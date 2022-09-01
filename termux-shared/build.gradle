@@ -24,7 +24,7 @@ android {
         // will be runtime exceptions on android < 8
         // due to missing classes like java.nio.file.Path.
         // Latest one (for me to remember): 2.11.0
-        implementation "commons-io:commons-io:2.5"
+        implementation "commons-io:commons-io:2.11.0"
 
         implementation project(":terminal-view")
 
