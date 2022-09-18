@@ -52,6 +52,22 @@
 - [Special Thanks](#Special-Thanks)
 ***
 
+## Termux Monet and Plugins
+
+> The [Termux Monet](https://github.com/HardcodedCat/termux-monet) fork app comes with the following optional plugin apps:
+>
+> **Modified:**
+> - [Termux:Styling](https://github.com/HardcodedCat/termux-styling)
+>
+> **Unmodified:**
+> - [Termux:API](https://github.com/termux/termux-api)
+> - [Termux:Boot](https://github.com/termux/termux-boot)
+> - [Termux:Float](https://github.com/termux/termux-float)
+> - [Termux:Tasker](https://github.com/termux/termux-tasker)
+> - [Termux:Widget](https://github.com/termux/termux-widget)
+
+***
+
 ## Phantom Process Killer
 
 **NOTICE:**
