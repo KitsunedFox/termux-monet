@@ -6,7 +6,7 @@ android {
 
     dependencies {
         implementation "androidx.appcompat:appcompat:1.5.1"
-        implementation "androidx.annotation:annotation:1.4.0"
+        implementation "androidx.annotation:annotation:1.5.0"
 
         // Do not bump androidx.core:core to 1.9.0, since it's gonna fail Task :app:compileDebugJavaWithJavac and Task :app:mergeDebugShaders at build
         implementation "androidx.core:core:1.8.0"
