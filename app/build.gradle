@@ -148,7 +148,7 @@ android {
 
 dependencies {
     testImplementation "junit:junit:4.13.2"
-    testImplementation "org.robolectric:robolectric:4.9"
+    testImplementation "org.robolectric:robolectric:4.9.1"
 
     // Do not increment com.android.tools:desugar_jdk_libs version higher than 1.1.6 since it will fail Task :app:l8DexDesugarLibDebug while building the app.
     coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:1.1.6"
