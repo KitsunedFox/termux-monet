@@ -177,6 +177,16 @@ Version: 3
 
 ***
 
+## Dynamic Motd
+
+> As described in [motds: add static motd back and use it as default instead of dynamic motd and add support for custom motd](https://github.com/termux/termux-tools/commit/6a0f5cc138c2c87fef91807fe0244e3531821d4c), in https://github.com/termux/termux-tools/pull/8, and in https://github.com/termux/termux-packages/pull/11250, Termux can now display both standard and dynamic motds.
+
+> For using your own custom dynamic motd, place a `motd.sh` executable file at `~/.termux/`.
+
+> To use the dynamic motd provided by the latest termux-tools package, run `ln -sf $PREFIX/etc/motd.sh ~/.termux/motd.sh`.
+
+***
+
 ## Wallpaper support
 > As described in https://github.com/termux/termux-app/pull/3079, Wallpapers can be defined either by placing `background_landscape.jpeg` and `background.jpeg` on `.termux` folder or by selecting the option `Set background image` inside the terminal context menu, under "Appearance".
 > Background image loading can also be enabled/disabled from settings. From Termux Settings -> Termux -> Termux Style -> Background Image.
