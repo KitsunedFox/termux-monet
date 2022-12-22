@@ -9,6 +9,7 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
+    rebase-strategy: "disabled"
     ignore:
       - dependency-name: "androidx.preference:preference"
       - dependency-name: "com.android.tools:desugar_jdk_libs"
@@ -19,3 +20,4 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
+    rebase-strategy: "disabled"
