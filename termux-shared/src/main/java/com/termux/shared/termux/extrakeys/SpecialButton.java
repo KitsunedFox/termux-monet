@@ -39,7 +39,7 @@ public class SpecialButton {
      * Get {@link #key} for this {@link SpecialButton}.
      */
     public String getKey() {
-        return key;
+        return getValue();
     }
 
     /**
@@ -54,6 +54,13 @@ public class SpecialButton {
     @NonNull
     @Override
     public String toString() {
+        return getValue();
+    }
+
+    /**
+     * Get {@link #key} for this {@link SpecialButton}.
+     */
+    public String getValue() {
         return key;
     }
 }

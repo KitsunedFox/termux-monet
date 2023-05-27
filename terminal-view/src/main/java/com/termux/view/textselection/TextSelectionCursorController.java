@@ -120,7 +120,7 @@ public class TextSelectionCursorController implements CursorController {
 
             @Override
             public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                return false;
+                return terminate(mode, menu);
             }
 
             @Override
@@ -171,7 +171,7 @@ public class TextSelectionCursorController implements CursorController {
 
             @Override
             public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                return false;
+                return terminate(mode, menu);
             }
 
             @Override
@@ -382,5 +382,9 @@ public class TextSelectionCursorController implements CursorController {
      */
     public boolean isSelectionEndDragged() {
         return mEndHandle.isDragging();
+    }
+
+    public boolean terminate(ActionMode mode, Menu menu) {
+        return false;
     }
 }

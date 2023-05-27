@@ -21,15 +21,15 @@ public class TermuxTerminalViewClientBase implements TerminalViewClient {
     }
 
     public boolean shouldBackButtonBeMappedToEscape() {
-        return false;
+        return reject();
     }
 
     public boolean shouldEnforceCharBasedInput() {
-        return false;
+        return reject();
     }
 
     public boolean shouldUseCtrlSpaceWorkaround() {
-        return false;
+        return reject();
     }
 
     @Override
@@ -58,22 +58,22 @@ public class TermuxTerminalViewClientBase implements TerminalViewClient {
 
     @Override
     public boolean readControlKey() {
-        return false;
+        return reject();
     }
 
     @Override
     public boolean readAltKey() {
-        return false;
+        return reject();
     }
 
     @Override
     public boolean readShiftKey() {
-        return false;
+        return reject();
     }
 
     @Override
     public boolean readFnKey() {
-        return false;
+        return reject();
     }
 
     @Override
@@ -118,5 +118,9 @@ public class TermuxTerminalViewClientBase implements TerminalViewClient {
     @Override
     public void logStackTrace(String tag, Exception e) {
         Logger.logStackTrace(tag, e);
+    }
+
+    public boolean reject() {
+        return false;
     }
 }
