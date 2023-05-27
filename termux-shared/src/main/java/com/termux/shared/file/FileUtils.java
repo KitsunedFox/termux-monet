@@ -267,11 +267,8 @@ public class FileUtils {
                     return true;
                 }
             }
-            if (getFileType(subFilePath, false) == FileType.DIRECTORY) {
-                // If non ignored sub file found, then early exit, otherwise continue looking
-                if (nonIgnoredSubFileExists(subFile.listFiles(), ignoredSubFilePaths))
-                    return true;
-            }
+            if (getFileType(subFilePath, false) == FileType.DIRECTORY && nonIgnoredSubFileExists(subFile.listFiles(), ignoredSubFilePaths))
+                return true;
         }
         return false;
     }
@@ -395,14 +392,11 @@ public class FileUtils {
                 isPathUnderParentDirPath = isPathInDirPath(filePath, parentDirPath, true);
             }
             // If setPermissions is enabled and path is a regular file
-            if (setPermissions && permissionsToCheck != null && fileType == FileType.REGULAR) {
-                // If there is not parentDirPath restriction or path is under parentDirPath
-                if (parentDirPath == null || (isPathUnderParentDirPath && getFileType(parentDirPath, false) == FileType.DIRECTORY)) {
-                    if (setMissingPermissionsOnly)
-                        setMissingFilePermissions(label + "file", filePath, permissionsToCheck);
-                    else
-                        setFilePermissions(label + "file", filePath, permissionsToCheck);
-                }
+            if (setPermissions && permissionsToCheck != null && fileType == FileType.REGULAR && parentDirPath == null || (isPathUnderParentDirPath && getFileType(parentDirPath, false) == FileType.DIRECTORY)) {
+                if (setMissingPermissionsOnly)
+                    setMissingFilePermissions(label + "file", filePath, permissionsToCheck);
+                else
+                    setFilePermissions(label + "file", filePath, permissionsToCheck);
             }
             // If path is not a regular file
             // Regular files cannot be automatically created so we do not ignore if missing
@@ -412,11 +406,9 @@ public class FileUtils {
             }
             // If there is not parentDirPath restriction or path is not under parentDirPath or
             // if permission errors must not be ignored for paths under parentDirPath
-            if (parentDirPath == null || !isPathUnderParentDirPath || !ignoreErrorsIfPathIsUnderParentDirPath) {
-                if (permissionsToCheck != null) {
-                    // Check if permissions are missing
-                    return checkMissingFilePermissions(label + "regular", filePath, permissionsToCheck, false);
-                }
+            if (parentDirPath == null || !isPathUnderParentDirPath || !ignoreErrorsIfPathIsUnderParentDirPath && permissionsToCheck != null) {
+                // Check if permissions are missing
+                return checkMissingFilePermissions(label + "regular", filePath, permissionsToCheck, false);
             }
         } catch (Exception e) {
             return FileUtilsErrno.ERRNO_VALIDATE_FILE_EXISTENCE_AND_PERMISSIONS_FAILED_WITH_EXCEPTION.getError(e, label + "file", filePath, e.getMessage());
@@ -467,26 +459,23 @@ public class FileUtils {
                 // The path can be equal to parent directory path or under it
                 isPathInParentDirPath = isPathInDirPath(filePath, parentDirPath, false);
             }
-            if (createDirectoryIfMissing || setPermissions) {
-                // If there is not parentDirPath restriction or path is in parentDirPath
-                if (parentDirPath == null || (isPathInParentDirPath && getFileType(parentDirPath, false) == FileType.DIRECTORY)) {
-                    // If createDirectoryIfMissing is enabled and no file exists at path, then create directory
-                    if (createDirectoryIfMissing && fileType == FileType.NO_EXIST) {
-                        Logger.logVerbose(LOG_TAG, "Creating " + label + "directory file at path \"" + filePath + "\"");
-                        // Create directory and update fileType if successful, otherwise return with error
-                        // It "might" be possible that mkdirs returns false even though directory was created
-                        boolean result = file.mkdirs();
-                        fileType = getFileType(filePath, false);
-                        if (!result && fileType != FileType.DIRECTORY)
-                            return FileUtilsErrno.ERRNO_CREATING_FILE_FAILED.getError(label + "directory file", filePath);
-                    }
-                    // If setPermissions is enabled and path is a directory
-                    if (setPermissions && permissionsToCheck != null && fileType == FileType.DIRECTORY) {
-                        if (setMissingPermissionsOnly)
-                            setMissingFilePermissions(label + "directory", filePath, permissionsToCheck);
-                        else
-                            setFilePermissions(label + "directory", filePath, permissionsToCheck);
-                    }
+            if (createDirectoryIfMissing || setPermissions && parentDirPath == null || (isPathInParentDirPath && getFileType(parentDirPath, false) == FileType.DIRECTORY)) {
+                // If createDirectoryIfMissing is enabled and no file exists at path, then create directory
+                if (createDirectoryIfMissing && fileType == FileType.NO_EXIST) {
+                    Logger.logVerbose(LOG_TAG, "Creating " + label + "directory file at path \"" + filePath + "\"");
+                    // Create directory and update fileType if successful, otherwise return with error
+                    // It "might" be possible that mkdirs returns false even though directory was created
+                    boolean result = file.mkdirs();
+                    fileType = getFileType(filePath, false);
+                    if (!result && fileType != FileType.DIRECTORY)
+                        return FileUtilsErrno.ERRNO_CREATING_FILE_FAILED.getError(label + "directory file", filePath);
+                }
+                // If setPermissions is enabled and path is a directory
+                if (setPermissions && permissionsToCheck != null && fileType == FileType.DIRECTORY) {
+                    if (setMissingPermissionsOnly)
+                        setMissingFilePermissions(label + "directory", filePath, permissionsToCheck);
+                    else
+                        setFilePermissions(label + "directory", filePath, permissionsToCheck);
                 }
             }
             // If there is not parentDirPath restriction or path is not in parentDirPath or
@@ -726,12 +715,9 @@ public class FileUtils {
             FileType targetFileType = getFileType(targetFileAbsolutePath, false);
             FileType destFileType = getFileType(destFilePath, false);
             // If target file does not exist
-            if (targetFileType == FileType.NO_EXIST) {
-                // If dangling symlink should not be allowed, then return with error
-                if (!allowDangling) {
-                    label += "symlink target file";
-                    return FileUtilsErrno.ERRNO_FILE_NOT_FOUND_AT_PATH.getError(label, targetFileAbsolutePath).setLabel(label);
-                }
+            if (targetFileType == FileType.NO_EXIST && !allowDangling) {
+                label += "symlink target file";
+                return FileUtilsErrno.ERRNO_FILE_NOT_FOUND_AT_PATH.getError(label, targetFileAbsolutePath).setLabel(label);
             }
             // If destination exists
             if (destFileType != FileType.NO_EXIST) {

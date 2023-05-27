@@ -159,12 +159,8 @@ public class TermuxTerminalSessionActivityClient extends TermuxTerminalSessionCl
             if (isPluginExecutionCommandWithPendingResult)
                 Logger.logVerbose(LOG_TAG, "The \"" + finishedSession.mSessionName + "\" session will be force finished automatically since result in pending.");
         }
-        if (mActivity.isVisible() && finishedSession != mActivity.getCurrentSession()) {
-            // Show toast for non-current sessions that exit.
-            // Verify that session was not removed before we got told about it finishing:
-            if (index >= 0)
-                mActivity.showToast(toToastTitle(finishedSession) + " - exited", true);
-        }
+        if (mActivity.isVisible() && finishedSession != mActivity.getCurrentSession() && index >= 0)
+            mActivity.showToast(toToastTitle(finishedSession) + " - exited", true);
         if (mActivity.getPackageManager().hasSystemFeature(PackageManager.FEATURE_LEANBACK)) {
             // On Android TV devices we need to use older behaviour because we may
             // not be able to have multiple launcher icons.

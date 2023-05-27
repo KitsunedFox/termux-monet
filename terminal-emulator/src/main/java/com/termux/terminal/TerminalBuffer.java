@@ -236,10 +236,8 @@ public final class TerminalBuffer {
                     if (cursor[1] >= i)
                         break;
                     int r = externalToInternalRow(i);
-                    if (mLines[r] == null || mLines[r].isBlank()) {
-                        if (--shiftDownOfTopRow == 0)
-                            break;
-                    }
+                    if (mLines[r] == null || mLines[r].isBlank() && --shiftDownOfTopRow == 0)
+                        break;
                 }
             } else if (shiftDownOfTopRow < 0) {
                 // Negative shift down = expanding. Only move screen up if there is transcript to show:

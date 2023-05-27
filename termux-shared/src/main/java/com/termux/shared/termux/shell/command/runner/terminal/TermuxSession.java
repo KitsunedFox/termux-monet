@@ -186,15 +186,13 @@ public class TermuxSession {
             return;
         }
         Logger.logDebug(LOG_TAG, "Send SIGKILL to \"" + mExecutionCommand.getCommandIdAndLabelLogString() + "\" TermuxSession");
-        if (mExecutionCommand.setStateFailed(Errno.ERRNO_FAILED.getCode(), context.getString(R.string.error_sending_sigkill_to_process))) {
-            if (processResult) {
-                // SIGKILL
-                mExecutionCommand.resultData.exitCode = 137;
-                // Get whatever output has been set till now in case its needed
-                if (this.mSetStdoutOnExit)
-                    mExecutionCommand.resultData.stdout.append(ShellUtils.getTerminalSessionTranscriptText(mTerminalSession, true, false));
-                TermuxSession.processTermuxSessionResult(this, null);
-            }
+        if (mExecutionCommand.setStateFailed(Errno.ERRNO_FAILED.getCode(), context.getString(R.string.error_sending_sigkill_to_process)) && processResult) {
+            // SIGKILL
+            mExecutionCommand.resultData.exitCode = 137;
+            // Get whatever output has been set till now in case its needed
+            if (this.mSetStdoutOnExit)
+                mExecutionCommand.resultData.stdout.append(ShellUtils.getTerminalSessionTranscriptText(mTerminalSession, true, false));
+            TermuxSession.processTermuxSessionResult(this, null);
         }
         // Send SIGKILL to process
         mTerminalSession.finishIfRunning();

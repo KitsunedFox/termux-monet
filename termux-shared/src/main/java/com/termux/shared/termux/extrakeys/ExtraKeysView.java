@@ -554,11 +554,8 @@ public final class ExtraKeysView extends GridLayout {
     }
 
     public void performExtraKeyButtonHapticFeedback(View view, ExtraKeyButton buttonInfo, MaterialButton button) {
-        if (mExtraKeysViewClient != null) {
-            // If client handled the feedback, then just return
-            if (mExtraKeysViewClient.performExtraKeyButtonHapticFeedback(view, buttonInfo, button))
-                return;
-        }
+        if (mExtraKeysViewClient != null && mExtraKeysViewClient.performExtraKeyButtonHapticFeedback(view, buttonInfo, button))
+            return;
         if (Settings.System.getInt(getContext().getContentResolver(), Settings.System.HAPTIC_FEEDBACK_ENABLED, 0) != 0) {
             if (Build.VERSION.SDK_INT >= 28) {
                 button.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);

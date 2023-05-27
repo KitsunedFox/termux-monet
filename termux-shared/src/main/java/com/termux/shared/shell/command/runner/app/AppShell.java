@@ -228,12 +228,10 @@ public final class AppShell {
             return;
         }
         Logger.logDebug(LOG_TAG, "Send SIGKILL to \"" + mExecutionCommand.getCommandIdAndLabelLogString() + "\" AppShell");
-        if (mExecutionCommand.setStateFailed(Errno.ERRNO_FAILED.getCode(), context.getString(R.string.error_sending_sigkill_to_process))) {
-            if (processResult) {
-                // SIGKILL
-                mExecutionCommand.resultData.exitCode = 137;
-                AppShell.processAppShellResult(this, null);
-            }
+        if (mExecutionCommand.setStateFailed(Errno.ERRNO_FAILED.getCode(), context.getString(R.string.error_sending_sigkill_to_process)) && processResult) {
+            // SIGKILL
+            mExecutionCommand.resultData.exitCode = 137;
+            AppShell.processAppShellResult(this, null);
         }
         if (mExecutionCommand.isExecuting()) {
             kill();

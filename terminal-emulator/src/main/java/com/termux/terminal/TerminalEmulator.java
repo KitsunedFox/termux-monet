@@ -2026,11 +2026,9 @@ public final class TerminalEmulator {
             'Z':
                 int numberOfTabs = getArg0(1);
                 int newCol = mLeftMargin;
-                for (int i = mCursorCol - 1; i >= 0; i--) if (mTabStop[i]) {
-                    if (--numberOfTabs == 0) {
-                        newCol = Math.max(i, mLeftMargin);
-                        break;
-                    }
+                for (int i = mCursorCol - 1; i >= 0; i--) if (mTabStop[i] && --numberOfTabs == 0) {
+                    newCol = Math.max(i, mLeftMargin);
+                    break;
                 }
                 mCursorCol = newCol;
                 break;
@@ -2756,13 +2754,11 @@ public final class TerminalEmulator {
         int[] bytes = new int[] { inputByte };
         // Only doing this for ESC_CSI and not for other ESC_CSI_* since they seem to be using their
         // own defaults with getArg*() calls, but there may be missed cases
-        if (mEscapeState == ESC_CSI) {
-            if (// If sequence starts with a ; character, like \033[;m
-            (mIsCSIStart && inputByte == ';') || (!mIsCSIStart && mLastCSIArg != null && mLastCSIArg == ';' && inputByte == ';')) {
-                // If sequence contains sequential ; characters, like \033[;;m
-                // Assume 0 was passed
-                bytes = new int[] { '0', ';' };
-            }
+        if (mEscapeState == ESC_CSI && // If sequence starts with a ; character, like \033[;m
+        (mIsCSIStart && inputByte == ';') || (!mIsCSIStart && mLastCSIArg != null && mLastCSIArg == ';' && inputByte == ';')) {
+            // If sequence contains sequential ; characters, like \033[;;m
+            // Assume 0 was passed
+            bytes = new int[] { '0', ';' };
         }
         mIsCSIStart = false;
         for (int b : bytes) {

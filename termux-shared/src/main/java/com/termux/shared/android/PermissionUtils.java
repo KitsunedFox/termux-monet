@@ -233,11 +233,8 @@ public class PermissionUtils {
         String errmsg;
         boolean requestLegacyStoragePermission = isLegacyExternalStoragePossible(context);
         boolean checkIfHasRequestedLegacyExternalStorage = checkIfHasRequestedLegacyExternalStorage(context);
-        if (requestLegacyStoragePermission && checkIfHasRequestedLegacyExternalStorage) {
-            // Check if requestLegacyExternalStorage is set to true in app manifest
-            if (!hasRequestedLegacyExternalStorage(context, showErrorMessage))
-                return false;
-        }
+        if (requestLegacyStoragePermission && checkIfHasRequestedLegacyExternalStorage && !hasRequestedLegacyExternalStorage(context, showErrorMessage))
+            return false;
         if (checkStoragePermission(context, requestLegacyStoragePermission)) {
             return true;
         }

@@ -228,11 +228,9 @@ public class StreamGobbler extends Thread {
         } catch (IOException e) {
             // read already closed
         }
-        if (!calledOnClose) {
-            if (streamClosedListener != null) {
-                calledOnClose = true;
-                streamClosedListener.onStreamClosed();
-            }
+        if (!calledOnClose && streamClosedListener != null) {
+            calledOnClose = true;
+            streamClosedListener.onStreamClosed();
         }
     }
 
