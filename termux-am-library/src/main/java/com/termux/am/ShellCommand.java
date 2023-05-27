@@ -13,19 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.termux.am;
 
 /**
  * Copied from android-7.0.0_r1 frameworks/base/core/java/android/os
  */
 public class ShellCommand {
+
     static final String TAG = "ShellCommand";
+
     static final boolean DEBUG = false;
 
     private String[] mArgs;
 
     private int mArgPos;
+
     private String mCurArgData;
 
     public void init(String[] args, int firstArgPos) {
@@ -105,5 +107,4 @@ public class ShellCommand {
         }
         return arg;
     }
-
 }

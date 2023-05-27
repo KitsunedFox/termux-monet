@@ -1,7 +1,6 @@
 package com.termux.terminal;
 
 import android.util.Log;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -59,10 +58,9 @@ public class Logger {
     }
 
     public static String getStackTraceString(Throwable throwable) {
-        if (throwable == null) return null;
-
+        if (throwable == null)
+            return null;
         String stackTraceString = null;
-
         try {
             StringWriter errors = new StringWriter();
             PrintWriter pw = new PrintWriter(errors);
@@ -73,8 +71,6 @@ public class Logger {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return stackTraceString;
     }
-
 }

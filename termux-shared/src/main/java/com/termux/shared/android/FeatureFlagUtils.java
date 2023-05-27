@@ -2,13 +2,10 @@ package com.termux.shared.android;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.termux.shared.logger.Logger;
 import com.termux.shared.reflection.ReflectionUtils;
-
 import java.lang.reflect.Method;
 import java.util.Map;
 
@@ -54,16 +51,21 @@ public class FeatureFlagUtils {
 
     public enum FeatureFlagValue {
 
-        /** Unknown like due to exception raised while getting value. */
+        /**
+         * Unknown like due to exception raised while getting value.
+         */
         UNKNOWN("<unknown>"),
-
-        /** Flag is unsupported on current android build. */
+        /**
+         * Flag is unsupported on current android build.
+         */
         UNSUPPORTED("<unsupported>"),
-
-        /** Flag is enabled. */
+        /**
+         * Flag is enabled.
+         */
         TRUE("true"),
-
-        /** Flag is not enabled. */
+        /**
+         * Flag is not enabled.
+         */
         FALSE("false");
 
         private final String name;
@@ -75,7 +77,6 @@ public class FeatureFlagUtils {
         public String getName() {
             return name;
         }
-
     }
 
     public static final String FEATURE_FLAGS_CLASS = "android.util.FeatureFlagUtils";
@@ -89,9 +90,11 @@ public class FeatureFlagUtils {
     public static Map<String, String> getAllFeatureFlags() {
         ReflectionUtils.bypassHiddenAPIReflectionRestrictions();
         try {
-            @SuppressLint("PrivateApi") Class<?> clazz = Class.forName(FEATURE_FLAGS_CLASS);
+            @SuppressLint("PrivateApi")
+            Class<?> clazz = Class.forName(FEATURE_FLAGS_CLASS);
             Method getAllFeatureFlagsMethod = ReflectionUtils.getDeclaredMethod(clazz, "getAllFeatureFlags");
-            if (getAllFeatureFlagsMethod == null) return null;
+            if (getAllFeatureFlagsMethod == null)
+                return null;
             return (Map<String, String>) ReflectionUtils.invokeMethod(getAllFeatureFlagsMethod, null).value;
         } catch (Exception e) {
             // ClassCastException may be thrown
@@ -109,7 +112,8 @@ public class FeatureFlagUtils {
     @Nullable
     public static Boolean featureFlagExists(@NonNull String feature) {
         Map<String, String> featureFlags = getAllFeatureFlags();
-        if (featureFlags == null) return null;
+        if (featureFlags == null)
+            return null;
         return featureFlags.containsKey(feature);
     }
 
@@ -129,7 +133,6 @@ public class FeatureFlagUtils {
         } else if (!featureFlagExists) {
             return FeatureFlagValue.UNSUPPORTED;
         }
-
         Boolean featureFlagValue = isFeatureEnabled(context, feature);
         if (featureFlagValue == null) {
             Logger.logError(LOG_TAG, "Failed to get feature flags \"" + feature + "\" value");
@@ -151,13 +154,13 @@ public class FeatureFlagUtils {
     public static Boolean isFeatureEnabled(@NonNull Context context, @NonNull String feature) {
         ReflectionUtils.bypassHiddenAPIReflectionRestrictions();
         try {
-            @SuppressLint("PrivateApi") Class<?> clazz = Class.forName(FEATURE_FLAGS_CLASS);
+            @SuppressLint("PrivateApi")
+            Class<?> clazz = Class.forName(FEATURE_FLAGS_CLASS);
             Method isFeatureEnabledMethod = ReflectionUtils.getDeclaredMethod(clazz, "isEnabled", Context.class, String.class);
             if (isFeatureEnabledMethod == null) {
                 Logger.logError(LOG_TAG, "Failed to check if feature flag \"" + feature + "\" is enabled");
                 return null;
             }
-
             return (boolean) ReflectionUtils.invokeMethod(isFeatureEnabledMethod, null, context, feature).value;
         } catch (Exception e) {
             // ClassCastException may be thrown
@@ -165,5 +168,4 @@ public class FeatureFlagUtils {
             return null;
         }
     }
-
 }

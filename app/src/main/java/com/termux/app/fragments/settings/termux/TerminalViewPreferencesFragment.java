@@ -2,12 +2,10 @@ package com.termux.app.fragments.settings.termux;
 
 import android.content.Context;
 import android.os.Bundle;
-
 import androidx.annotation.Keep;
 import androidx.preference.PreferenceDataStore;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
-
 import com.termux.R;
 import com.termux.shared.termux.settings.preferences.TermuxAppSharedPreferences;
 
@@ -17,19 +15,18 @@ public class TerminalViewPreferencesFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         Context context = getContext();
-        if (context == null) return;
-
+        if (context == null)
+            return;
         PreferenceManager preferenceManager = getPreferenceManager();
         preferenceManager.setPreferenceDataStore(TerminalViewPreferencesDataStore.getInstance(context));
-
         setPreferencesFromResource(R.xml.termux_terminal_view_preferences, rootKey);
     }
-
 }
 
 class TerminalViewPreferencesDataStore extends PreferenceDataStore {
 
     private final Context mContext;
+
     private final TermuxAppSharedPreferences mPreferences;
 
     private static TerminalViewPreferencesDataStore mInstance;
@@ -46,19 +43,18 @@ class TerminalViewPreferencesDataStore extends PreferenceDataStore {
         return mInstance;
     }
 
-
-
     @Override
     public void putBoolean(String key, boolean value) {
-        if (mPreferences == null) return;
-        if (key == null) return;
-
-        switch (key) {
+        if (mPreferences == null)
+            return;
+        if (key == null)
+            return;
+        switch(key) {
             case "terminal_margin_adjustment":
-                    mPreferences.setTerminalMarginAdjustment(value);
+                mPreferences.setTerminalMarginAdjustment(value);
                 break;
             case "activity_finish_remove_task":
-                    mPreferences.setRemoveTaskOnActivityFinishEnabled(value);
+                mPreferences.setRemoveTaskOnActivityFinishEnabled(value);
                 break;
             default:
                 break;
@@ -67,9 +63,9 @@ class TerminalViewPreferencesDataStore extends PreferenceDataStore {
 
     @Override
     public boolean getBoolean(String key, boolean defValue) {
-        if (mPreferences == null) return false;
-
-        switch (key) {
+        if (mPreferences == null)
+            return false;
+        switch(key) {
             case "terminal_margin_adjustment":
                 return mPreferences.isTerminalMarginAdjustmentEnabled();
             case "activity_finish_remove_task":
@@ -78,5 +74,4 @@ class TerminalViewPreferencesDataStore extends PreferenceDataStore {
                 return false;
         }
     }
-
 }

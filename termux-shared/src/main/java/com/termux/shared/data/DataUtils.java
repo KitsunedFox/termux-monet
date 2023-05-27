@@ -3,39 +3,36 @@ package com.termux.shared.data;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.google.common.base.Strings;
-
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 public class DataUtils {
 
-    /** Max safe limit of data size to prevent TransactionTooLargeException when transferring data
-     * inside or to other apps via transactions. */
-    public static final int TRANSACTION_SIZE_LIMIT_IN_BYTES = 100 * 1024; // 100KB
+    /**
+     * Max safe limit of data size to prevent TransactionTooLargeException when transferring data
+     * inside or to other apps via transactions.
+     */
+    // 100KB
+    public static final int TRANSACTION_SIZE_LIMIT_IN_BYTES = 100 * 1024;
 
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 
     public static String getTruncatedCommandOutput(String text, int maxLength, boolean fromEnd, boolean onNewline, boolean addPrefix) {
-        if (text == null) return null;
-
+        if (text == null)
+            return null;
         String prefix = "(truncated) ";
-
         if (addPrefix)
             maxLength = maxLength - prefix.length();
-
-        if (maxLength < 0 || text.length() < maxLength) return text;
-
+        if (maxLength < 0 || text.length() < maxLength)
+            return text;
         if (fromEnd) {
             text = text.substring(0, maxLength);
         } else {
             int cutOffIndex = text.length() - maxLength;
-
             if (onNewline) {
                 int nextNewlineIndex = text.indexOf('\n', cutOffIndex);
                 if (nextNewlineIndex != -1 && nextNewlineIndex != text.length() - 1) {
@@ -44,10 +41,8 @@ public class DataUtils {
             }
             text = text.substring(cutOffIndex);
         }
-
         if (addPrefix)
             text = prefix + text;
-
         return text;
     }
 
@@ -59,8 +54,8 @@ public class DataUtils {
      * @param replace The sub string to replace with.
      */
     public static void replaceSubStringsInStringArrayItems(String[] array, String find, String replace) {
-        if(array == null || array.length == 0) return;
-
+        if (array == null || array.length == 0)
+            return;
         for (int i = 0; i < array.length; i++) {
             array[i] = array[i].replace(find, replace);
         }
@@ -75,12 +70,11 @@ public class DataUtils {
      * returns default if failed to read a valid value, like in case of an exception.
      */
     public static float getFloatFromString(String value, float def) {
-        if (value == null) return def;
-
+        if (value == null)
+            return def;
         try {
             return Float.parseFloat(value);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return def;
         }
     }
@@ -94,12 +88,11 @@ public class DataUtils {
      * returns default if failed to read a valid value, like in case of an exception.
      */
     public static int getIntFromString(String value, int def) {
-        if (value == null) return def;
-
+        if (value == null)
+            return def;
         try {
             return Integer.parseInt(value);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return def;
         }
     }
@@ -142,11 +135,10 @@ public class DataUtils {
      * like in case of an exception.
      */
     public static int getIntStoredAsStringFromBundle(Bundle bundle, String key, int def) {
-        if (bundle == null) return def;
+        if (bundle == null)
+            return def;
         return getIntFromString(bundle.getString(key, Integer.toString(def)), def);
     }
-
-
 
     /**
      * If value is not in the range [min, max], set it to either min or max.
@@ -164,8 +156,6 @@ public class DataUtils {
         else
             return value;
     }
-
-
 
     /**
      * Add a space indent to a {@link String}. Each indent is 4 space characters long.
@@ -210,8 +200,6 @@ public class DataUtils {
             return string.replaceAll("(?m)^", Strings.repeat(indent, Math.max(count, 1)));
     }
 
-
-
     /**
      * Get the object itself if it is not {@code null}, otherwise default.
      *
@@ -234,16 +222,19 @@ public class DataUtils {
         return (value == null || value.isEmpty()) ? def : value;
     }
 
-    /** Check if a string is null or empty. */
+    /**
+     * Check if a string is null or empty.
+     */
     public static boolean isNullOrEmpty(String string) {
         return string == null || string.isEmpty();
     }
 
-
-
-    /** Get size of a serializable object. */
+    /**
+     * Get size of a serializable object.
+     */
     public static long getSerializedSize(Serializable object) {
-        if (object == null) return 0;
+        if (object == null)
+            return 0;
         try {
             ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteOutputStream);
@@ -256,13 +247,12 @@ public class DataUtils {
         }
     }
 
-
     /**
      * Wrapper for {@link #getIntColorFromString(String, int, boolean)} with `setAlpha` `false`.
      */
     public static int getIntColorFromString(String value, int def) {
-        if (value == null) return def;
-
+        if (value == null)
+            return def;
         try {
             return Color.parseColor(value);
         } catch (Exception e) {
@@ -281,22 +271,19 @@ public class DataUtils {
      * value, otherwise returns default value.
      */
     public static int getIntColorFromString(String value, int def, boolean setAlpha) {
-        if (value == null) return def;
-
+        if (value == null)
+            return def;
         try {
             int color = Color.parseColor(value);
-
             if (setAlpha && value.length() == 7) {
                 // Use alpha value of `def` color and rgb value of given `value`.
                 color = (def & 0xff000000) | (color & 0x00ffffff);
             }
-
             return color;
         } catch (Exception e) {
             return def;
         }
     }
-
 
     /**
      * Exchanges the value of x and y in {@link Point}.
@@ -307,5 +294,4 @@ public class DataUtils {
     public static Point swap(Point point) {
         return new Point(point.y, point.x);
     }
-
 }

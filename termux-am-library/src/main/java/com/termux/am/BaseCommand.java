@@ -14,7 +14,6 @@
 ** See the License for the specific language governing permissions and
 ** limitations under the License.
 */
-
 package com.termux.am;
 
 import java.io.PrintStream;
@@ -28,16 +27,20 @@ public abstract class BaseCommand {
 
     // These are magic strings understood by the Eclipse plugin.
     public static final String FATAL_ERROR_CODE = "Error type 1";
+
     public static final String NO_SYSTEM_ERROR_CODE = "Error type 2";
+
     public static final String NO_CLASS_ERROR_CODE = "Error type 3";
-    
+
     protected PrintStream out;
+
     protected PrintStream err;
+
     public BaseCommand(PrintStream out, PrintStream err) {
         this.out = out;
         this.err = err;
     }
-    
+
     /**
      * Call to run the command.
      */
@@ -46,9 +49,7 @@ public abstract class BaseCommand {
             onShowUsage(out);
             return 1;
         }
-
         mArgs.init(args, 0);
-
         try {
             onRun();
         } catch (IllegalArgumentException e) {

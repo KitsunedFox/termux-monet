@@ -3,15 +3,12 @@ package com.termux.shared.data;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
-
 import androidx.annotation.NonNull;
-
 import java.util.Arrays;
 
 public class IntentUtils {
 
     private static final String LOG_TAG = "IntentUtils";
-
 
     /**
      * Get a {@link String} extra from an {@link Intent} if its not {@code null} or empty.
@@ -64,15 +61,11 @@ public class IntentUtils {
             if (value == null || value.isEmpty()) {
                 return def;
             }
-
             return Integer.parseInt(value);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return def;
         }
     }
-
-
 
     /**
      * Get a {@link String[]} extra from an {@link Intent} if its not {@code null} or empty.
@@ -111,22 +104,20 @@ public class IntentUtils {
     }
 
     public static String getIntentString(Intent intent) {
-        if (intent == null) return null;
-
+        if (intent == null)
+            return null;
         return intent.toString() + "\n" + getBundleString(intent.getExtras());
     }
 
     public static String getBundleString(Bundle bundle) {
-        if (bundle == null || bundle.size() == 0) return "Bundle[]";
-
+        if (bundle == null || bundle.size() == 0)
+            return "Bundle[]";
         StringBuilder bundleString = new StringBuilder("Bundle[\n");
         boolean first = true;
         for (String key : bundle.keySet()) {
             if (!first)
                 bundleString.append("\n");
-
             bundleString.append(key).append(": `");
-
             Object value = bundle.get(key);
             if (value instanceof int[]) {
                 bundleString.append(Arrays.toString((int[]) value));
@@ -153,14 +144,10 @@ public class IntentUtils {
             } else {
                 bundleString.append(value);
             }
-
             bundleString.append("`");
-
             first = false;
         }
-
         bundleString.append("\n]");
         return bundleString.toString();
     }
-
 }

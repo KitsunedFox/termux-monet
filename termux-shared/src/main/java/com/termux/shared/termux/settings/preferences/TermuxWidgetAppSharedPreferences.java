@@ -1,10 +1,8 @@
 package com.termux.shared.termux.settings.preferences;
 
 import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.termux.shared.logger.Logger;
 import com.termux.shared.android.PackageUtils;
 import com.termux.shared.settings.preferences.AppSharedPreferences;
@@ -12,7 +10,6 @@ import com.termux.shared.settings.preferences.SharedPreferenceUtils;
 import com.termux.shared.termux.TermuxUtils;
 import com.termux.shared.termux.settings.preferences.TermuxPreferenceConstants.TERMUX_WIDGET_APP;
 import com.termux.shared.termux.TermuxConstants;
-
 import java.util.UUID;
 
 public class TermuxWidgetAppSharedPreferences extends AppSharedPreferences {
@@ -20,11 +17,7 @@ public class TermuxWidgetAppSharedPreferences extends AppSharedPreferences {
     private static final String LOG_TAG = "TermuxWidgetAppSharedPreferences";
 
     private TermuxWidgetAppSharedPreferences(@NonNull Context context) {
-        super(context,
-            SharedPreferenceUtils.getPrivateSharedPreferences(context,
-                TermuxConstants.TERMUX_WIDGET_DEFAULT_PREFERENCES_FILE_BASENAME_WITHOUT_EXTENSION),
-            SharedPreferenceUtils.getPrivateAndMultiProcessSharedPreferences(context,
-                TermuxConstants.TERMUX_WIDGET_DEFAULT_PREFERENCES_FILE_BASENAME_WITHOUT_EXTENSION));
+        super(context, SharedPreferenceUtils.getPrivateSharedPreferences(context, TermuxConstants.TERMUX_WIDGET_DEFAULT_PREFERENCES_FILE_BASENAME_WITHOUT_EXTENSION), SharedPreferenceUtils.getPrivateAndMultiProcessSharedPreferences(context, TermuxConstants.TERMUX_WIDGET_DEFAULT_PREFERENCES_FILE_BASENAME_WITHOUT_EXTENSION));
     }
 
     /**
@@ -60,24 +53,21 @@ public class TermuxWidgetAppSharedPreferences extends AppSharedPreferences {
             return new TermuxWidgetAppSharedPreferences(termuxWidgetPackageContext);
     }
 
-
-
     public static String getGeneratedToken(@NonNull Context context) {
         TermuxWidgetAppSharedPreferences preferences = TermuxWidgetAppSharedPreferences.build(context, true);
-        if (preferences == null) return null;
+        if (preferences == null)
+            return null;
         return preferences.getGeneratedToken();
     }
 
     public String getGeneratedToken() {
-        String token =  SharedPreferenceUtils.getString(mSharedPreferences, TERMUX_WIDGET_APP.KEY_TOKEN, null, true);
+        String token = SharedPreferenceUtils.getString(mSharedPreferences, TERMUX_WIDGET_APP.KEY_TOKEN, null, true);
         if (token == null) {
             token = UUID.randomUUID().toString();
             SharedPreferenceUtils.setString(mSharedPreferences, TERMUX_WIDGET_APP.KEY_TOKEN, token, true);
         }
         return token;
     }
-
-
 
     public int getLogLevel(boolean readFromFile) {
         if (readFromFile)
@@ -90,5 +80,4 @@ public class TermuxWidgetAppSharedPreferences extends AppSharedPreferences {
         logLevel = Logger.setLogLevel(context, logLevel);
         SharedPreferenceUtils.setInt(mSharedPreferences, TERMUX_WIDGET_APP.KEY_LOG_LEVEL, logLevel, commitToFile);
     }
-
 }

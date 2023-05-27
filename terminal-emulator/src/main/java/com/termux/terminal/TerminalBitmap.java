@@ -3,11 +3,9 @@ package com.termux.terminal;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
-
 import android.os.SystemClock;
 
 /**
@@ -17,13 +15,18 @@ import android.os.SystemClock;
  * See {@link #externalToInternalRow(int)} for how to map from logical screen rows to array indices.
  */
 public class TerminalBitmap {
-    public Bitmap bitmap;
-    public int cellWidth;
-    public int cellHeight;
-    public int scrollLines;
-    public int[] cursorDelta;
-    private static final String LOG_TAG = "TerminalBitmap";
 
+    public Bitmap bitmap;
+
+    public int cellWidth;
+
+    public int cellHeight;
+
+    public int scrollLines;
+
+    public int[] cursorDelta;
+
+    private static final String LOG_TAG = "TerminalBitmap";
 
     public TerminalBitmap(int num, WorkingTerminalBitmap sixel, int Y, int X, int cellW, int cellH, TerminalBuffer screen) {
         Bitmap bm = sixel.bitmap;
@@ -51,14 +54,14 @@ public class TerminalBitmap {
                 double wFactor = 9999.0;
                 double hFactor = 9999.0;
                 if (width > 0) {
-                    wFactor = (double)width / imageWidth;
+                    wFactor = (double) width / imageWidth;
                 }
                 if (height > 0) {
-                    hFactor = (double)height / imageHeight;
+                    hFactor = (double) height / imageHeight;
                 }
                 double factor = Math.min(wFactor, hFactor);
-                newWidth = (int)(factor * imageWidth);
-                newHeight = (int)(factor * imageHeight);
+                newWidth = (int) (factor * imageWidth);
+                newHeight = (int) (factor * imageHeight);
             } else {
                 if (height <= 0) {
                     newHeight = imageHeight;
@@ -91,14 +94,14 @@ public class TerminalBitmap {
                 try {
                     bm = Bitmap.createBitmap(bm, 0, 0, cropWidth, bm.getHeight());
                     newWidth = maxWidth;
-                } catch(OutOfMemoryError e) {
+                } catch (OutOfMemoryError e) {
                     // This is just a memory optimization. If it fails,
                     // continue (and probably fail later).
                 }
             }
             try {
                 bm = Bitmap.createScaledBitmap(bm, newWidth, newHeight, true);
-            } catch(OutOfMemoryError e) {
+            } catch (OutOfMemoryError e) {
                 Logger.logWarn(null, LOG_TAG, "Out of memory, cannot rescale image");
                 bm = null;
             }
@@ -109,16 +112,14 @@ public class TerminalBitmap {
                 Logger.logWarn(null, LOG_TAG, "Out of memory, cannot decode image");
             }
         }
-
         if (bm == null) {
             Logger.logWarn(null, LOG_TAG, "Cannot decode image");
             bitmap = null;
             return;
         }
-
         bm = resizeBitmapConstraints(bm, bm.getWidth(), bm.getHeight(), cellW, cellH, screen.mColumns - X);
         addBitmap(num, bm, Y, X, cellW, cellH, screen);
-        cursorDelta  = new int[] {scrollLines, (bitmap.getWidth() + cellW - 1) / cellW};
+        cursorDelta = new int[] { scrollLines, (bitmap.getWidth() + cellW - 1) / cellW };
     }
 
     private void addBitmap(int num, Bitmap bm, int Y, int X, int cellW, int cellH, TerminalBuffer screen) {
@@ -133,34 +134,34 @@ public class TerminalBitmap {
         int w = Math.min(screen.mColumns - X, (width + cellW - 1) / cellW);
         int h = (height + cellH - 1) / cellH;
         int s = 0;
-        for (int i=0; i<h; i++) {
-            if (Y+i-s == screen.mScreenRows) {
+        for (int i = 0; i < h; i++) {
+            if (Y + i - s == screen.mScreenRows) {
                 screen.scrollDownOneLine(0, screen.mScreenRows, TextStyle.NORMAL);
                 s++;
             }
-            for (int j=0; j<w ; j++) {
-                screen.setChar(X+j, Y+i-s, '+', TextStyle.encodeBitmap(num, j, i));
+            for (int j = 0; j < w; j++) {
+                screen.setChar(X + j, Y + i - s, '+', TextStyle.encodeBitmap(num, j, i));
             }
         }
         if (w * cellW < width) {
             try {
                 bm = Bitmap.createBitmap(bm, 0, 0, w * cellW, height);
-            } catch(OutOfMemoryError e) {
+            } catch (OutOfMemoryError e) {
                 // Image cannot be cropped to only visible part due to out of memory.
                 // This causes memory waste.
-            } 
+            }
         }
         bitmap = bm;
-        scrollLines =  h - s;
+        scrollLines = h - s;
     }
-        
+
     static public Bitmap resizeBitmap(Bitmap bm, int w, int h) {
         int[] pixels = new int[bm.getAllocationByteCount()];
         bm.getPixels(pixels, 0, bm.getWidth(), 0, 0, bm.getWidth(), bm.getHeight());
         Bitmap newbm;
         try {
             newbm = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        } catch(OutOfMemoryError e) {
+        } catch (OutOfMemoryError e) {
             // Only a minor display glitch in this case
             return bm;
         }
@@ -178,7 +179,7 @@ public class TerminalBitmap {
             int newH = ((h - 1) / cellH) * cellH + cellH;
             try {
                 bm = resizeBitmap(bm, newW, newH);
-            } catch(OutOfMemoryError e) {
+            } catch (OutOfMemoryError e) {
                 // Only a minor display glitch in this case
             }
         }

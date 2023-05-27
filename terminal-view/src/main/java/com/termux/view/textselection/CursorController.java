@@ -2,7 +2,6 @@ package com.termux.view.textselection;
 
 import android.view.MotionEvent;
 import android.view.ViewTreeObserver;
-
 import com.termux.view.TerminalView;
 
 /**
@@ -10,6 +9,7 @@ import com.termux.view.TerminalView;
  * It is not used outside of {@link TerminalView}.
  */
 public interface CursorController extends ViewTreeObserver.OnTouchModeChangeListener {
+
     /**
      * Show the cursors on screen. Will be drawn by {@link #render()} by a call during onDraw.
      * See also {@link #hide()}.
@@ -51,5 +51,4 @@ public interface CursorController extends ViewTreeObserver.OnTouchModeChangeList
      * @return true if the cursors are currently active.
      */
     boolean isActive();
-
 }

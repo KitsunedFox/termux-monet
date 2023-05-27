@@ -1,10 +1,8 @@
 package com.termux.shared.termux.settings.preferences;
 
 import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.termux.shared.logger.Logger;
 import com.termux.shared.android.PackageUtils;
 import com.termux.shared.settings.preferences.AppSharedPreferences;
@@ -18,11 +16,7 @@ public class TermuxAPIAppSharedPreferences extends AppSharedPreferences {
     private static final String LOG_TAG = "TermuxAPIAppSharedPreferences";
 
     private TermuxAPIAppSharedPreferences(@NonNull Context context) {
-        super(context,
-            SharedPreferenceUtils.getPrivateSharedPreferences(context,
-                TermuxConstants.TERMUX_API_DEFAULT_PREFERENCES_FILE_BASENAME_WITHOUT_EXTENSION),
-            SharedPreferenceUtils.getPrivateAndMultiProcessSharedPreferences(context,
-                TermuxConstants.TERMUX_API_DEFAULT_PREFERENCES_FILE_BASENAME_WITHOUT_EXTENSION));
+        super(context, SharedPreferenceUtils.getPrivateSharedPreferences(context, TermuxConstants.TERMUX_API_DEFAULT_PREFERENCES_FILE_BASENAME_WITHOUT_EXTENSION), SharedPreferenceUtils.getPrivateAndMultiProcessSharedPreferences(context, TermuxConstants.TERMUX_API_DEFAULT_PREFERENCES_FILE_BASENAME_WITHOUT_EXTENSION));
     }
 
     /**
@@ -58,8 +52,6 @@ public class TermuxAPIAppSharedPreferences extends AppSharedPreferences {
             return new TermuxAPIAppSharedPreferences(termuxAPIPackageContext);
     }
 
-
-
     public int getLogLevel(boolean readFromFile) {
         if (readFromFile)
             return SharedPreferenceUtils.getInt(mMultiProcessSharedPreferences, TERMUX_API_APP.KEY_LOG_LEVEL, Logger.DEFAULT_LOG_LEVEL);
@@ -72,7 +64,6 @@ public class TermuxAPIAppSharedPreferences extends AppSharedPreferences {
         SharedPreferenceUtils.setInt(mSharedPreferences, TERMUX_API_APP.KEY_LOG_LEVEL, logLevel, commitToFile);
     }
 
-
     public int getLastPendingIntentRequestCode() {
         return SharedPreferenceUtils.getInt(mSharedPreferences, TERMUX_API_APP.KEY_LAST_PENDING_INTENT_REQUEST_CODE, TERMUX_API_APP.DEFAULT_VALUE_KEY_LAST_PENDING_INTENT_REQUEST_CODE);
     }
@@ -80,5 +71,4 @@ public class TermuxAPIAppSharedPreferences extends AppSharedPreferences {
     public void setLastPendingIntentRequestCode(int lastPendingIntentRequestCode) {
         SharedPreferenceUtils.setInt(mSharedPreferences, TERMUX_API_APP.KEY_LAST_PENDING_INTENT_REQUEST_CODE, lastPendingIntentRequestCode, true);
     }
-
 }

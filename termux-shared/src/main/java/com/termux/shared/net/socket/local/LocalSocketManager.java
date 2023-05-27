@@ -1,10 +1,8 @@
 package com.termux.shared.net.socket.local;
 
 import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.termux.shared.errors.Error;
 import com.termux.shared.jni.models.JniResult;
 import com.termux.shared.logger.Logger;
@@ -24,30 +22,50 @@ public class LocalSocketManager {
 
     public static final String LOG_TAG = "LocalSocketManager";
 
-    /** The native JNI local socket library. */
+    /**
+     * The native JNI local socket library.
+     */
     protected static String LOCAL_SOCKET_LIBRARY = "local-socket";
 
-    /** Whether {@link #LOCAL_SOCKET_LIBRARY} has been loaded or not. */
+    /**
+     * Whether {@link #LOCAL_SOCKET_LIBRARY} has been loaded or not.
+     */
     protected static boolean localSocketLibraryLoaded;
 
-    /** The {@link Context} that may needed for various operations. */
-    @NonNull protected final Context mContext;
+    /**
+     * The {@link Context} that may needed for various operations.
+     */
+    @NonNull
+    protected final Context mContext;
 
-    /** The {@link LocalSocketRunConfig} containing run config for the {@link LocalSocketManager}. */
-    @NonNull protected final LocalSocketRunConfig mLocalSocketRunConfig;
+    /**
+     * The {@link LocalSocketRunConfig} containing run config for the {@link LocalSocketManager}.
+     */
+    @NonNull
+    protected final LocalSocketRunConfig mLocalSocketRunConfig;
 
-    /** The {@link LocalServerSocket} for the {@link LocalSocketManager}. */
-    @NonNull protected final LocalServerSocket mServerSocket;
+    /**
+     * The {@link LocalServerSocket} for the {@link LocalSocketManager}.
+     */
+    @NonNull
+    protected final LocalServerSocket mServerSocket;
 
-    /** The {@link ILocalSocketManager} client for the {@link LocalSocketManager}. */
-    @NonNull protected final ILocalSocketManager mLocalSocketManagerClient;
+    /**
+     * The {@link ILocalSocketManager} client for the {@link LocalSocketManager}.
+     */
+    @NonNull
+    protected final ILocalSocketManager mLocalSocketManagerClient;
 
-    /** The {@link Thread.UncaughtExceptionHandler} used for client thread started by {@link LocalSocketManager}. */
-    @NonNull protected final Thread.UncaughtExceptionHandler mLocalSocketManagerClientThreadUEH;
+    /**
+     * The {@link Thread.UncaughtExceptionHandler} used for client thread started by {@link LocalSocketManager}.
+     */
+    @NonNull
+    protected final Thread.UncaughtExceptionHandler mLocalSocketManagerClientThreadUEH;
 
-    /** Whether the {@link LocalServerSocket} managed by {@link LocalSocketManager} in running or not. */
+    /**
+     * Whether the {@link LocalServerSocket} managed by {@link LocalSocketManager} in running or not.
+     */
     protected boolean mIsRunning;
-
 
     /**
      * Create an new instance of {@link LocalSocketManager}.
@@ -69,19 +87,17 @@ public class LocalSocketManager {
      */
     public synchronized Error start() {
         Logger.logDebugExtended(LOG_TAG, "start\n" + mLocalSocketRunConfig);
-
         if (!localSocketLibraryLoaded) {
             try {
                 Logger.logDebug(LOG_TAG, "Loading \"" + LOCAL_SOCKET_LIBRARY + "\" library");
                 System.loadLibrary(LOCAL_SOCKET_LIBRARY);
                 localSocketLibraryLoaded = true;
             } catch (Throwable t) {
-                Error error = LocalSocketErrno.ERRNO_START_LOCAL_SOCKET_LIB_LOAD_FAILED_WITH_EXCEPTION.getError(t, LOCAL_SOCKET_LIBRARY,  t.getMessage());
+                Error error = LocalSocketErrno.ERRNO_START_LOCAL_SOCKET_LIB_LOAD_FAILED_WITH_EXCEPTION.getError(t, LOCAL_SOCKET_LIBRARY, t.getMessage());
                 Logger.logErrorExtended(LOG_TAG, error.getErrorLogString());
                 return error;
             }
         }
-
         mIsRunning = true;
         return mServerSocket.start();
     }
@@ -98,14 +114,10 @@ public class LocalSocketManager {
         return null;
     }
 
-
-
-
     /*
      Note: Exceptions thrown from JNI must be caught with Throwable class instead of Exception,
      otherwise exception will be sent to UncaughtExceptionHandler of the thread.
     */
-
     /**
      * Creates an AF_UNIX/SOCK_STREAM local server socket at {@code path}, with the specified backlog.
      *
@@ -302,32 +314,37 @@ public class LocalSocketManager {
         }
     }
 
-
-
-    /** Wrapper for {@link #onError(LocalClientSocket, Error)} for {@code null} {@link LocalClientSocket}. */
+    /**
+     * Wrapper for {@link #onError(LocalClientSocket, Error)} for {@code null} {@link LocalClientSocket}.
+     */
     public void onError(@NonNull Error error) {
         onError(null, error);
     }
 
-    /** Wrapper to call {@link ILocalSocketManager#onError(LocalSocketManager, LocalClientSocket, Error)} in a new thread. */
+    /**
+     * Wrapper to call {@link ILocalSocketManager#onError(LocalSocketManager, LocalClientSocket, Error)} in a new thread.
+     */
     public void onError(@Nullable LocalClientSocket clientSocket, @NonNull Error error) {
-        startLocalSocketManagerClientThread(() ->
-            mLocalSocketManagerClient.onError(this, clientSocket, error));
+        startLocalSocketManagerClientThread(() -> mLocalSocketManagerClient.onError(this, clientSocket, error));
     }
 
-    /** Wrapper to call {@link ILocalSocketManager#onDisallowedClientConnected(LocalSocketManager, LocalClientSocket, Error)} in a new thread. */
+    /**
+     * Wrapper to call {@link ILocalSocketManager#onDisallowedClientConnected(LocalSocketManager, LocalClientSocket, Error)} in a new thread.
+     */
     public void onDisallowedClientConnected(@NonNull LocalClientSocket clientSocket, @NonNull Error error) {
-        startLocalSocketManagerClientThread(() ->
-            mLocalSocketManagerClient.onDisallowedClientConnected(this, clientSocket, error));
+        startLocalSocketManagerClientThread(() -> mLocalSocketManagerClient.onDisallowedClientConnected(this, clientSocket, error));
     }
 
-    /** Wrapper to call {@link ILocalSocketManager#onClientAccepted(LocalSocketManager, LocalClientSocket)} in a new thread. */
+    /**
+     * Wrapper to call {@link ILocalSocketManager#onClientAccepted(LocalSocketManager, LocalClientSocket)} in a new thread.
+     */
     public void onClientAccepted(@NonNull LocalClientSocket clientSocket) {
-        startLocalSocketManagerClientThread(() ->
-            mLocalSocketManagerClient.onClientAccepted(this, clientSocket));
+        startLocalSocketManagerClientThread(() -> mLocalSocketManagerClient.onClientAccepted(this, clientSocket));
     }
 
-    /** All client accept logic must be run on separate threads so that incoming client acceptance is not blocked. */
+    /**
+     * All client accept logic must be run on separate threads so that incoming client acceptance is not blocked.
+     */
     public void startLocalSocketManagerClientThread(@NonNull Runnable runnable) {
         Thread thread = new Thread(runnable);
         thread.setUncaughtExceptionHandler(getLocalSocketManagerClientThreadUEH());
@@ -338,29 +355,37 @@ public class LocalSocketManager {
         }
     }
 
-
-
-    /** Get {@link #mContext}. */
+    /**
+     * Get {@link #mContext}.
+     */
     public Context getContext() {
         return mContext;
     }
 
-    /** Get {@link #mLocalSocketRunConfig}. */
+    /**
+     * Get {@link #mLocalSocketRunConfig}.
+     */
     public LocalSocketRunConfig getLocalSocketRunConfig() {
         return mLocalSocketRunConfig;
     }
 
-    /** Get {@link #mLocalSocketManagerClient}. */
+    /**
+     * Get {@link #mLocalSocketManagerClient}.
+     */
     public ILocalSocketManager getLocalSocketManagerClient() {
         return mLocalSocketManagerClient;
     }
 
-    /** Get {@link #mServerSocket}. */
+    /**
+     * Get {@link #mServerSocket}.
+     */
     public LocalServerSocket getServerSocket() {
         return mServerSocket;
     }
 
-    /** Get {@link #mLocalSocketManagerClientThreadUEH}. */
+    /**
+     * Get {@link #mLocalSocketManagerClientThreadUEH}.
+     */
     public Thread.UncaughtExceptionHandler getLocalSocketManagerClientThreadUEH() {
         return mLocalSocketManagerClientThreadUEH;
     }
@@ -371,80 +396,73 @@ public class LocalSocketManager {
      * or the default handler that just logs the exception.
      */
     protected Thread.UncaughtExceptionHandler getLocalSocketManagerClientThreadUEHOrDefault() {
-        Thread.UncaughtExceptionHandler uncaughtExceptionHandler =
-            mLocalSocketManagerClient.getLocalSocketManagerClientThreadUEH(this);
+        Thread.UncaughtExceptionHandler uncaughtExceptionHandler = mLocalSocketManagerClient.getLocalSocketManagerClientThreadUEH(this);
         if (uncaughtExceptionHandler == null)
-            uncaughtExceptionHandler = (t, e) ->
-                Logger.logStackTraceWithMessage(LOG_TAG, "Uncaught exception for " + t + " in " + mLocalSocketRunConfig.getTitle() + " server", e);
+            uncaughtExceptionHandler = (t, e) -> Logger.logStackTraceWithMessage(LOG_TAG, "Uncaught exception for " + t + " in " + mLocalSocketRunConfig.getTitle() + " server", e);
         return uncaughtExceptionHandler;
     }
 
-    /** Get {@link #mIsRunning}. */
+    /**
+     * Get {@link #mIsRunning}.
+     */
     public boolean isRunning() {
         return mIsRunning;
     }
 
-
-
-    /** Get an error log {@link String} for the {@link LocalSocketManager}. */
-    public static String getErrorLogString(@NonNull Error error,
-                                           @NonNull LocalSocketRunConfig localSocketRunConfig,
-                                           @Nullable LocalClientSocket clientSocket) {
+    /**
+     * Get an error log {@link String} for the {@link LocalSocketManager}.
+     */
+    public static String getErrorLogString(@NonNull Error error, @NonNull LocalSocketRunConfig localSocketRunConfig, @Nullable LocalClientSocket clientSocket) {
         StringBuilder logString = new StringBuilder();
-
         logString.append(localSocketRunConfig.getTitle()).append(" Socket Server Error:\n");
         logString.append(error.getErrorLogString());
         logString.append("\n\n\n");
-
         logString.append(localSocketRunConfig.getLogString());
-
         if (clientSocket != null) {
             logString.append("\n\n\n");
             logString.append(clientSocket.getLogString());
         }
-
         return logString.toString();
     }
 
-    /** Get an error markdown {@link String} for the {@link LocalSocketManager}. */
-    public static String getErrorMarkdownString(@NonNull Error error,
-                                                @NonNull LocalSocketRunConfig localSocketRunConfig,
-                                                @Nullable LocalClientSocket clientSocket) {
+    /**
+     * Get an error markdown {@link String} for the {@link LocalSocketManager}.
+     */
+    public static String getErrorMarkdownString(@NonNull Error error, @NonNull LocalSocketRunConfig localSocketRunConfig, @Nullable LocalClientSocket clientSocket) {
         StringBuilder markdownString = new StringBuilder();
-
         markdownString.append(error.getErrorMarkdownString());
         markdownString.append("\n##\n\n\n");
-
         markdownString.append(localSocketRunConfig.getMarkdownString());
-
         if (clientSocket != null) {
             markdownString.append("\n\n\n");
             markdownString.append(clientSocket.getMarkdownString());
         }
-
         return markdownString.toString();
     }
 
+    @Nullable
+    private static native JniResult createServerSocketNative(@NonNull String serverTitle, @NonNull byte[] path, int backlog);
 
+    @Nullable
+    private static native JniResult closeSocketNative(@NonNull String serverTitle, int fd);
 
+    @Nullable
+    private static native JniResult acceptNative(@NonNull String serverTitle, int fd);
 
+    @Nullable
+    private static native JniResult readNative(@NonNull String serverTitle, int fd, @NonNull byte[] data, long deadline);
 
-    @Nullable private static native JniResult createServerSocketNative(@NonNull String serverTitle, @NonNull byte[] path, int backlog);
+    @Nullable
+    private static native JniResult sendNative(@NonNull String serverTitle, int fd, @NonNull byte[] data, long deadline);
 
-    @Nullable private static native JniResult closeSocketNative(@NonNull String serverTitle, int fd);
-
-    @Nullable private static native JniResult acceptNative(@NonNull String serverTitle, int fd);
-
-    @Nullable private static native JniResult readNative(@NonNull String serverTitle, int fd, @NonNull byte[] data, long deadline);
-
-    @Nullable private static native JniResult sendNative(@NonNull String serverTitle, int fd, @NonNull byte[] data, long deadline);
-
-    @Nullable private static native JniResult availableNative(@NonNull String serverTitle, int fd);
+    @Nullable
+    private static native JniResult availableNative(@NonNull String serverTitle, int fd);
 
     private static native JniResult setSocketReadTimeoutNative(@NonNull String serverTitle, int fd, int timeout);
 
-    @Nullable private static native JniResult setSocketSendTimeoutNative(@NonNull String serverTitle, int fd, int timeout);
+    @Nullable
+    private static native JniResult setSocketSendTimeoutNative(@NonNull String serverTitle, int fd, int timeout);
 
-    @Nullable private static native JniResult getPeerCredNative(@NonNull String serverTitle, int fd, PeerCred peerCred);
-
+    @Nullable
+    private static native JniResult getPeerCredNative(@NonNull String serverTitle, int fd, PeerCred peerCred);
 }

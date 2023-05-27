@@ -3,14 +3,11 @@ package com.termux.shared.termux.shell;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.ArrayAdapter;
-
 import androidx.annotation.NonNull;
-
 import com.termux.shared.shell.command.ExecutionCommand;
 import com.termux.shared.shell.command.runner.app.AppShell;
 import com.termux.shared.termux.settings.preferences.TermuxAppSharedPreferences;
 import com.termux.shared.termux.shell.command.runner.terminal.TermuxSession;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,8 +47,6 @@ public class TermuxShellManager {
      */
     public static int TERMINAL_SESSION_NUMBER_SINCE_APP_START;
 
-
-
     public TermuxShellManager(@NonNull Context context) {
         mContext = context.getApplicationContext();
     }
@@ -65,7 +60,6 @@ public class TermuxShellManager {
     public static TermuxShellManager init(@NonNull Context context) {
         if (shellManager == null)
             shellManager = new TermuxShellManager(context);
-
         return shellManager;
     }
 
@@ -78,11 +72,10 @@ public class TermuxShellManager {
         return shellManager;
     }
 
-
     public synchronized static void onActionBootCompleted(@NonNull Context context, @NonNull Intent intent) {
         TermuxAppSharedPreferences preferences = TermuxAppSharedPreferences.build(context);
-        if (preferences == null) return;
-
+        if (preferences == null)
+            return;
         // Ensure any shells started after boot have valid ENV_SHELL_CMD__APP_SHELL_NUMBER_SINCE_BOOT and
         // ENV_SHELL_CMD__TERMINAL_SESSION_NUMBER_SINCE_BOOT exported
         preferences.resetAppShellNumberSinceBoot();
@@ -103,21 +96,22 @@ public class TermuxShellManager {
     public static synchronized int getAndIncrementAppShellNumberSinceAppStart() {
         // Keep value at MAX_VALUE on integer overflow and not 0, since not first shell
         int curValue = APP_SHELL_NUMBER_SINCE_APP_START;
-        if (curValue < 0) curValue = Integer.MAX_VALUE;
-
+        if (curValue < 0)
+            curValue = Integer.MAX_VALUE;
         APP_SHELL_NUMBER_SINCE_APP_START = curValue + 1;
-        if (APP_SHELL_NUMBER_SINCE_APP_START < 0) APP_SHELL_NUMBER_SINCE_APP_START = Integer.MAX_VALUE;
+        if (APP_SHELL_NUMBER_SINCE_APP_START < 0)
+            APP_SHELL_NUMBER_SINCE_APP_START = Integer.MAX_VALUE;
         return curValue;
     }
 
     public static synchronized int getAndIncrementTerminalSessionNumberSinceAppStart() {
         // Keep value at MAX_VALUE on integer overflow and not 0, since not first shell
         int curValue = TERMINAL_SESSION_NUMBER_SINCE_APP_START;
-        if (curValue < 0) curValue = Integer.MAX_VALUE;
-
+        if (curValue < 0)
+            curValue = Integer.MAX_VALUE;
         TERMINAL_SESSION_NUMBER_SINCE_APP_START = curValue + 1;
-        if (TERMINAL_SESSION_NUMBER_SINCE_APP_START < 0) TERMINAL_SESSION_NUMBER_SINCE_APP_START = Integer.MAX_VALUE;
+        if (TERMINAL_SESSION_NUMBER_SINCE_APP_START < 0)
+            TERMINAL_SESSION_NUMBER_SINCE_APP_START = Integer.MAX_VALUE;
         return curValue;
     }
-
 }

@@ -2,10 +2,8 @@ package com.termux.shared.android;
 
 import android.Manifest;
 import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.termux.shared.logger.Logger;
 import com.termux.shared.shell.command.environment.AndroidShellEnvironment;
 import com.termux.shared.shell.command.ExecutionCommand;
@@ -73,14 +71,12 @@ public class PhantomProcessUtils {
      */
     @Nullable
     public static Integer getActivityManagerMaxPhantomProcesses(@NonNull Context context) {
-        if (!PermissionUtils.checkPermissions(context, new String[]{Manifest.permission.DUMP, Manifest.permission.PACKAGE_USAGE_STATS})) {
+        if (!PermissionUtils.checkPermissions(context, new String[] { Manifest.permission.DUMP, Manifest.permission.PACKAGE_USAGE_STATS })) {
             return null;
         }
-
         // Dumpsys logs the currently enforced MAX_PHANTOM_PROCESSES value and not the device config setting.
         String script = "/system/bin/dumpsys activity settings | /system/bin/grep -iE '^[\t ]+" + KEY_MAX_PHANTOM_PROCESSES + "=[0-9]+$' | /system/bin/cut -d = -f2";
-        ExecutionCommand executionCommand = new ExecutionCommand(-1, "/system/bin/sh", null,
-            script + "\n", "/", ExecutionCommand.Runner.APP_SHELL.getName(), true);
+        ExecutionCommand executionCommand = new ExecutionCommand(-1, "/system/bin/sh", null, script + "\n", "/", ExecutionCommand.Runner.APP_SHELL.getName(), true);
         executionCommand.commandLabel = " ActivityManager " + KEY_MAX_PHANTOM_PROCESSES + " Command";
         executionCommand.backgroundCustomLogLevel = Logger.LOG_LEVEL_OFF;
         AppShell appShell = AppShell.execute(context, executionCommand, null, new AndroidShellEnvironment(), null, true);
@@ -89,14 +85,12 @@ public class PhantomProcessUtils {
             Logger.logErrorExtended(LOG_TAG, executionCommand.toString());
             return null;
         }
-
         try {
             return Integer.parseInt(executionCommand.resultData.stdout.toString().trim());
         } catch (NumberFormatException e) {
             Logger.logStackTraceWithMessage(LOG_TAG, "The " + executionCommand.commandLabel + " did not return a valid integer", e);
             Logger.logErrorExtended(LOG_TAG, executionCommand.toString());
         }
-
         return null;
     }
 
@@ -108,8 +102,6 @@ public class PhantomProcessUtils {
      */
     @Nullable
     public static Integer getSettingsGlobalDeviceConfigSyncDisabled(@NonNull Context context) {
-        return (Integer) SettingsProviderUtils.getSettingsValue(context, SettingsProviderUtils.SettingNamespace.GLOBAL,
-            SettingsProviderUtils.SettingType.INT, SETTINGS_GLOBAL_DEVICE_CONFIG_SYNC_DISABLED, null);
+        return (Integer) SettingsProviderUtils.getSettingsValue(context, SettingsProviderUtils.SettingNamespace.GLOBAL, SettingsProviderUtils.SettingType.INT, SETTINGS_GLOBAL_DEVICE_CONFIG_SYNC_DISABLED, null);
     }
-
 }

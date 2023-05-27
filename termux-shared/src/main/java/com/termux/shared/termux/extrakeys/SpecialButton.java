@@ -1,20 +1,26 @@
 package com.termux.shared.termux.extrakeys;
 
 import androidx.annotation.NonNull;
-
 import java.util.HashMap;
 
-/** The {@link Class} that implements special buttons for {@link ExtraKeysView}. */
+/**
+ * The {@link Class} that implements special buttons for {@link ExtraKeysView}.
+ */
 public class SpecialButton {
 
     private static final HashMap<String, SpecialButton> map = new HashMap<>();
 
     public static final SpecialButton CTRL = new SpecialButton("CTRL");
+
     public static final SpecialButton ALT = new SpecialButton("ALT");
+
     public static final SpecialButton SHIFT = new SpecialButton("SHIFT");
+
     public static final SpecialButton FN = new SpecialButton("FN");
 
-    /** The special button key. */
+    /**
+     * The special button key.
+     */
     private final String key;
 
     /**
@@ -29,7 +35,9 @@ public class SpecialButton {
         map.put(key, this);
     }
 
-    /** Get {@link #key} for this {@link SpecialButton}. */
+    /**
+     * Get {@link #key} for this {@link SpecialButton}.
+     */
     public String getKey() {
         return key;
     }
@@ -48,5 +56,4 @@ public class SpecialButton {
     public String toString() {
         return key;
     }
-
 }

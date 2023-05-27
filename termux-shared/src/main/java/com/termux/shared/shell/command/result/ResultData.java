@@ -1,13 +1,11 @@
 package com.termux.shared.shell.command.result;
 
 import androidx.annotation.NonNull;
-
 import com.termux.shared.data.DataUtils;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.markdown.MarkdownUtils;
 import com.termux.shared.errors.Errno;
 import com.termux.shared.errors.Error;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,20 +13,28 @@ import java.util.List;
 
 public class ResultData implements Serializable {
 
-    /** The stdout of command. */
+    /**
+     * The stdout of command.
+     */
     public final StringBuilder stdout = new StringBuilder();
-    /** The stderr of command. */
+
+    /**
+     * The stderr of command.
+     */
     public final StringBuilder stderr = new StringBuilder();
-    /** The exit code of command. */
+
+    /**
+     * The exit code of command.
+     */
     public Integer exitCode;
 
-    /** The internal errors list of command. */
-    public List<Error> errorsList =  new ArrayList<>();
-
+    /**
+     * The internal errors list of command.
+     */
+    public List<Error> errorsList = new ArrayList<>();
 
     public ResultData() {
     }
-
 
     public void clearStdout() {
         stdout.setLength(0);
@@ -50,7 +56,6 @@ public class ResultData implements Serializable {
         return stdout.append(message).append("\n");
     }
 
-
     public void clearStderr() {
         stderr.setLength(0);
     }
@@ -71,7 +76,6 @@ public class ResultData implements Serializable {
         return stderr.append(message).append("\n");
     }
 
-
     public synchronized boolean setStateFailed(@NonNull Error error) {
         return setStateFailed(error.getType(), error.getCode(), error.getMessage(), null);
     }
@@ -79,6 +83,7 @@ public class ResultData implements Serializable {
     public synchronized boolean setStateFailed(@NonNull Error error, Throwable throwable) {
         return setStateFailed(error.getType(), error.getCode(), error.getMessage(), Collections.singletonList(throwable));
     }
+
     public synchronized boolean setStateFailed(@NonNull Error error, List<Throwable> throwablesList) {
         return setStateFailed(error.getType(), error.getCode(), error.getMessage(), throwablesList);
     }
@@ -97,21 +102,17 @@ public class ResultData implements Serializable {
 
     public synchronized boolean setStateFailed(String type, int code, String message, List<Throwable> throwablesList) {
         if (errorsList == null)
-            errorsList =  new ArrayList<>();
-
+            errorsList = new ArrayList<>();
         Error error = new Error();
         errorsList.add(error);
-
         return error.setStateFailed(type, code, message, throwablesList);
     }
 
     public boolean isStateFailed() {
         if (errorsList != null) {
-            for (Error error : errorsList)
-                if (error.isStateFailed())
-                    return true;
+            for (Error error : errorsList) if (error.isStateFailed())
+                return true;
         }
-
         return false;
     }
 
@@ -121,7 +122,6 @@ public class ResultData implements Serializable {
         else
             return Errno.ERRNO_SUCCESS.getCode();
     }
-
 
     @NonNull
     @Override
@@ -137,22 +137,17 @@ public class ResultData implements Serializable {
      * @return Returns the log friendly {@link String}.
      */
     public static String getResultDataLogString(final ResultData resultData, boolean logStdoutAndStderr) {
-        if (resultData == null) return "null";
-
+        if (resultData == null)
+            return "null";
         StringBuilder logString = new StringBuilder();
-
         if (logStdoutAndStderr) {
             logString.append("\n").append(resultData.getStdoutLogString());
             logString.append("\n").append(resultData.getStderrLogString());
         }
         logString.append("\n").append(resultData.getExitCodeLogString());
-
         logString.append("\n\n").append(getErrorsListLogString(resultData));
-
         return logString.toString();
     }
-
-
 
     public String getStdoutLogString() {
         if (stdout.toString().isEmpty())
@@ -173,10 +168,9 @@ public class ResultData implements Serializable {
     }
 
     public static String getErrorsListLogString(final ResultData resultData) {
-        if (resultData == null) return "null";
-
+        if (resultData == null)
+            return "null";
         StringBuilder logString = new StringBuilder();
-
         if (resultData.errorsList != null) {
             for (Error error : resultData.errorsList) {
                 if (error.isStateFailed()) {
@@ -186,7 +180,6 @@ public class ResultData implements Serializable {
                 }
             }
         }
-
         return logString.toString();
     }
 
@@ -197,33 +190,26 @@ public class ResultData implements Serializable {
      * @return Returns the markdown {@link String}.
      */
     public static String getResultDataMarkdownString(final ResultData resultData) {
-        if (resultData == null) return "null";
-
+        if (resultData == null)
+            return "null";
         StringBuilder markdownString = new StringBuilder();
-
         if (resultData.stdout.toString().isEmpty())
             markdownString.append(MarkdownUtils.getSingleLineMarkdownStringEntry("Stdout", null, "-"));
         else
             markdownString.append(MarkdownUtils.getMultiLineMarkdownStringEntry("Stdout", resultData.stdout.toString(), "-"));
-
         if (resultData.stderr.toString().isEmpty())
             markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("Stderr", null, "-"));
         else
             markdownString.append("\n").append(MarkdownUtils.getMultiLineMarkdownStringEntry("Stderr", resultData.stderr.toString(), "-"));
-
         markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("Exit Code", resultData.exitCode, "-"));
-
         markdownString.append("\n\n").append(getErrorsListMarkdownString(resultData));
-
-
         return markdownString.toString();
     }
 
     public static String getErrorsListMarkdownString(final ResultData resultData) {
-        if (resultData == null) return "null";
-
+        if (resultData == null)
+            return "null";
         StringBuilder markdownString = new StringBuilder();
-
         if (resultData.errorsList != null) {
             for (Error error : resultData.errorsList) {
                 if (error.isStateFailed()) {
@@ -233,15 +219,13 @@ public class ResultData implements Serializable {
                 }
             }
         }
-
         return markdownString.toString();
     }
 
     public static String getErrorsListMinimalString(final ResultData resultData) {
-        if (resultData == null) return "null";
-
+        if (resultData == null)
+            return "null";
         StringBuilder minimalString = new StringBuilder();
-
         if (resultData.errorsList != null) {
             for (Error error : resultData.errorsList) {
                 if (error.isStateFailed()) {
@@ -251,8 +235,6 @@ public class ResultData implements Serializable {
                 }
             }
         }
-
         return minimalString.toString();
     }
-
 }

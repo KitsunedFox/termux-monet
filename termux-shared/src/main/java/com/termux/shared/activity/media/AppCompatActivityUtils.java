@@ -7,7 +7,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
-
 import com.termux.shared.logger.Logger;
 import com.termux.shared.theme.NightMode;
 
@@ -15,8 +14,8 @@ public class AppCompatActivityUtils {
 
     private static final String LOG_TAG = "AppCompatActivityUtils";
 
-
-    /** Set activity night mode.
+    /**
+     * Set activity night mode.
      *
      * @param activity The host {@link AppCompatActivity}.
      * @param name The {@link String} representing the name for a {@link NightMode}.
@@ -24,7 +23,8 @@ public class AppCompatActivityUtils {
      *              will be made, otherwise to {@link AppCompatDelegate#setDefaultNightMode(int)}.
      */
     public static void setNightMode(AppCompatActivity activity, String name, boolean local) {
-        if (name == null) return;
+        if (name == null)
+            return;
         NightMode nightMode = NightMode.modeOf(name);
         if (nightMode != null) {
             if (local) {
@@ -35,10 +35,10 @@ public class AppCompatActivityUtils {
                 AppCompatDelegate.setDefaultNightMode(nightMode.getMode());
             }
         }
-
     }
 
-    /** Set activity toolbar.
+    /**
+     * Set activity toolbar.
      *
      * @param activity The host {@link AppCompatActivity}.
      * @param id The toolbar resource id.
@@ -49,42 +49,39 @@ public class AppCompatActivityUtils {
             activity.setSupportActionBar(toolbar);
     }
 
-    /** Set activity toolbar title.
+    /**
+     * Set activity toolbar title.
      *
      * @param activity The host {@link AppCompatActivity}.
      * @param id The toolbar resource id.
      * @param title The toolbar title {@link String}.
      * @param titleAppearance The toolbar title TextAppearance resource id.
      */
-    public static void setToolbarTitle(@NonNull AppCompatActivity activity, @IdRes int id,
-                                       String title, @StyleRes int titleAppearance) {
+    public static void setToolbarTitle(@NonNull AppCompatActivity activity, @IdRes int id, String title, @StyleRes int titleAppearance) {
         Toolbar toolbar = activity.findViewById(id);
         if (toolbar != null) {
             //toolbar.setTitle(title); // Does not work
             final ActionBar actionBar = activity.getSupportActionBar();
             if (actionBar != null)
                 actionBar.setTitle(title);
-
             try {
                 if (titleAppearance != 0)
                     toolbar.setTitleTextAppearance(activity, titleAppearance);
             } catch (Exception e) {
                 Logger.logStackTraceWithMessage(LOG_TAG, "Failed to set toolbar title appearance to style resource id " + titleAppearance, e);
             }
-
-
         }
     }
 
-    /** Set activity toolbar subtitle.
+    /**
+     * Set activity toolbar subtitle.
      *
      * @param activity The host {@link AppCompatActivity}.
      * @param id The toolbar resource id.
      * @param subtitle The toolbar subtitle {@link String}.
      * @param subtitleAppearance The toolbar subtitle TextAppearance resource id.
      */
-    public static void setToolbarSubtitle(@NonNull AppCompatActivity activity, @IdRes int id,
-                                          String subtitle, @StyleRes int subtitleAppearance) {
+    public static void setToolbarSubtitle(@NonNull AppCompatActivity activity, @IdRes int id, String subtitle, @StyleRes int subtitleAppearance) {
         Toolbar toolbar = activity.findViewById(id);
         if (toolbar != null) {
             toolbar.setSubtitle(subtitle);
@@ -97,14 +94,13 @@ public class AppCompatActivityUtils {
         }
     }
 
-
-    /** Set whether back button should be shown in activity toolbar.
+    /**
+     * Set whether back button should be shown in activity toolbar.
      *
      * @param activity The host {@link AppCompatActivity}.
      * @param showBackButtonInActionBar Set to {@code true} to enable and {@code false} to disable.
      */
-    public static void setShowBackButtonInActionBar(@NonNull AppCompatActivity activity,
-                                                    boolean showBackButtonInActionBar) {
+    public static void setShowBackButtonInActionBar(@NonNull AppCompatActivity activity, boolean showBackButtonInActionBar) {
         final ActionBar actionBar = activity.getSupportActionBar();
         if (actionBar != null) {
             if (showBackButtonInActionBar) {
@@ -116,5 +112,4 @@ public class AppCompatActivityUtils {
             }
         }
     }
-
 }

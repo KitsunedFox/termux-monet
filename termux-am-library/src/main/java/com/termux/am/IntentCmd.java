@@ -4,7 +4,6 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -14,24 +13,27 @@ import java.util.HashSet;
  * Copied from android-7.0.0_r1 frameworks/base/core/java/android/content/Intent.java
  */
 public class IntentCmd {
-    /** @hide */
+
+    /**
+     * @hide
+     */
     public interface CommandOptionHandler {
+
         boolean handleOption(String opt, ShellCommand cmd);
     }
 
-    /** @hide */
-    public static Intent parseCommandArgs(ShellCommand cmd, CommandOptionHandler optionHandler)
-            throws URISyntaxException {
+    /**
+     * @hide
+     */
+    public static Intent parseCommandArgs(ShellCommand cmd, CommandOptionHandler optionHandler) throws URISyntaxException {
         Intent intent = new Intent();
         Intent baseIntent = intent;
         boolean hasIntentInfo = false;
-
         Uri data = null;
         String type = null;
-
         String opt;
-        while ((opt=cmd.getNextOption()) != null) {
-            switch (opt) {
+        while ((opt = cmd.getNextOption()) != null) {
+            switch(opt) {
                 case "-a":
                     intent.setAction(cmd.getNextArgRequired());
                     if (intent == baseIntent) {
@@ -57,190 +59,207 @@ public class IntentCmd {
                     }
                     break;
                 case "-e":
-                case "--es": {
-                    String key = cmd.getNextArgRequired();
-                    String value = cmd.getNextArgRequired();
-                    intent.putExtra(key, value);
-                }
-                break;
-                case "--esn": {
-                    String key = cmd.getNextArgRequired();
-                    intent.putExtra(key, (String) null);
-                }
-                break;
-                case "--ei": {
-                    String key = cmd.getNextArgRequired();
-                    String value = cmd.getNextArgRequired();
-                    intent.putExtra(key, Integer.decode(value));
-                }
-                break;
-                case "--eu": {
-                    String key = cmd.getNextArgRequired();
-                    String value = cmd.getNextArgRequired();
-                    intent.putExtra(key, Uri.parse(value));
-                }
-                break;
-                case "--ecn": {
-                    String key = cmd.getNextArgRequired();
-                    String value = cmd.getNextArgRequired();
-                    ComponentName cn = ComponentName.unflattenFromString(value);
-                    if (cn == null)
-                        throw new IllegalArgumentException("Bad component name: " + value);
-                    intent.putExtra(key, cn);
-                }
-                break;
-                case "--eia": {
-                    String key = cmd.getNextArgRequired();
-                    String value = cmd.getNextArgRequired();
-                    String[] strings = value.split(",");
-                    int[] list = new int[strings.length];
-                    for (int i = 0; i < strings.length; i++) {
-                        list[i] = Integer.decode(strings[i]);
+                case "--es":
+                    {
+                        String key = cmd.getNextArgRequired();
+                        String value = cmd.getNextArgRequired();
+                        intent.putExtra(key, value);
                     }
-                    intent.putExtra(key, list);
-                }
-                break;
-                case "--eial": {
-                    String key = cmd.getNextArgRequired();
-                    String value = cmd.getNextArgRequired();
-                    String[] strings = value.split(",");
-                    ArrayList<Integer> list = new ArrayList<>(strings.length);
-                    for (int i = 0; i < strings.length; i++) {
-                        list.add(Integer.decode(strings[i]));
+                    break;
+                case "--esn":
+                    {
+                        String key = cmd.getNextArgRequired();
+                        intent.putExtra(key, (String) null);
                     }
-                    intent.putExtra(key, list);
-                }
-                break;
-                case "--el": {
-                    String key = cmd.getNextArgRequired();
-                    String value = cmd.getNextArgRequired();
-                    intent.putExtra(key, Long.valueOf(value));
-                }
-                break;
-                case "--ela": {
-                    String key = cmd.getNextArgRequired();
-                    String value = cmd.getNextArgRequired();
-                    String[] strings = value.split(",");
-                    long[] list = new long[strings.length];
-                    for (int i = 0; i < strings.length; i++) {
-                        list[i] = Long.valueOf(strings[i]);
+                    break;
+                case "--ei":
+                    {
+                        String key = cmd.getNextArgRequired();
+                        String value = cmd.getNextArgRequired();
+                        intent.putExtra(key, Integer.decode(value));
                     }
-                    intent.putExtra(key, list);
-                    hasIntentInfo = true;
-                }
-                break;
-                case "--elal": {
-                    String key = cmd.getNextArgRequired();
-                    String value = cmd.getNextArgRequired();
-                    String[] strings = value.split(",");
-                    ArrayList<Long> list = new ArrayList<>(strings.length);
-                    for (int i = 0; i < strings.length; i++) {
-                        list.add(Long.valueOf(strings[i]));
+                    break;
+                case "--eu":
+                    {
+                        String key = cmd.getNextArgRequired();
+                        String value = cmd.getNextArgRequired();
+                        intent.putExtra(key, Uri.parse(value));
                     }
-                    intent.putExtra(key, list);
-                    hasIntentInfo = true;
-                }
-                break;
-                case "--ef": {
-                    String key = cmd.getNextArgRequired();
-                    String value = cmd.getNextArgRequired();
-                    intent.putExtra(key, Float.valueOf(value));
-                    hasIntentInfo = true;
-                }
-                break;
-                case "--efa": {
-                    String key = cmd.getNextArgRequired();
-                    String value = cmd.getNextArgRequired();
-                    String[] strings = value.split(",");
-                    float[] list = new float[strings.length];
-                    for (int i = 0; i < strings.length; i++) {
-                        list[i] = Float.valueOf(strings[i]);
+                    break;
+                case "--ecn":
+                    {
+                        String key = cmd.getNextArgRequired();
+                        String value = cmd.getNextArgRequired();
+                        ComponentName cn = ComponentName.unflattenFromString(value);
+                        if (cn == null)
+                            throw new IllegalArgumentException("Bad component name: " + value);
+                        intent.putExtra(key, cn);
                     }
-                    intent.putExtra(key, list);
-                    hasIntentInfo = true;
-                }
-                break;
-                case "--efal": {
-                    String key = cmd.getNextArgRequired();
-                    String value = cmd.getNextArgRequired();
-                    String[] strings = value.split(",");
-                    ArrayList<Float> list = new ArrayList<>(strings.length);
-                    for (int i = 0; i < strings.length; i++) {
-                        list.add(Float.valueOf(strings[i]));
+                    break;
+                case "--eia":
+                    {
+                        String key = cmd.getNextArgRequired();
+                        String value = cmd.getNextArgRequired();
+                        String[] strings = value.split(",");
+                        int[] list = new int[strings.length];
+                        for (int i = 0; i < strings.length; i++) {
+                            list[i] = Integer.decode(strings[i]);
+                        }
+                        intent.putExtra(key, list);
                     }
-                    intent.putExtra(key, list);
-                    hasIntentInfo = true;
-                }
-                break;
-                case "--esa": {
-                    String key = cmd.getNextArgRequired();
-                    String value = cmd.getNextArgRequired();
-                    // Split on commas unless they are preceeded by an escape.
-                    // The escape character must be escaped for the string and
-                    // again for the regex, thus four escape characters become one.
-                    String[] strings = value.split("(?<!\\\\),");
-                    for (int i = 0; i < strings.length; i++) {
-                        strings[i] = strings[i].replaceAll("\\\\,",",");
+                    break;
+                case "--eial":
+                    {
+                        String key = cmd.getNextArgRequired();
+                        String value = cmd.getNextArgRequired();
+                        String[] strings = value.split(",");
+                        ArrayList<Integer> list = new ArrayList<>(strings.length);
+                        for (int i = 0; i < strings.length; i++) {
+                            list.add(Integer.decode(strings[i]));
+                        }
+                        intent.putExtra(key, list);
                     }
-                    intent.putExtra(key, strings);
-                    hasIntentInfo = true;
-                }
-                break;
-                case "--esal": {
-                    String key = cmd.getNextArgRequired();
-                    String value = cmd.getNextArgRequired();
-                    // Split on commas unless they are preceeded by an escape.
-                    // The escape character must be escaped for the string and
-                    // again for the regex, thus four escape characters become one.
-                    String[] strings = value.split("(?<!\\\\),");
-                    ArrayList<String> list = new ArrayList<>(strings.length);
-                    for (int i = 0; i < strings.length; i++) {
-                        list.add(strings[i].replaceAll("\\\\,",","));
+                    break;
+                case "--el":
+                    {
+                        String key = cmd.getNextArgRequired();
+                        String value = cmd.getNextArgRequired();
+                        intent.putExtra(key, Long.valueOf(value));
                     }
-                    intent.putExtra(key, list);
-                    hasIntentInfo = true;
-                }
-                break;
-                case "--ez": {
-                    String key = cmd.getNextArgRequired();
-                    String value = cmd.getNextArgRequired().toLowerCase();
-                    // Boolean.valueOf() results in false for anything that is not "true", which is
-                    // error-prone in shell commands
-                    boolean arg;
-                    if ("true".equals(value) || "t".equals(value)) {
-                        arg = true;
-                    } else if ("false".equals(value) || "f".equals(value)) {
-                        arg = false;
-                    } else {
-                        try {
-                            arg = Integer.decode(value) != 0;
-                        } catch (NumberFormatException ex) {
-                            throw new IllegalArgumentException("Invalid boolean value: " + value);
+                    break;
+                case "--ela":
+                    {
+                        String key = cmd.getNextArgRequired();
+                        String value = cmd.getNextArgRequired();
+                        String[] strings = value.split(",");
+                        long[] list = new long[strings.length];
+                        for (int i = 0; i < strings.length; i++) {
+                            list[i] = Long.valueOf(strings[i]);
+                        }
+                        intent.putExtra(key, list);
+                        hasIntentInfo = true;
+                    }
+                    break;
+                case "--elal":
+                    {
+                        String key = cmd.getNextArgRequired();
+                        String value = cmd.getNextArgRequired();
+                        String[] strings = value.split(",");
+                        ArrayList<Long> list = new ArrayList<>(strings.length);
+                        for (int i = 0; i < strings.length; i++) {
+                            list.add(Long.valueOf(strings[i]));
+                        }
+                        intent.putExtra(key, list);
+                        hasIntentInfo = true;
+                    }
+                    break;
+                case "--ef":
+                    {
+                        String key = cmd.getNextArgRequired();
+                        String value = cmd.getNextArgRequired();
+                        intent.putExtra(key, Float.valueOf(value));
+                        hasIntentInfo = true;
+                    }
+                    break;
+                case "--efa":
+                    {
+                        String key = cmd.getNextArgRequired();
+                        String value = cmd.getNextArgRequired();
+                        String[] strings = value.split(",");
+                        float[] list = new float[strings.length];
+                        for (int i = 0; i < strings.length; i++) {
+                            list[i] = Float.valueOf(strings[i]);
+                        }
+                        intent.putExtra(key, list);
+                        hasIntentInfo = true;
+                    }
+                    break;
+                case "--efal":
+                    {
+                        String key = cmd.getNextArgRequired();
+                        String value = cmd.getNextArgRequired();
+                        String[] strings = value.split(",");
+                        ArrayList<Float> list = new ArrayList<>(strings.length);
+                        for (int i = 0; i < strings.length; i++) {
+                            list.add(Float.valueOf(strings[i]));
+                        }
+                        intent.putExtra(key, list);
+                        hasIntentInfo = true;
+                    }
+                    break;
+                case "--esa":
+                    {
+                        String key = cmd.getNextArgRequired();
+                        String value = cmd.getNextArgRequired();
+                        // Split on commas unless they are preceeded by an escape.
+                        // The escape character must be escaped for the string and
+                        // again for the regex, thus four escape characters become one.
+                        String[] strings = value.split("(?<!\\\\),");
+                        for (int i = 0; i < strings.length; i++) {
+                            strings[i] = strings[i].replaceAll("\\\\,", ",");
+                        }
+                        intent.putExtra(key, strings);
+                        hasIntentInfo = true;
+                    }
+                    break;
+                case "--esal":
+                    {
+                        String key = cmd.getNextArgRequired();
+                        String value = cmd.getNextArgRequired();
+                        // Split on commas unless they are preceeded by an escape.
+                        // The escape character must be escaped for the string and
+                        // again for the regex, thus four escape characters become one.
+                        String[] strings = value.split("(?<!\\\\),");
+                        ArrayList<String> list = new ArrayList<>(strings.length);
+                        for (int i = 0; i < strings.length; i++) {
+                            list.add(strings[i].replaceAll("\\\\,", ","));
+                        }
+                        intent.putExtra(key, list);
+                        hasIntentInfo = true;
+                    }
+                    break;
+                case "--ez":
+                    {
+                        String key = cmd.getNextArgRequired();
+                        String value = cmd.getNextArgRequired().toLowerCase();
+                        // Boolean.valueOf() results in false for anything that is not "true", which is
+                        // error-prone in shell commands
+                        boolean arg;
+                        if ("true".equals(value) || "t".equals(value)) {
+                            arg = true;
+                        } else if ("false".equals(value) || "f".equals(value)) {
+                            arg = false;
+                        } else {
+                            try {
+                                arg = Integer.decode(value) != 0;
+                            } catch (NumberFormatException ex) {
+                                throw new IllegalArgumentException("Invalid boolean value: " + value);
+                            }
+                        }
+                        intent.putExtra(key, arg);
+                    }
+                    break;
+                case "-n":
+                    {
+                        String str = cmd.getNextArgRequired();
+                        ComponentName cn = ComponentName.unflattenFromString(str);
+                        if (cn == null)
+                            throw new IllegalArgumentException("Bad component name: " + str);
+                        intent.setComponent(cn);
+                        if (intent == baseIntent) {
+                            hasIntentInfo = true;
                         }
                     }
-
-                    intent.putExtra(key, arg);
-                }
-                break;
-                case "-n": {
-                    String str = cmd.getNextArgRequired();
-                    ComponentName cn = ComponentName.unflattenFromString(str);
-                    if (cn == null)
-                        throw new IllegalArgumentException("Bad component name: " + str);
-                    intent.setComponent(cn);
-                    if (intent == baseIntent) {
-                        hasIntentInfo = true;
+                    break;
+                case "-p":
+                    {
+                        String str = cmd.getNextArgRequired();
+                        intent.setPackage(str);
+                        if (intent == baseIntent) {
+                            hasIntentInfo = true;
+                        }
                     }
-                }
-                break;
-                case "-p": {
-                    String str = cmd.getNextArgRequired();
-                    intent.setPackage(str);
-                    if (intent == baseIntent) {
-                        hasIntentInfo = true;
-                    }
-                }
-                break;
+                    break;
                 case "-f":
                     String str = cmd.getNextArgRequired();
                     intent.setFlags(Integer.decode(str).intValue());
@@ -342,14 +361,12 @@ public class IntentCmd {
             }
         }
         intent.setDataAndType(data, type);
-
         final boolean hasSelector = intent != baseIntent;
         if (hasSelector) {
             // A selector was specified; fix up.
             baseIntent.setSelector(intent);
             intent = baseIntent;
         }
-
         String arg = cmd.getNextArg();
         baseIntent = null;
         if (arg == null) {
@@ -365,8 +382,7 @@ public class IntentCmd {
         } else if (arg.indexOf(':') >= 0) {
             // The argument is a URI.  Fully parse it, and use that result
             // to fill in any data not specified so far.
-            baseIntent = Intent.parseUri(arg, Intent.URI_INTENT_SCHEME
-                    | Intent.URI_ANDROID_APP_SCHEME | Intent.URI_ALLOW_UNSAFE);
+            baseIntent = Intent.parseUri(arg, Intent.URI_INTENT_SCHEME | Intent.URI_ANDROID_APP_SCHEME | Intent.URI_ALLOW_UNSAFE);
         } else if (arg.indexOf('/') >= 0) {
             // The argument is a component name.  Build an Intent to launch
             // it.
@@ -381,9 +397,9 @@ public class IntentCmd {
         }
         if (baseIntent != null) {
             Bundle extras = intent.getExtras();
-            intent.replaceExtras((Bundle)null);
+            intent.replaceExtras((Bundle) null);
             Bundle uriExtras = baseIntent.getExtras();
-            baseIntent.replaceExtras((Bundle)null);
+            baseIntent.replaceExtras((Bundle) null);
             if (intent.getAction() != null && baseIntent.getCategories() != null) {
                 HashSet<String> cats = new HashSet<String>(baseIntent.getCategories());
                 for (String c : cats) {
@@ -400,66 +416,19 @@ public class IntentCmd {
             intent.replaceExtras(extras);
             hasIntentInfo = true;
         }
-
-        if (!hasIntentInfo) throw new IllegalArgumentException("No intent supplied");
+        if (!hasIntentInfo)
+            throw new IllegalArgumentException("No intent supplied");
         return intent;
     }
 
-    /** @hide */
+    /**
+     * @hide
+     */
     public static void printIntentArgsHelp(PrintWriter pw, String prefix) {
-        final String[] lines = new String[] {
-                "<INTENT> specifications include these flags and arguments:",
-                "    [-a <ACTION>] [-d <DATA_URI>] [-t <MIME_TYPE>]",
-                "    [-c <CATEGORY> [-c <CATEGORY>] ...]",
-                "    [-e|--es <EXTRA_KEY> <EXTRA_STRING_VALUE> ...]",
-                "    [--esn <EXTRA_KEY> ...]",
-                "    [--ez <EXTRA_KEY> <EXTRA_BOOLEAN_VALUE> ...]",
-                "    [--ei <EXTRA_KEY> <EXTRA_INT_VALUE> ...]",
-                "    [--el <EXTRA_KEY> <EXTRA_LONG_VALUE> ...]",
-                "    [--ef <EXTRA_KEY> <EXTRA_FLOAT_VALUE> ...]",
-                "    [--eu <EXTRA_KEY> <EXTRA_URI_VALUE> ...]",
-                "    [--ecn <EXTRA_KEY> <EXTRA_COMPONENT_NAME_VALUE>]",
-                "    [--eia <EXTRA_KEY> <EXTRA_INT_VALUE>[,<EXTRA_INT_VALUE...]]",
-                "        (mutiple extras passed as Integer[])",
-                "    [--eial <EXTRA_KEY> <EXTRA_INT_VALUE>[,<EXTRA_INT_VALUE...]]",
-                "        (mutiple extras passed as List<Integer>)",
-                "    [--ela <EXTRA_KEY> <EXTRA_LONG_VALUE>[,<EXTRA_LONG_VALUE...]]",
-                "        (mutiple extras passed as Long[])",
-                "    [--elal <EXTRA_KEY> <EXTRA_LONG_VALUE>[,<EXTRA_LONG_VALUE...]]",
-                "        (mutiple extras passed as List<Long>)",
-                "    [--efa <EXTRA_KEY> <EXTRA_FLOAT_VALUE>[,<EXTRA_FLOAT_VALUE...]]",
-                "        (mutiple extras passed as Float[])",
-                "    [--efal <EXTRA_KEY> <EXTRA_FLOAT_VALUE>[,<EXTRA_FLOAT_VALUE...]]",
-                "        (mutiple extras passed as List<Float>)",
-                "    [--esa <EXTRA_KEY> <EXTRA_STRING_VALUE>[,<EXTRA_STRING_VALUE...]]",
-                "        (mutiple extras passed as String[]; to embed a comma into a string,",
-                "         escape it using \"\\,\")",
-                "    [--esal <EXTRA_KEY> <EXTRA_STRING_VALUE>[,<EXTRA_STRING_VALUE...]]",
-                "        (mutiple extras passed as List<String>; to embed a comma into a string,",
-                "         escape it using \"\\,\")",
-                "    [-f <FLAG>]",
-                "    [--grant-read-uri-permission] [--grant-write-uri-permission]",
-                "    [--grant-persistable-uri-permission] [--grant-prefix-uri-permission]",
-                "    [--debug-log-resolution] [--exclude-stopped-packages]",
-                "    [--include-stopped-packages]",
-                "    [--activity-brought-to-front] [--activity-clear-top]",
-                "    [--activity-clear-when-task-reset] [--activity-exclude-from-recents]",
-                "    [--activity-launched-from-history] [--activity-multiple-task]",
-                "    [--activity-no-animation] [--activity-no-history]",
-                "    [--activity-no-user-action] [--activity-previous-is-top]",
-                "    [--activity-reorder-to-front] [--activity-reset-task-if-needed]",
-                "    [--activity-single-top] [--activity-clear-task]",
-                "    [--activity-task-on-home]",
-                "    [--receiver-registered-only] [--receiver-replace-pending]",
-                "    [--receiver-foreground] [--receiver-no-abort]",
-                "    [--receiver-include-background]",
-                "    [--selector]",
-                "    [<URI> | <PACKAGE> | <COMPONENT>]"
-        };
+        final String[] lines = new String[] { "<INTENT> specifications include these flags and arguments:", "    [-a <ACTION>] [-d <DATA_URI>] [-t <MIME_TYPE>]", "    [-c <CATEGORY> [-c <CATEGORY>] ...]", "    [-e|--es <EXTRA_KEY> <EXTRA_STRING_VALUE> ...]", "    [--esn <EXTRA_KEY> ...]", "    [--ez <EXTRA_KEY> <EXTRA_BOOLEAN_VALUE> ...]", "    [--ei <EXTRA_KEY> <EXTRA_INT_VALUE> ...]", "    [--el <EXTRA_KEY> <EXTRA_LONG_VALUE> ...]", "    [--ef <EXTRA_KEY> <EXTRA_FLOAT_VALUE> ...]", "    [--eu <EXTRA_KEY> <EXTRA_URI_VALUE> ...]", "    [--ecn <EXTRA_KEY> <EXTRA_COMPONENT_NAME_VALUE>]", "    [--eia <EXTRA_KEY> <EXTRA_INT_VALUE>[,<EXTRA_INT_VALUE...]]", "        (mutiple extras passed as Integer[])", "    [--eial <EXTRA_KEY> <EXTRA_INT_VALUE>[,<EXTRA_INT_VALUE...]]", "        (mutiple extras passed as List<Integer>)", "    [--ela <EXTRA_KEY> <EXTRA_LONG_VALUE>[,<EXTRA_LONG_VALUE...]]", "        (mutiple extras passed as Long[])", "    [--elal <EXTRA_KEY> <EXTRA_LONG_VALUE>[,<EXTRA_LONG_VALUE...]]", "        (mutiple extras passed as List<Long>)", "    [--efa <EXTRA_KEY> <EXTRA_FLOAT_VALUE>[,<EXTRA_FLOAT_VALUE...]]", "        (mutiple extras passed as Float[])", "    [--efal <EXTRA_KEY> <EXTRA_FLOAT_VALUE>[,<EXTRA_FLOAT_VALUE...]]", "        (mutiple extras passed as List<Float>)", "    [--esa <EXTRA_KEY> <EXTRA_STRING_VALUE>[,<EXTRA_STRING_VALUE...]]", "        (mutiple extras passed as String[]; to embed a comma into a string,", "         escape it using \"\\,\")", "    [--esal <EXTRA_KEY> <EXTRA_STRING_VALUE>[,<EXTRA_STRING_VALUE...]]", "        (mutiple extras passed as List<String>; to embed a comma into a string,", "         escape it using \"\\,\")", "    [-f <FLAG>]", "    [--grant-read-uri-permission] [--grant-write-uri-permission]", "    [--grant-persistable-uri-permission] [--grant-prefix-uri-permission]", "    [--debug-log-resolution] [--exclude-stopped-packages]", "    [--include-stopped-packages]", "    [--activity-brought-to-front] [--activity-clear-top]", "    [--activity-clear-when-task-reset] [--activity-exclude-from-recents]", "    [--activity-launched-from-history] [--activity-multiple-task]", "    [--activity-no-animation] [--activity-no-history]", "    [--activity-no-user-action] [--activity-previous-is-top]", "    [--activity-reorder-to-front] [--activity-reset-task-if-needed]", "    [--activity-single-top] [--activity-clear-task]", "    [--activity-task-on-home]", "    [--receiver-registered-only] [--receiver-replace-pending]", "    [--receiver-foreground] [--receiver-no-abort]", "    [--receiver-include-background]", "    [--selector]", "    [<URI> | <PACKAGE> | <COMPONENT>]" };
         for (String line : lines) {
             pw.print(prefix);
             pw.println(line);
         }
     }
-
 }

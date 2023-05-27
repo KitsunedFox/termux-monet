@@ -10,10 +10,8 @@ import android.provider.DocumentsContract.Document;
 import android.provider.DocumentsContract.Root;
 import android.provider.DocumentsProvider;
 import android.webkit.MimeTypeMap;
-
 import com.termux.R;
 import com.termux.shared.termux.TermuxConstants;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -37,36 +35,18 @@ public class TermuxDocumentsProvider extends DocumentsProvider {
 
     private static final File BASE_DIR = TermuxConstants.TERMUX_FILES_DIR;
 
-
     // The default columns to return information about a root if no specific
     // columns are requested in a query.
-    private static final String[] DEFAULT_ROOT_PROJECTION = new String[]{
-        Root.COLUMN_ROOT_ID,
-        Root.COLUMN_MIME_TYPES,
-        Root.COLUMN_FLAGS,
-        Root.COLUMN_ICON,
-        Root.COLUMN_TITLE,
-        Root.COLUMN_SUMMARY,
-        Root.COLUMN_DOCUMENT_ID,
-        Root.COLUMN_AVAILABLE_BYTES
-    };
+    private static final String[] DEFAULT_ROOT_PROJECTION = new String[] { Root.COLUMN_ROOT_ID, Root.COLUMN_MIME_TYPES, Root.COLUMN_FLAGS, Root.COLUMN_ICON, Root.COLUMN_TITLE, Root.COLUMN_SUMMARY, Root.COLUMN_DOCUMENT_ID, Root.COLUMN_AVAILABLE_BYTES };
 
     // The default columns to return information about a document if no specific
     // columns are requested in a query.
-    private static final String[] DEFAULT_DOCUMENT_PROJECTION = new String[]{
-        Document.COLUMN_DOCUMENT_ID,
-        Document.COLUMN_MIME_TYPE,
-        Document.COLUMN_DISPLAY_NAME,
-        Document.COLUMN_LAST_MODIFIED,
-        Document.COLUMN_FLAGS,
-        Document.COLUMN_SIZE
-    };
+    private static final String[] DEFAULT_DOCUMENT_PROJECTION = new String[] { Document.COLUMN_DOCUMENT_ID, Document.COLUMN_MIME_TYPE, Document.COLUMN_DISPLAY_NAME, Document.COLUMN_LAST_MODIFIED, Document.COLUMN_FLAGS, Document.COLUMN_SIZE };
 
     @Override
     public Cursor queryRoots(String[] projection) {
         final MatrixCursor result = new MatrixCursor(projection != null ? projection : DEFAULT_ROOT_PROJECTION);
         final String applicationName = getContext().getString(R.string.application_name);
-
         final MatrixCursor.RowBuilder row = result.newRow();
         row.add(Root.COLUMN_ROOT_ID, getDocIdForFile(BASE_DIR));
         row.add(Root.COLUMN_DOCUMENT_ID, getDocIdForFile(BASE_DIR));
@@ -151,22 +131,17 @@ public class TermuxDocumentsProvider extends DocumentsProvider {
         File sourceFile = getFileForDocId(sourceDocumentId);
         File targetParentFile = getFileForDocId(targetParentDocumentId);
         if (!isChildDocument(sourceParentDocumentId, sourceDocumentId)) {
-            throw new FileNotFoundException("Document with id " + sourceParentDocumentId +
-                " is not the parent document of " + sourceDocumentId);
+            throw new FileNotFoundException("Document with id " + sourceParentDocumentId + " is not the parent document of " + sourceDocumentId);
         }
         if (!targetParentFile.isDirectory()) {
-            throw new FileNotFoundException("Target parent document with id " +
-                targetParentDocumentId + " is not a directory");
+            throw new FileNotFoundException("Target parent document with id " + targetParentDocumentId + " is not a directory");
         }
         File targetFile = new File(targetParentFile, sourceFile.getName());
         if (targetFile.exists()) {
-            throw new FileNotFoundException("Failed to move document with id " +
-                sourceDocumentId + " : target file " + targetFile.getPath() + " exists");
+            throw new FileNotFoundException("Failed to move document with id " + sourceDocumentId + " : target file " + targetFile.getPath() + " exists");
         }
         if (!sourceFile.renameTo(targetFile)) {
-            throw new FileNotFoundException("Failed to move document with id " +
-                sourceDocumentId + " (whose parent document id is " + sourceParentDocumentId +
-                ") to directory with document id " + targetParentDocumentId);
+            throw new FileNotFoundException("Failed to move document with id " + sourceDocumentId + " (whose parent document id is " + sourceParentDocumentId + ") to directory with document id " + targetParentDocumentId);
         }
         return targetFile.getPath();
     }
@@ -176,12 +151,10 @@ public class TermuxDocumentsProvider extends DocumentsProvider {
         File sourceFile = getFileForDocId(documentId);
         File targetFile = new File(sourceFile.getParentFile(), displayName);
         if (targetFile.exists()) {
-            throw new FileNotFoundException("Failed to rename document with id " +
-                documentId + " : target file " + targetFile.getPath() + " exists");
+            throw new FileNotFoundException("Failed to rename document with id " + documentId + " : target file " + targetFile.getPath() + " exists");
         }
         if (!sourceFile.renameTo(targetFile)) {
-            throw new FileNotFoundException("Failed to rename document with id " +
-                documentId + " to display name " + displayName);
+            throw new FileNotFoundException("Failed to rename document with id " + documentId + " to display name " + displayName);
         }
         return targetFile.getPath();
     }
@@ -196,14 +169,12 @@ public class TermuxDocumentsProvider extends DocumentsProvider {
     public Cursor querySearchDocuments(String rootId, String query, String[] projection) throws FileNotFoundException {
         final MatrixCursor result = new MatrixCursor(projection != null ? projection : DEFAULT_DOCUMENT_PROJECTION);
         final File parent = getFileForDocId(rootId);
-
         // This example implementation searches file names for the query and doesn't rank search
         // results, so we can stop as soon as we find a sufficient number of matches.  Other
         // implementations might rank results and use other data about files, rather than the file
         // name, to produce a match.
         final LinkedList<File> pending = new LinkedList<>();
         pending.add(parent);
-
         final int MAX_SEARCH_RESULTS = 50;
         while (!pending.isEmpty() && result.getCount() < MAX_SEARCH_RESULTS) {
             final File file = pending.removeFirst();
@@ -225,7 +196,6 @@ public class TermuxDocumentsProvider extends DocumentsProvider {
                 }
             }
         }
-
         return result;
     }
 
@@ -249,7 +219,8 @@ public class TermuxDocumentsProvider extends DocumentsProvider {
      */
     private static File getFileForDocId(String docId) throws FileNotFoundException {
         final File f = new File(docId);
-        if (!f.exists()) throw new FileNotFoundException(f.getAbsolutePath() + " not found");
+        if (!f.exists())
+            throw new FileNotFoundException(f.getAbsolutePath() + " not found");
         return f;
     }
 
@@ -262,7 +233,8 @@ public class TermuxDocumentsProvider extends DocumentsProvider {
             if (lastDot >= 0) {
                 final String extension = name.substring(lastDot + 1).toLowerCase();
                 final String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-                if (mime != null) return mime;
+                if (mime != null)
+                    return mime;
             }
             return "application/octet-stream";
         }
@@ -275,26 +247,25 @@ public class TermuxDocumentsProvider extends DocumentsProvider {
      * @param docId  the document ID representing the desired file (may be null if given file)
      * @param file   the File object representing the desired file (may be null if given docID)
      */
-    private void includeFile(MatrixCursor result, String docId, File file)
-        throws FileNotFoundException {
+    private void includeFile(MatrixCursor result, String docId, File file) throws FileNotFoundException {
         if (docId == null) {
             docId = getDocIdForFile(file);
         } else {
             file = getFileForDocId(docId);
         }
-
         int flags = 0;
         if (file.isDirectory()) {
-            if (file.canWrite()) flags |= Document.FLAG_DIR_SUPPORTS_CREATE;
+            if (file.canWrite())
+                flags |= Document.FLAG_DIR_SUPPORTS_CREATE;
         } else if (file.canWrite()) {
             flags |= Document.FLAG_SUPPORTS_WRITE;
         }
-        if (file.getParentFile().canWrite()) flags |= Document.FLAG_SUPPORTS_DELETE;
-
+        if (file.getParentFile().canWrite())
+            flags |= Document.FLAG_SUPPORTS_DELETE;
         final String displayName = file.getName();
         final String mimeType = getMimeType(file);
-        if (mimeType.startsWith("image/")) flags |= Document.FLAG_SUPPORTS_THUMBNAIL;
-
+        if (mimeType.startsWith("image/"))
+            flags |= Document.FLAG_SUPPORTS_THUMBNAIL;
         final MatrixCursor.RowBuilder row = result.newRow();
         row.add(Document.COLUMN_DOCUMENT_ID, docId);
         row.add(Document.COLUMN_DISPLAY_NAME, displayName);
@@ -304,5 +275,4 @@ public class TermuxDocumentsProvider extends DocumentsProvider {
         row.add(Document.COLUMN_FLAGS, flags);
         row.add(Document.COLUMN_ICON, R.mipmap.ic_launcher);
     }
-
 }

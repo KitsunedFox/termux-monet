@@ -1,10 +1,8 @@
 package com.termux.shared.net.uri;
 
 import android.net.Uri;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.termux.shared.data.DataUtils;
 import com.termux.shared.file.FileUtils;
 
@@ -27,9 +25,11 @@ public class UriUtils {
      */
     @Nullable
     public static String getUriFilePathWithFragment(Uri uri) {
-        if (uri == null) return null;
+        if (uri == null)
+            return null;
         String path = uri.getPath();
-        if (DataUtils.isNullOrEmpty(path)) return null;
+        if (DataUtils.isNullOrEmpty(path))
+            return null;
         String fragment = uri.getFragment();
         return path + (DataUtils.isNullOrEmpty(fragment) ? "" : "#" + fragment);
     }
@@ -44,16 +44,16 @@ public class UriUtils {
      */
     @Nullable
     public static String getUriFileBasename(Uri uri, boolean withFragment) {
-        if (uri == null) return null;
-
+        if (uri == null)
+            return null;
         String path;
         if (withFragment) {
             path = getUriFilePathWithFragment(uri);
         } else {
             path = uri.getPath();
-            if (DataUtils.isNullOrEmpty(path)) return null;
+            if (DataUtils.isNullOrEmpty(path))
+                return null;
         }
-
         return FileUtils.getFileBasename(path);
     }
 
@@ -98,5 +98,4 @@ public class UriUtils {
     public static Uri getContentUri(@NonNull String authority, @NonNull String path) {
         return new Uri.Builder().scheme(UriScheme.SCHEME_CONTENT).authority(authority).path(path).build();
     }
-
 }

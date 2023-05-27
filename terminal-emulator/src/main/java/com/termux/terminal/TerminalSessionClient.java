@@ -28,11 +28,7 @@ public interface TerminalSessionClient {
 
     void setTerminalShellPid(@NonNull TerminalSession session, int pid);
 
-
-
     Integer getTerminalCursorStyle();
-
-
 
     void logError(String tag, String message);
 
@@ -47,5 +43,4 @@ public interface TerminalSessionClient {
     void logStackTraceWithMessage(String tag, String message, Exception e);
 
     void logStackTrace(String tag, Exception e);
-
 }

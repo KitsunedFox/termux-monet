@@ -1,17 +1,18 @@
 package com.termux.shared.net.url;
 
 import androidx.annotation.Nullable;
-
 import com.termux.shared.data.DataUtils;
 import com.termux.shared.logger.Logger;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 
 public class UrlUtils {
 
-    /** The parts of a {@link URL}. */
+    /**
+     * The parts of a {@link URL}.
+     */
     public enum UrlPart {
+
         AUTHORITY,
         FILE,
         HOST,
@@ -36,7 +37,8 @@ public class UrlUtils {
      */
     @Nullable
     public static String joinUrl(final String base, String destination, boolean logError) {
-        if (DataUtils.isNullOrEmpty(base)) return null;
+        if (DataUtils.isNullOrEmpty(base))
+            return null;
         try {
             return new URL(new URL(base), destination).toString();
         } catch (MalformedURLException e) {
@@ -54,7 +56,8 @@ public class UrlUtils {
      */
     @Nullable
     public static URL getUrl(String urlString) {
-        if (DataUtils.isNullOrEmpty(urlString)) return null;
+        if (DataUtils.isNullOrEmpty(urlString))
+            return null;
         try {
             return new URL(urlString);
         } catch (MalformedURLException e) {
@@ -72,8 +75,9 @@ public class UrlUtils {
     @Nullable
     public static String getUrlPart(String urlString, UrlPart urlPart) {
         URL url = getUrl(urlString);
-        if (url == null) return null;
-        switch (urlPart) {
+        if (url == null)
+            return null;
+        switch(urlPart) {
             case AUTHORITY:
                 return url.getAuthority();
             case FILE:
@@ -98,16 +102,20 @@ public class UrlUtils {
         }
     }
 
-    /** Remove "https://www.", "https://", "www.", etc */
+    /**
+     * Remove "https://www.", "https://", "www.", etc
+     */
     public static String removeProtocol(String urlString) {
-        if (urlString == null) return null;
-        return urlString.replaceFirst("^(http[s]?://www\\.|http[s]?://|www\\.)","");
+        if (urlString == null)
+            return null;
+        return urlString.replaceFirst("^(http[s]?://www\\.|http[s]?://|www\\.)", "");
     }
 
     public static boolean areUrlsEqual(String url1, String url2) {
-        if (url1 == null && url2 == null) return true;
-        if (url1 == null || url2 == null) return false;
+        if (url1 == null && url2 == null)
+            return true;
+        if (url1 == null || url2 == null)
+            return false;
         return UrlUtils.removeProtocol(url1).replaceAll("/+$", "").equals(UrlUtils.removeProtocol(url2).replaceAll("/+$", ""));
     }
-
 }

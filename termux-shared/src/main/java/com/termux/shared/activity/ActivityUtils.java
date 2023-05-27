@@ -3,16 +3,13 @@ package com.termux.shared.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContract;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.termux.shared.errors.Error;
 import com.termux.shared.errors.FunctionErrno;
-
 
 public class ActivityUtils {
 
@@ -36,18 +33,15 @@ public class ActivityUtils {
      *                         {@code null}.
      * @return Returns the {@code error} if starting activity was not successful, otherwise {@code null}.
      */
-    public static Error startActivity(Context context, @NonNull Intent intent,
-                                      boolean logErrorMessage, boolean showErrorMessage) {
+    public static Error startActivity(Context context, @NonNull Intent intent, boolean logErrorMessage, boolean showErrorMessage) {
         Error error;
         String activityName = intent.getComponent() != null ? intent.getComponent().getClassName() : "Unknown";
-
         if (context == null) {
             error = ActivityErrno.ERRNO_STARTING_ACTIVITY_WITH_NULL_CONTEXT.getError(activityName);
             if (logErrorMessage)
                 error.logErrorAndShowToast(null, LOG_TAG);
             return error;
         }
-
         try {
             context.startActivity(intent);
         } catch (Exception e) {
@@ -56,11 +50,8 @@ public class ActivityUtils {
                 error.logErrorAndShowToast(showErrorMessage ? context : null, LOG_TAG);
             return error;
         }
-
         return null;
     }
-
-
 
     /**
      * Wrapper for {@link #startActivityForResult(Context, int, Intent, boolean, boolean, ActivityResultLauncher)}.
@@ -72,8 +63,7 @@ public class ActivityUtils {
     /**
      * Wrapper for {@link #startActivityForResult(Context, int, Intent, boolean, boolean, ActivityResultLauncher)}.
      */
-    public static Error startActivityForResult(Context context, int requestCode, @NonNull Intent intent,
-                                               boolean logErrorMessage, boolean showErrorMessage) {
+    public static Error startActivityForResult(Context context, int requestCode, @NonNull Intent intent, boolean logErrorMessage, boolean showErrorMessage) {
         return startActivityForResult(context, requestCode, intent, logErrorMessage, showErrorMessage, null);
     }
 
@@ -98,9 +88,7 @@ public class ActivityUtils {
      *                               Note that later is deprecated.
      * @return Returns the {@code error} if starting activity was not successful, otherwise {@code null}.
      */
-    public static Error startActivityForResult(Context context, int requestCode, @NonNull Intent intent,
-                                               boolean logErrorMessage, boolean showErrorMessage,
-                                               @Nullable ActivityResultLauncher<Intent> activityResultLauncher) {
+    public static Error startActivityForResult(Context context, int requestCode, @NonNull Intent intent, boolean logErrorMessage, boolean showErrorMessage, @Nullable ActivityResultLauncher<Intent> activityResultLauncher) {
         Error error;
         String activityName = intent.getComponent() != null ? intent.getComponent().getClassName() : "Unknown";
         try {
@@ -113,7 +101,6 @@ public class ActivityUtils {
                         error.logErrorAndShowToast(null, LOG_TAG);
                     return error;
                 }
-
                 if (context instanceof AppCompatActivity)
                     ((AppCompatActivity) context).startActivityForResult(intent, requestCode);
                 else if (context instanceof Activity)
@@ -131,17 +118,13 @@ public class ActivityUtils {
                 error.logErrorAndShowToast(showErrorMessage ? context : null, LOG_TAG);
             return error;
         }
-
         return null;
     }
-
-
 
     /**
      * Wrapper for {@link #startActivityForResult(Context, ActivityResultLauncher, Object, boolean, boolean)}.
      */
-    public static <T> Error startActivityForResult(Context context, @NonNull ActivityResultLauncher<T> activityResultLauncher,
-                                                   T input) {
+    public static <T> Error startActivityForResult(Context context, @NonNull ActivityResultLauncher<T> activityResultLauncher, T input) {
         return startActivityForResult(context, activityResultLauncher, input, true, true);
     }
 
@@ -159,15 +142,12 @@ public class ActivityUtils {
      * @param <T> Type of the input required to {@link ActivityResultLauncher#launch(Object) launch}.
      * @return Returns the {@code error} if starting activity was not successful, otherwise {@code null}.
      */
-    public static <T> Error startActivityForResult(Context context, @NonNull ActivityResultLauncher<T> activityResultLauncher,
-                                                   T input, boolean logErrorMessage, boolean showErrorMessage) {
+    public static <T> Error startActivityForResult(Context context, @NonNull ActivityResultLauncher<T> activityResultLauncher, T input, boolean logErrorMessage, boolean showErrorMessage) {
         Error error;
         String activityName = "Unknown";
-
         if (input instanceof Intent && ((Intent) input).getComponent() != null) {
             activityName = ((Intent) input).getComponent().getClassName();
         }
-
         try {
             activityResultLauncher.launch(input);
         } catch (Exception e) {
@@ -176,8 +156,6 @@ public class ActivityUtils {
                 error.logErrorAndShowToast(showErrorMessage ? context : null, LOG_TAG);
             return error;
         }
-
         return null;
     }
-
 }

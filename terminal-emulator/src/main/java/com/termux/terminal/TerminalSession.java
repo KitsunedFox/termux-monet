@@ -6,7 +6,6 @@ import android.os.Message;
 import android.system.ErrnoException;
 import android.system.Os;
 import android.system.OsConstants;
-
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
@@ -31,6 +30,7 @@ import java.util.UUID;
 public final class TerminalSession extends TerminalOutput {
 
     private static final int MSG_NEW_INPUT = 1;
+
     private static final int MSG_PROCESS_EXITED = 4;
 
     public final String mHandle = UUID.randomUUID().toString();
@@ -42,24 +42,36 @@ public final class TerminalSession extends TerminalOutput {
      * terminal emulator.
      */
     final ByteQueue mProcessToTerminalIOQueue = new ByteQueue(4096);
+
     /**
      * A queue written to from the main thread due to user interaction, and read by another thread which forwards by
      * writing to the {@link #mTerminalFileDescriptor}.
      */
     final ByteQueue mTerminalToProcessIOQueue = new ByteQueue(4096);
-    /** Buffer to write translate code points into utf8 before writing to mTerminalToProcessIOQueue */
+
+    /**
+     * Buffer to write translate code points into utf8 before writing to mTerminalToProcessIOQueue
+     */
     private final byte[] mUtf8InputBuffer = new byte[5];
 
-    /** Callback which gets notified when a session finishes or changes title. */
+    /**
+     * Callback which gets notified when a session finishes or changes title.
+     */
     TerminalSessionClient mClient;
 
-    /** The pid of the shell process. 0 if not started and -1 if finished running. */
+    /**
+     * The pid of the shell process. 0 if not started and -1 if finished running.
+     */
     int mShellPid;
 
-    /** The exit status of the shell process. Only valid if ${@link #mShellPid} is -1. */
+    /**
+     * The exit status of the shell process. Only valid if ${@link #mShellPid} is -1.
+     */
     int mShellExitStatus;
 
-    /** Whether to show bold text with bright colors. */
+    /**
+     * Whether to show bold text with bright colors.
+     */
     private boolean mBoldWithBright;
 
     /**
@@ -68,15 +80,21 @@ public final class TerminalSession extends TerminalOutput {
      */
     private int mTerminalFileDescriptor;
 
-    /** Set by the application for user identification of session, not by terminal. */
+    /**
+     * Set by the application for user identification of session, not by terminal.
+     */
     public String mSessionName;
 
     final Handler mMainThreadHandler = new MainThreadHandler();
 
     private final String mShellPath;
+
     private final String mCwd;
+
     private final String[] mArgs;
+
     private final String[] mEnv;
+
     private final Integer mTranscriptRows;
 
     private static final String LOG_TAG = "TerminalSession";
@@ -96,18 +114,21 @@ public final class TerminalSession extends TerminalOutput {
      */
     public void updateTerminalSessionClient(TerminalSessionClient client) {
         mClient = client;
-
         if (mEmulator != null)
             mEmulator.updateTerminalSessionClient(client);
     }
 
-    /** Update the setting to render bold text with bright colors. This takes effect on
-     * the next call to updateSize(). */
+    /**
+     * Update the setting to render bold text with bright colors. This takes effect on
+     * the next call to updateSize().
+     */
     public void setBoldWithBright(boolean boldWithBright) {
         this.mBoldWithBright = boldWithBright;
     }
 
-    /** Inform the attached pty of the new size and reflow or initialize the emulator. */
+    /**
+     * Inform the attached pty of the new size and reflow or initialize the emulator.
+     */
     public void updateSize(int columns, int rows, int fontWidth, int fontHeight) {
         if (mEmulator == null) {
             initializeEmulator(columns, rows, fontWidth, fontHeight);
@@ -117,7 +138,9 @@ public final class TerminalSession extends TerminalOutput {
         }
     }
 
-    /** The terminal title as set through escape sequences or null if none set. */
+    /**
+     * The terminal title as set through escape sequences or null if none set.
+     */
     public String getTitle() {
         return (mEmulator == null) ? null : mEmulator.getTitle();
     }
@@ -127,26 +150,26 @@ public final class TerminalSession extends TerminalOutput {
      *
      * @param columns The number of columns in the terminal window.
      * @param rows    The number of rows in the terminal window.
-     */     
+     */
     public void initializeEmulator(int columns, int rows, int cellWidth, int cellHeight) {
         mEmulator = new TerminalEmulator(this, mBoldWithBright, columns, rows, mTranscriptRows, mClient);
-
         int[] processId = new int[1];
         mTerminalFileDescriptor = JNI.createSubprocess(mShellPath, mCwd, mArgs, mEnv, processId, rows, columns, cellWidth, cellHeight);
         mShellPid = processId[0];
         mClient.setTerminalShellPid(this, mShellPid);
-
         final FileDescriptor terminalFileDescriptorWrapped = wrapFileDescriptor(mTerminalFileDescriptor, mClient);
-
         new Thread("TermSessionInputReader[pid=" + mShellPid + "]") {
+
             @Override
             public void run() {
                 try (InputStream termIn = new FileInputStream(terminalFileDescriptorWrapped)) {
                     final byte[] buffer = new byte[4096];
                     while (true) {
                         int read = termIn.read(buffer);
-                        if (read == -1) return;
-                        if (!mProcessToTerminalIOQueue.write(buffer, 0, read)) return;
+                        if (read == -1)
+                            return;
+                        if (!mProcessToTerminalIOQueue.write(buffer, 0, read))
+                            return;
                         mMainThreadHandler.sendEmptyMessage(MSG_NEW_INPUT);
                     }
                 } catch (Exception e) {
@@ -154,15 +177,16 @@ public final class TerminalSession extends TerminalOutput {
                 }
             }
         }.start();
-
         new Thread("TermSessionOutputWriter[pid=" + mShellPid + "]") {
+
             @Override
             public void run() {
                 final byte[] buffer = new byte[4096];
                 try (FileOutputStream termOut = new FileOutputStream(terminalFileDescriptorWrapped)) {
                     while (true) {
                         int bytesToWrite = mTerminalToProcessIOQueue.read(buffer, true);
-                        if (bytesToWrite == -1) return;
+                        if (bytesToWrite == -1)
+                            return;
                         termOut.write(buffer, 0, bytesToWrite);
                     }
                 } catch (IOException e) {
@@ -170,48 +194,55 @@ public final class TerminalSession extends TerminalOutput {
                 }
             }
         }.start();
-
         new Thread("TermSessionWaiter[pid=" + mShellPid + "]") {
+
             @Override
             public void run() {
                 int processExitCode = JNI.waitFor(mShellPid);
                 mMainThreadHandler.sendMessage(mMainThreadHandler.obtainMessage(MSG_PROCESS_EXITED, processExitCode));
             }
         }.start();
-
     }
 
-    /** Write data to the shell process. */
+    /**
+     * Write data to the shell process.
+     */
     @Override
     public void write(byte[] data, int offset, int count) {
-        if (mShellPid > 0) mTerminalToProcessIOQueue.write(data, offset, count);
+        if (mShellPid > 0)
+            mTerminalToProcessIOQueue.write(data, offset, count);
     }
 
-    /** Write the Unicode code point to the terminal encoded in UTF-8. */
+    /**
+     * Write the Unicode code point to the terminal encoded in UTF-8.
+     */
     public void writeCodePoint(boolean prependEscape, int codePoint) {
         if (codePoint > 1114111 || (codePoint >= 0xD800 && codePoint <= 0xDFFF)) {
             // 1114111 (= 2**16 + 1024**2 - 1) is the highest code point, [0xD800,0xDFFF] is the surrogate range.
             throw new IllegalArgumentException("Invalid code point: " + codePoint);
         }
-
         int bufferPosition = 0;
-        if (prependEscape) mUtf8InputBuffer[bufferPosition++] = 27;
-
-        if (codePoint <= /* 7 bits */0b1111111) {
+        if (prependEscape)
+            mUtf8InputBuffer[bufferPosition++] = 27;
+        if (codePoint <= /* 7 bits */
+        0b1111111) {
             mUtf8InputBuffer[bufferPosition++] = (byte) codePoint;
-        } else if (codePoint <= /* 11 bits */0b11111111111) {
+        } else if (codePoint <= /* 11 bits */
+        0b11111111111) {
             /* 110xxxxx leading byte with leading 5 bits */
             mUtf8InputBuffer[bufferPosition++] = (byte) (0b11000000 | (codePoint >> 6));
             /* 10xxxxxx continuation byte with following 6 bits */
             mUtf8InputBuffer[bufferPosition++] = (byte) (0b10000000 | (codePoint & 0b111111));
-        } else if (codePoint <= /* 16 bits */0b1111111111111111) {
+        } else if (codePoint <= /* 16 bits */
+        0b1111111111111111) {
             /* 1110xxxx leading byte with leading 4 bits */
             mUtf8InputBuffer[bufferPosition++] = (byte) (0b11100000 | (codePoint >> 12));
             /* 10xxxxxx continuation byte with following 6 bits */
             mUtf8InputBuffer[bufferPosition++] = (byte) (0b10000000 | ((codePoint >> 6) & 0b111111));
             /* 10xxxxxx continuation byte with following 6 bits */
             mUtf8InputBuffer[bufferPosition++] = (byte) (0b10000000 | (codePoint & 0b111111));
-        } else { /* We have checked codePoint <= 1114111 above, so we have max 21 bits = 0b111111111111111111111 */
+        } else {
+            /* We have checked codePoint <= 1114111 above, so we have max 21 bits = 0b111111111111111111111 */
             /* 11110xxx leading byte with leading 3 bits */
             mUtf8InputBuffer[bufferPosition++] = (byte) (0b11110000 | (codePoint >> 18));
             /* 10xxxxxx continuation byte with following 6 bits */
@@ -228,18 +259,24 @@ public final class TerminalSession extends TerminalOutput {
         return mEmulator;
     }
 
-    /** Notify the {@link #mClient} that the screen has changed. */
+    /**
+     * Notify the {@link #mClient} that the screen has changed.
+     */
     protected void notifyScreenUpdate() {
         mClient.onTextChanged(this);
     }
 
-    /** Reset state for terminal emulator state. */
+    /**
+     * Reset state for terminal emulator state.
+     */
     public void reset() {
         mEmulator.reset();
         notifyScreenUpdate();
     }
 
-    /** Finish this terminal session by sending SIGKILL to the shell. */
+    /**
+     * Finish this terminal session by sending SIGKILL to the shell.
+     */
     public void finishIfRunning() {
         if (isRunning()) {
             try {
@@ -250,13 +287,14 @@ public final class TerminalSession extends TerminalOutput {
         }
     }
 
-    /** Cleanup resources when the process exits. */
+    /**
+     * Cleanup resources when the process exits.
+     */
     void cleanupResources(int exitStatus) {
         synchronized (this) {
             mShellPid = -1;
             mShellExitStatus = exitStatus;
         }
-
         // Stop the reader and writer threads, and close the I/O streams
         mTerminalToProcessIOQueue.close();
         mProcessToTerminalIOQueue.close();
@@ -272,7 +310,9 @@ public final class TerminalSession extends TerminalOutput {
         return mShellPid != -1;
     }
 
-    /** Only valid if not {@link #isRunning()}. */
+    /**
+     * Only valid if not {@link #isRunning()}.
+     */
     public synchronized int getExitStatus() {
         return mShellExitStatus;
     }
@@ -301,7 +341,9 @@ public final class TerminalSession extends TerminalOutput {
         return mShellPid;
     }
 
-    /** Returns the shell's working directory or null if it was unavailable. */
+    /**
+     * Returns the shell's working directory or null if it was unavailable.
+     */
     public String getCwd() {
         if (mShellPid < 1) {
             return null;
@@ -353,11 +395,9 @@ public final class TerminalSession extends TerminalOutput {
                 mEmulator.append(mReceiveBuffer, bytesRead);
                 notifyScreenUpdate();
             }
-
             if (msg.what == MSG_PROCESS_EXITED) {
                 int exitCode = (Integer) msg.obj;
                 cleanupResources(exitCode);
-
                 String exitDescription = "\r\n[Process completed";
                 if (exitCode > 0) {
                     // Non-zero process exit.
@@ -367,15 +407,11 @@ public final class TerminalSession extends TerminalOutput {
                     exitDescription += " (signal " + (-exitCode) + ")";
                 }
                 exitDescription += " - press Enter]";
-
                 byte[] bytesToWrite = exitDescription.getBytes(StandardCharsets.UTF_8);
                 mEmulator.append(bytesToWrite, bytesToWrite.length);
                 notifyScreenUpdate();
-
                 mClient.onSessionFinished(TerminalSession.this);
             }
         }
-
     }
-
 }

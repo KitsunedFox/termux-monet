@@ -2,13 +2,10 @@ package com.termux.shared.android;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.termux.shared.logger.Logger;
 import com.termux.shared.reflection.ReflectionUtils;
-
 import java.lang.reflect.Method;
 
 public class UserUtils {
@@ -47,12 +44,13 @@ public class UserUtils {
      */
     @Nullable
     public static String getNameForUidFromPackageManager(@NonNull Context context, int uid) {
-        if (uid < 0) return null;
-
+        if (uid < 0)
+            return null;
         try {
             String name = context.getPackageManager().getNameForUid(uid);
             if (name != null && name.endsWith(":" + uid))
-                name = name.replaceAll(":" + uid + "$", ""); // Remove ":<uid>" suffix
+                // Remove ":<uid>" suffix
+                name = name.replaceAll(":" + uid + "$", "");
             return name;
         } catch (Exception e) {
             Logger.logStackTraceWithMessage(LOG_TAG, "Failed to get name for uid \"" + uid + "\" from package manager", e);
@@ -85,13 +83,14 @@ public class UserUtils {
      */
     @Nullable
     public static String getNameForUidFromLibcore(int uid) {
-        if (uid < 0) return null;
-
+        if (uid < 0)
+            return null;
         ReflectionUtils.bypassHiddenAPIReflectionRestrictions();
         try {
             String libcoreClassName = "libcore.io.Libcore";
             Class<?> clazz = Class.forName(libcoreClassName);
-            Object os; // libcore.io.BlockGuardOs
+            // libcore.io.BlockGuardOs
+            Object os;
             try {
                 os = ReflectionUtils.invokeField(Class.forName(libcoreClassName), "os", null).value;
             } catch (Exception e) {
@@ -99,33 +98,31 @@ public class UserUtils {
                 Logger.logStackTraceWithMessage(LOG_TAG, "Failed to get \"os\" field value for " + libcoreClassName + " class", e);
                 return null;
             }
-
             if (os == null) {
                 Logger.logError(LOG_TAG, "Failed to get BlockGuardOs class obj from Libcore");
                 return null;
             }
-
-            clazz = os.getClass().getSuperclass();  // libcore.io.ForwardingOs
+            // libcore.io.ForwardingOs
+            clazz = os.getClass().getSuperclass();
             if (clazz == null) {
                 Logger.logError(LOG_TAG, "Failed to find super class ForwardingOs from object of class " + os.getClass().getName());
                 return null;
             }
-
-            Object structPasswd; // android.system.StructPasswd
+            // android.system.StructPasswd
+            Object structPasswd;
             try {
                 Method getpwuidMethod = ReflectionUtils.getDeclaredMethod(clazz, "getpwuid", int.class);
-                if (getpwuidMethod == null) return null;
+                if (getpwuidMethod == null)
+                    return null;
                 structPasswd = ReflectionUtils.invokeMethod(getpwuidMethod, os, uid).value;
             } catch (Exception e) {
                 Logger.logStackTraceWithMessage(LOG_TAG, "Failed to invoke getpwuid() method of " + clazz.getName() + " class", e);
                 return null;
             }
-
             if (structPasswd == null) {
                 Logger.logError(LOG_TAG, "Failed to get StructPasswd obj from call to ForwardingOs.getpwuid()");
                 return null;
             }
-
             try {
                 clazz = structPasswd.getClass();
                 return (String) ReflectionUtils.invokeField(clazz, "pw_name", structPasswd).value;
@@ -139,5 +136,4 @@ public class UserUtils {
             return null;
         }
     }
-
 }

@@ -2,7 +2,6 @@ package com.termux.shared.jni.models;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
-
 import com.termux.shared.logger.Logger;
 
 /**
@@ -86,24 +85,22 @@ public class JniResult {
      */
     @NonNull
     public static String getErrorString(final JniResult result) {
-        if (result == null) return "null";
+        if (result == null)
+            return "null";
         return result.getErrorString();
     }
 
-    /** Get error {@link String} for {@link JniResult}. */
+    /**
+     * Get error {@link String} for {@link JniResult}.
+     */
     @NonNull
     public String getErrorString() {
         StringBuilder logString = new StringBuilder();
-
         logString.append(Logger.getSingleLineLogStringEntry("Retval", retval, "-"));
-
         if (errno != 0)
             logString.append("\n").append(Logger.getSingleLineLogStringEntry("Errno", errno, "-"));
-
         if (errmsg != null && !errmsg.isEmpty())
             logString.append("\n").append(Logger.getMultiLineLogStringEntry("Errmsg", errmsg, "-"));
-
         return logString.toString();
     }
-
 }

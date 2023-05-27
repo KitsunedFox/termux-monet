@@ -1,35 +1,33 @@
 package com.termux.shared.file.filesystem;
 
 import android.system.Os;
-
 import androidx.annotation.NonNull;
-
 import com.termux.shared.logger.Logger;
-
 import java.io.File;
 
 public class FileTypes {
 
-    /** Flags to represent regular, directory and symlink file types defined by {@link FileType} */
+    /**
+     * Flags to represent regular, directory and symlink file types defined by {@link FileType}
+     */
     public static final int FILE_TYPE_NORMAL_FLAGS = FileType.REGULAR.getValue() | FileType.DIRECTORY.getValue() | FileType.SYMLINK.getValue();
 
-    /** Flags to represent any file type defined by {@link FileType} */
-    public static final int FILE_TYPE_ANY_FLAGS = Integer.MAX_VALUE; // 1111111111111111111111111111111 (31 1's)
+    /**
+     * Flags to represent any file type defined by {@link FileType}
+     */
+    // 1111111111111111111111111111111 (31 1's)
+    public static final int FILE_TYPE_ANY_FLAGS = Integer.MAX_VALUE;
 
     public static String convertFileTypeFlagsToNamesString(int fileTypeFlags) {
         StringBuilder fileTypeFlagsStringBuilder = new StringBuilder();
-
-        FileType[] fileTypes = {FileType.REGULAR, FileType.DIRECTORY, FileType.SYMLINK, FileType.CHARACTER, FileType.FIFO, FileType.BLOCK, FileType.UNKNOWN};
+        FileType[] fileTypes = { FileType.REGULAR, FileType.DIRECTORY, FileType.SYMLINK, FileType.CHARACTER, FileType.FIFO, FileType.BLOCK, FileType.UNKNOWN };
         for (FileType fileType : fileTypes) {
             if ((fileTypeFlags & fileType.getValue()) > 0)
                 fileTypeFlagsStringBuilder.append(fileType.getName()).append(",");
         }
-
         String fileTypeFlagsString = fileTypeFlagsStringBuilder.toString();
-
         if (fileTypeFlagsString.endsWith(","))
             fileTypeFlagsString = fileTypeFlagsString.substring(0, fileTypeFlagsString.lastIndexOf(","));
-
         return fileTypeFlagsString;
     }
 
@@ -84,8 +82,8 @@ public class FileTypes {
      */
     @NonNull
     public static FileType getFileType(final String filePath, final boolean followLinks) {
-        if (filePath == null || filePath.isEmpty()) return FileType.NO_EXIST;
-
+        if (filePath == null || filePath.isEmpty())
+            return FileType.NO_EXIST;
         try {
             FileAttributes fileAttributes = FileAttributes.get(filePath, followLinks);
             return getFileType(fileAttributes);
@@ -115,5 +113,4 @@ public class FileTypes {
         else
             return FileType.UNKNOWN;
     }
-
 }

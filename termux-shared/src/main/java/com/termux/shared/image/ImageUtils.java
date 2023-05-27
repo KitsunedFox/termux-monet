@@ -17,12 +17,10 @@ import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
-
 import com.termux.shared.errors.Error;
 import com.termux.shared.file.FileUtils;
 import com.termux.shared.file.FileUtilsErrno;
 import com.termux.shared.logger.Logger;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -48,7 +46,6 @@ public final class ImageUtils {
 
     public static final String ANY_IMAGE_TYPE = IMAGE_TYPE + "/*";
 
-
     private static final String LOG_TAG = "ImageUtils";
 
     /**
@@ -67,7 +64,6 @@ public final class ImageUtils {
      */
     public static Bitmap getBitmap(final Context context, Uri uri) {
         Bitmap bitmap = null;
-
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(context.getContentResolver(), uri));
@@ -91,7 +87,6 @@ public final class ImageUtils {
     public static Bitmap getBitmap(String path) {
         return BitmapFactory.decodeFile(path);
     }
-
 
     /**
      * Creates an centered and resized {@link Bitmap} according to given size.
@@ -132,27 +127,22 @@ public final class ImageUtils {
     public static Error compressAndSaveBitmap(Bitmap bitmap, Bitmap.CompressFormat foramt, int quality, String path) {
         FileUtils.deleteRegularFile(null, path, true);
         Error error = FileUtils.createRegularFile(path);
-
         if (error != null)
             return error;
-
         try (FileOutputStream out = new FileOutputStream(path)) {
             bitmap.compress(foramt, quality, out);
         } catch (Exception e) {
             FileUtils.deleteRegularFile(null, path, true);
             error = FileUtilsErrno.ERRNO_CREATING_FILE_FAILED_WITH_EXCEPTION.getError(e, e.getMessage());
         }
-
         return error;
     }
-
 
     /**
      * Wrapper for {@link #getDrawable(String)} with `file.getAbsolutePath()` `path` of file.
      */
     public static Drawable getDrawable(File file) {
         String path = file.getAbsolutePath();
-
         return getDrawable(path);
     }
 
@@ -173,14 +163,12 @@ public final class ImageUtils {
      * @param color    Overlay color for image.
      */
     public static void addOverlay(Drawable drawable, int color) {
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             drawable.setColorFilter(new BlendModeColorFilter(color, BlendMode.DARKEN));
         } else {
             drawable.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.DARKEN));
         }
     }
-
 
     /**
      * Wrapper for {@link #isImageOptimized(String, Point, int)} with `{@link #OPTIMALITY_TOLERANCE}` `tolerance`.
@@ -207,19 +195,15 @@ public final class ImageUtils {
      * @return Returns whether the given image is optimized or not.
      */
     public static boolean isImageOptimized(String path, int width, int height, int tolerance) {
-
         if (!FileUtils.regularFileExists(path, false)) {
             Logger.logInfo(LOG_TAG, "Image file " + path + " does not exist.");
             return false;
         }
-
         BitmapFactory.Options opt = new BitmapFactory.Options();
         opt.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(path, opt);
-
         int imgWidth = opt.outWidth;
         int imgHeight = opt.outHeight;
-
         return Math.abs(imgWidth - width) <= tolerance && Math.abs(imgHeight - height) <= tolerance;
     }
 
@@ -228,11 +212,9 @@ public final class ImageUtils {
             Logger.logInfo(LOG_TAG, "Image file " + path + " does not exist.");
             return false;
         }
-
         BitmapFactory.Options opt = new BitmapFactory.Options();
         opt.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(path, opt);
-
         return opt.outWidth != -1 && opt.outHeight != -1;
     }
 
@@ -249,18 +231,14 @@ public final class ImageUtils {
      * otherwise {@code null}.
      */
     public static Error saveForDisplayResolution(Bitmap bitmap, Point point, String path1, String path2) {
-
         Error error;
         Bitmap bitmap1 = resizeBitmap(bitmap, point);
         error = compressAndSaveBitmap(bitmap1, path1);
-
         if (error != null) {
             return error;
         }
-
         Bitmap bitmap2 = resizeBitmap(bitmap, new Point(point.y, point.x));
         error = compressAndSaveBitmap(bitmap2, path2);
-
         return error;
     }
 
@@ -274,5 +252,4 @@ public final class ImageUtils {
     public static boolean isBitmapDrawable(Drawable drawable) {
         return drawable instanceof BitmapDrawable;
     }
-
 }

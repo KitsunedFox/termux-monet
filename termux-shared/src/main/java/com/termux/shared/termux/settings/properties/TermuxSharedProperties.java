@@ -1,15 +1,12 @@
 package com.termux.shared.termux.settings.properties;
 
 import android.content.Context;
-
 import androidx.annotation.NonNull;
-
 import com.termux.shared.logger.Logger;
 import com.termux.shared.data.DataUtils;
 import com.termux.shared.settings.properties.SharedProperties;
 import com.termux.shared.settings.properties.SharedPropertiesParser;
 import com.termux.shared.termux.TermuxConstants;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -20,17 +17,22 @@ import java.util.Set;
 public abstract class TermuxSharedProperties {
 
     protected final Context mContext;
+
     protected final String mLabel;
+
     protected final List<String> mPropertiesFilePaths;
+
     protected final Set<String> mPropertiesList;
+
     protected final SharedPropertiesParser mSharedPropertiesParser;
+
     protected File mPropertiesFile;
+
     protected SharedProperties mSharedProperties;
 
     public static final String LOG_TAG = "TermuxSharedProperties";
 
-    public TermuxSharedProperties(@NonNull Context context, @NonNull String label, List<String> propertiesFilePaths,
-                                  @NonNull Set<String> propertiesList, @NonNull SharedPropertiesParser sharedPropertiesParser) {
+    public TermuxSharedProperties(@NonNull Context context, @NonNull String label, List<String> propertiesFilePaths, @NonNull Set<String> propertiesList, @NonNull SharedPropertiesParser sharedPropertiesParser) {
         mContext = context.getApplicationContext();
         mLabel = label;
         mPropertiesFilePaths = propertiesFilePaths;
@@ -49,15 +51,10 @@ public abstract class TermuxSharedProperties {
         mPropertiesFile = SharedProperties.getPropertiesFileFromList(mPropertiesFilePaths, LOG_TAG);
         mSharedProperties = null;
         mSharedProperties = new SharedProperties(mContext, mPropertiesFile, mPropertiesList, mSharedPropertiesParser);
-
         mSharedProperties.loadPropertiesFromDisk();
         dumpPropertiesToLog();
         dumpInternalPropertiesToLog();
     }
-
-
-
-
 
     /**
      * Get the {@link Properties} from the {@link #mPropertiesFile} file.
@@ -122,10 +119,6 @@ public abstract class TermuxSharedProperties {
         return (boolean) SharedProperties.getInvertedBooleanValueForStringValue(key, (String) getPropertyValue(key, null, cached), true, logErrorOnInvalidValue, LOG_TAG);
     }
 
-
-
-
-
     /**
      * Get the internal value {@link Object} {@link HashMap <>} in-memory cache for the
      * {@link #mPropertiesFile} file. A call to {@link #loadTermuxPropertiesFromDisk()} must be made
@@ -165,7 +158,7 @@ public abstract class TermuxSharedProperties {
                 // A null value can still be returned by
                 // {@link #getInternalPropertyValueFromValue(Context,String,String)} for some keys
                 value = getInternalTermuxPropertyValueFromValue(mContext, key, null);
-                Logger.logWarn(LOG_TAG, "The value for \"" + key + "\" not found in SharedProperties cache, force returning default value: `" + value +  "`");
+                Logger.logWarn(LOG_TAG, "The value for \"" + key + "\" not found in SharedProperties cache, force returning default value: `" + value + "`");
                 return value;
             }
         } else {
@@ -173,10 +166,6 @@ public abstract class TermuxSharedProperties {
             return getInternalTermuxPropertyValueFromValue(mContext, key, mSharedProperties.getProperty(key, false));
         }
     }
-
-
-
-
 
     /**
      * Get the internal {@link Object} value for the key passed from the first file found in
@@ -189,15 +178,14 @@ public abstract class TermuxSharedProperties {
      * the object stored against the key is {@code null}.
      */
     public static Object getTermuxInternalPropertyValue(Context context, String key) {
-        return SharedProperties.getInternalProperty(context,
-            SharedProperties.getPropertiesFileFromList(TermuxConstants.TERMUX_PROPERTIES_FILE_PATHS_LIST, LOG_TAG),
-            key, new SharedPropertiesParserClient());
+        return SharedProperties.getInternalProperty(context, SharedProperties.getPropertiesFileFromList(TermuxConstants.TERMUX_PROPERTIES_FILE_PATHS_LIST, LOG_TAG), key, new SharedPropertiesParserClient());
     }
 
     /**
      * The class that implements the {@link SharedPropertiesParser} interface.
      */
     public static class SharedPropertiesParserClient implements SharedPropertiesParser {
+
         @NonNull
         @Override
         public Properties preProcessPropertiesOnReadFromDisk(@NonNull Context context, @NonNull Properties properties) {
@@ -218,26 +206,21 @@ public abstract class TermuxSharedProperties {
     @NonNull
     public static Properties replaceUseBlackUIProperty(@NonNull Properties properties) {
         String useBlackUIStringValue = properties.getProperty(TermuxPropertyConstants.KEY_USE_BLACK_UI);
-        if (useBlackUIStringValue == null) return properties;
-
+        if (useBlackUIStringValue == null)
+            return properties;
         Logger.logWarn(LOG_TAG, "Removing deprecated property " + TermuxPropertyConstants.KEY_USE_BLACK_UI + "=" + useBlackUIStringValue);
         properties.remove(TermuxPropertyConstants.KEY_USE_BLACK_UI);
-
         // If KEY_NIGHT_MODE is not set
         if (properties.getProperty(TermuxPropertyConstants.KEY_NIGHT_MODE) == null) {
             Boolean useBlackUI = SharedProperties.getBooleanValueForStringValue(useBlackUIStringValue);
             if (useBlackUI != null) {
-                String termuxAppTheme = useBlackUI ? TermuxPropertyConstants.IVALUE_NIGHT_MODE_TRUE :
-                    TermuxPropertyConstants.IVALUE_NIGHT_MODE_FALSE;
+                String termuxAppTheme = useBlackUI ? TermuxPropertyConstants.IVALUE_NIGHT_MODE_TRUE : TermuxPropertyConstants.IVALUE_NIGHT_MODE_FALSE;
                 Logger.logWarn(LOG_TAG, "Replacing deprecated property " + TermuxPropertyConstants.KEY_USE_BLACK_UI + "=" + useBlackUI + " with " + TermuxPropertyConstants.KEY_NIGHT_MODE + "=" + termuxAppTheme);
                 properties.put(TermuxPropertyConstants.KEY_NIGHT_MODE, termuxAppTheme);
             }
         }
-
         return properties;
     }
-
-
 
     /**
      * A static function that should return the internal termux {@link Object} for a key/value pair
@@ -249,7 +232,8 @@ public abstract class TermuxSharedProperties {
      * @return Returns the internal termux {@link Object} object.
      */
     public static Object getInternalTermuxPropertyValueFromValue(Context context, String key, String value) {
-        if (key == null) return null;
+        if (key == null)
+            return null;
         /*
           For keys where a MAP_* is checked by respective functions. Note that value to this function
           would actually be the key for the MAP_*:
@@ -257,7 +241,7 @@ public abstract class TermuxSharedProperties {
           - If the value is not null and does not exist in MAP_*, then internal default value will be used.
           - If the value is not null and does exist in MAP_*, then internal value returned by map will be used.
          */
-        switch (key) {
+        switch(key) {
             /* int */
             case TermuxPropertyConstants.KEY_BELL_BEHAVIOUR:
                 return (int) getBellBehaviourInternalPropertyValueFromValue(value);
@@ -275,18 +259,15 @@ public abstract class TermuxSharedProperties {
                 return (int) getTerminalTranscriptRowsInternalPropertyValueFromValue(value);
             case TermuxPropertyConstants.KEY_BACKGROUND_OVERLAY_COLOR:
                 return (int) getBackgroundOverlayInternalPropertyValueFromValue(value);
-
             /* float */
             case TermuxPropertyConstants.KEY_TERMINAL_TOOLBAR_HEIGHT_SCALE_FACTOR:
                 return (float) getTerminalToolbarHeightScaleFactorInternalPropertyValueFromValue(value);
-
             /* Integer (may be null) */
             case TermuxPropertyConstants.KEY_SHORTCUT_CREATE_SESSION:
             case TermuxPropertyConstants.KEY_SHORTCUT_NEXT_SESSION:
             case TermuxPropertyConstants.KEY_SHORTCUT_PREVIOUS_SESSION:
             case TermuxPropertyConstants.KEY_SHORTCUT_RENAME_SESSION:
                 return (Integer) getCodePointForSessionShortcuts(key, value);
-
             /* String (may be null) */
             case TermuxPropertyConstants.KEY_BACK_KEY_BEHAVIOUR:
                 return (String) getBackKeyBehaviourInternalPropertyValueFromValue(value);
@@ -302,7 +283,6 @@ public abstract class TermuxSharedProperties {
                 return (String) getSoftKeyboardToggleBehaviourInternalPropertyValueFromValue(value);
             case TermuxPropertyConstants.KEY_VOLUME_KEYS_BEHAVIOUR:
                 return (String) getVolumeKeysBehaviourInternalPropertyValueFromValue(value);
-
             default:
                 // default false boolean behaviour
                 if (TermuxPropertyConstants.TERMUX_DEFAULT_FALSE_BOOLEAN_BEHAVIOUR_PROPERTIES_LIST.contains(key))
@@ -310,21 +290,17 @@ public abstract class TermuxSharedProperties {
                 // default true boolean behaviour
                 if (TermuxPropertyConstants.TERMUX_DEFAULT_TRUE_BOOLEAN_BEHAVIOUR_PROPERTIES_LIST.contains(key))
                     return (boolean) SharedProperties.getBooleanValueForStringValue(key, value, true, true, LOG_TAG);
-                // default inverted false boolean behaviour
-                //else if (TermuxPropertyConstants.TERMUX_DEFAULT_INVERETED_FALSE_BOOLEAN_BEHAVIOUR_PROPERTIES_LIST.contains(key))
-                //    return (boolean) SharedProperties.getInvertedBooleanValueForStringValue(key, value, false, true, LOG_TAG);
-                // default inverted true boolean behaviour
-                // else if (TermuxPropertyConstants.TERMUX_DEFAULT_INVERETED_TRUE_BOOLEAN_BEHAVIOUR_PROPERTIES_LIST.contains(key))
-                //    return (boolean) SharedProperties.getInvertedBooleanValueForStringValue(key, value, true, true, LOG_TAG);
-                // just use String object as is (may be null)
                 else
+                    // default inverted false boolean behaviour
+                    //else if (TermuxPropertyConstants.TERMUX_DEFAULT_INVERETED_FALSE_BOOLEAN_BEHAVIOUR_PROPERTIES_LIST.contains(key))
+                    //    return (boolean) SharedProperties.getInvertedBooleanValueForStringValue(key, value, false, true, LOG_TAG);
+                    // default inverted true boolean behaviour
+                    // else if (TermuxPropertyConstants.TERMUX_DEFAULT_INVERETED_TRUE_BOOLEAN_BEHAVIOUR_PROPERTIES_LIST.contains(key))
+                    //    return (boolean) SharedProperties.getInvertedBooleanValueForStringValue(key, value, true, true, LOG_TAG);
+                    // just use String object as is (may be null)
                     return value;
         }
     }
-
-
-
-
 
     /**
      * Returns the internal value after mapping it based on
@@ -348,12 +324,7 @@ public abstract class TermuxSharedProperties {
      * @return Returns the internal value for value.
      */
     public static int getDeleteTMPDIRFilesOlderThanXDaysOnExitInternalPropertyValueFromValue(String value) {
-        return SharedProperties.getDefaultIfNotInRange(TermuxPropertyConstants.KEY_DELETE_TMPDIR_FILES_OLDER_THAN_X_DAYS_ON_EXIT,
-            DataUtils.getIntFromString(value, TermuxPropertyConstants.DEFAULT_IVALUE_DELETE_TMPDIR_FILES_OLDER_THAN_X_DAYS_ON_EXIT),
-            TermuxPropertyConstants.DEFAULT_IVALUE_DELETE_TMPDIR_FILES_OLDER_THAN_X_DAYS_ON_EXIT,
-            TermuxPropertyConstants.IVALUE_DELETE_TMPDIR_FILES_OLDER_THAN_X_DAYS_ON_EXIT_MIN,
-            TermuxPropertyConstants.IVALUE_DELETE_TMPDIR_FILES_OLDER_THAN_X_DAYS_ON_EXIT_MAX,
-            true, true, LOG_TAG);
+        return SharedProperties.getDefaultIfNotInRange(TermuxPropertyConstants.KEY_DELETE_TMPDIR_FILES_OLDER_THAN_X_DAYS_ON_EXIT, DataUtils.getIntFromString(value, TermuxPropertyConstants.DEFAULT_IVALUE_DELETE_TMPDIR_FILES_OLDER_THAN_X_DAYS_ON_EXIT), TermuxPropertyConstants.DEFAULT_IVALUE_DELETE_TMPDIR_FILES_OLDER_THAN_X_DAYS_ON_EXIT, TermuxPropertyConstants.IVALUE_DELETE_TMPDIR_FILES_OLDER_THAN_X_DAYS_ON_EXIT_MIN, TermuxPropertyConstants.IVALUE_DELETE_TMPDIR_FILES_OLDER_THAN_X_DAYS_ON_EXIT_MAX, true, true, LOG_TAG);
     }
 
     /**
@@ -366,12 +337,7 @@ public abstract class TermuxSharedProperties {
      * @return Returns the internal value for value.
      */
     public static int getTerminalCursorBlinkRateInternalPropertyValueFromValue(String value) {
-        return SharedProperties.getDefaultIfNotInRange(TermuxPropertyConstants.KEY_TERMINAL_CURSOR_BLINK_RATE,
-            DataUtils.getIntFromString(value, TermuxPropertyConstants.DEFAULT_IVALUE_TERMINAL_CURSOR_BLINK_RATE),
-            TermuxPropertyConstants.DEFAULT_IVALUE_TERMINAL_CURSOR_BLINK_RATE,
-            TermuxPropertyConstants.IVALUE_TERMINAL_CURSOR_BLINK_RATE_MIN,
-            TermuxPropertyConstants.IVALUE_TERMINAL_CURSOR_BLINK_RATE_MAX,
-            true, true, LOG_TAG);
+        return SharedProperties.getDefaultIfNotInRange(TermuxPropertyConstants.KEY_TERMINAL_CURSOR_BLINK_RATE, DataUtils.getIntFromString(value, TermuxPropertyConstants.DEFAULT_IVALUE_TERMINAL_CURSOR_BLINK_RATE), TermuxPropertyConstants.DEFAULT_IVALUE_TERMINAL_CURSOR_BLINK_RATE, TermuxPropertyConstants.IVALUE_TERMINAL_CURSOR_BLINK_RATE_MIN, TermuxPropertyConstants.IVALUE_TERMINAL_CURSOR_BLINK_RATE_MAX, true, true, LOG_TAG);
     }
 
     /**
@@ -396,12 +362,7 @@ public abstract class TermuxSharedProperties {
      * @return Returns the internal value for value.
      */
     public static int getTerminalMarginHorizontalInternalPropertyValueFromValue(String value) {
-        return SharedProperties.getDefaultIfNotInRange(TermuxPropertyConstants.KEY_TERMINAL_MARGIN_HORIZONTAL,
-            DataUtils.getIntFromString(value, TermuxPropertyConstants.DEFAULT_IVALUE_TERMINAL_MARGIN_HORIZONTAL),
-            TermuxPropertyConstants.DEFAULT_IVALUE_TERMINAL_MARGIN_HORIZONTAL,
-            TermuxPropertyConstants.IVALUE_TERMINAL_MARGIN_HORIZONTAL_MIN,
-            TermuxPropertyConstants.IVALUE_TERMINAL_MARGIN_HORIZONTAL_MAX,
-            true, true, LOG_TAG);
+        return SharedProperties.getDefaultIfNotInRange(TermuxPropertyConstants.KEY_TERMINAL_MARGIN_HORIZONTAL, DataUtils.getIntFromString(value, TermuxPropertyConstants.DEFAULT_IVALUE_TERMINAL_MARGIN_HORIZONTAL), TermuxPropertyConstants.DEFAULT_IVALUE_TERMINAL_MARGIN_HORIZONTAL, TermuxPropertyConstants.IVALUE_TERMINAL_MARGIN_HORIZONTAL_MIN, TermuxPropertyConstants.IVALUE_TERMINAL_MARGIN_HORIZONTAL_MAX, true, true, LOG_TAG);
     }
 
     /**
@@ -414,12 +375,7 @@ public abstract class TermuxSharedProperties {
      * @return Returns the internal value for value.
      */
     public static int getTerminalMarginVerticalInternalPropertyValueFromValue(String value) {
-        return SharedProperties.getDefaultIfNotInRange(TermuxPropertyConstants.KEY_TERMINAL_MARGIN_VERTICAL,
-            DataUtils.getIntFromString(value, TermuxPropertyConstants.DEFAULT_IVALUE_TERMINAL_MARGIN_VERTICAL),
-            TermuxPropertyConstants.DEFAULT_IVALUE_TERMINAL_MARGIN_VERTICAL,
-            TermuxPropertyConstants.IVALUE_TERMINAL_MARGIN_VERTICAL_MIN,
-            TermuxPropertyConstants.IVALUE_TERMINAL_MARGIN_VERTICAL_MAX,
-            true, true, LOG_TAG);
+        return SharedProperties.getDefaultIfNotInRange(TermuxPropertyConstants.KEY_TERMINAL_MARGIN_VERTICAL, DataUtils.getIntFromString(value, TermuxPropertyConstants.DEFAULT_IVALUE_TERMINAL_MARGIN_VERTICAL), TermuxPropertyConstants.DEFAULT_IVALUE_TERMINAL_MARGIN_VERTICAL, TermuxPropertyConstants.IVALUE_TERMINAL_MARGIN_VERTICAL_MIN, TermuxPropertyConstants.IVALUE_TERMINAL_MARGIN_VERTICAL_MAX, true, true, LOG_TAG);
     }
 
     /**
@@ -432,12 +388,7 @@ public abstract class TermuxSharedProperties {
      * @return Returns the internal value for value.
      */
     public static int getTerminalTranscriptRowsInternalPropertyValueFromValue(String value) {
-        return SharedProperties.getDefaultIfNotInRange(TermuxPropertyConstants.KEY_TERMINAL_TRANSCRIPT_ROWS,
-            DataUtils.getIntFromString(value, TermuxPropertyConstants.DEFAULT_IVALUE_TERMINAL_TRANSCRIPT_ROWS),
-            TermuxPropertyConstants.DEFAULT_IVALUE_TERMINAL_TRANSCRIPT_ROWS,
-            TermuxPropertyConstants.IVALUE_TERMINAL_TRANSCRIPT_ROWS_MIN,
-            TermuxPropertyConstants.IVALUE_TERMINAL_TRANSCRIPT_ROWS_MAX,
-            true, true, LOG_TAG);
+        return SharedProperties.getDefaultIfNotInRange(TermuxPropertyConstants.KEY_TERMINAL_TRANSCRIPT_ROWS, DataUtils.getIntFromString(value, TermuxPropertyConstants.DEFAULT_IVALUE_TERMINAL_TRANSCRIPT_ROWS), TermuxPropertyConstants.DEFAULT_IVALUE_TERMINAL_TRANSCRIPT_ROWS, TermuxPropertyConstants.IVALUE_TERMINAL_TRANSCRIPT_ROWS_MIN, TermuxPropertyConstants.IVALUE_TERMINAL_TRANSCRIPT_ROWS_MAX, true, true, LOG_TAG);
     }
 
     /**
@@ -462,12 +413,7 @@ public abstract class TermuxSharedProperties {
      * @return Returns the internal value for value.
      */
     public static float getTerminalToolbarHeightScaleFactorInternalPropertyValueFromValue(String value) {
-        return SharedProperties.getDefaultIfNotInRange(TermuxPropertyConstants.KEY_TERMINAL_TOOLBAR_HEIGHT_SCALE_FACTOR,
-            DataUtils.getFloatFromString(value, TermuxPropertyConstants.DEFAULT_IVALUE_TERMINAL_TOOLBAR_HEIGHT_SCALE_FACTOR),
-            TermuxPropertyConstants.DEFAULT_IVALUE_TERMINAL_TOOLBAR_HEIGHT_SCALE_FACTOR,
-            TermuxPropertyConstants.IVALUE_TERMINAL_TOOLBAR_HEIGHT_SCALE_FACTOR_MIN,
-            TermuxPropertyConstants.IVALUE_TERMINAL_TOOLBAR_HEIGHT_SCALE_FACTOR_MAX,
-            true, true, LOG_TAG);
+        return SharedProperties.getDefaultIfNotInRange(TermuxPropertyConstants.KEY_TERMINAL_TOOLBAR_HEIGHT_SCALE_FACTOR, DataUtils.getFloatFromString(value, TermuxPropertyConstants.DEFAULT_IVALUE_TERMINAL_TOOLBAR_HEIGHT_SCALE_FACTOR), TermuxPropertyConstants.DEFAULT_IVALUE_TERMINAL_TOOLBAR_HEIGHT_SCALE_FACTOR, TermuxPropertyConstants.IVALUE_TERMINAL_TOOLBAR_HEIGHT_SCALE_FACTOR_MIN, TermuxPropertyConstants.IVALUE_TERMINAL_TOOLBAR_HEIGHT_SCALE_FACTOR_MAX, true, true, LOG_TAG);
     }
 
     /**
@@ -479,15 +425,16 @@ public abstract class TermuxSharedProperties {
      * @return Returns the internal value for value.
      */
     public static Integer getCodePointForSessionShortcuts(String key, String value) {
-        if (key == null) return null;
-        if (value == null) return null;
+        if (key == null)
+            return null;
+        if (value == null)
+            return null;
         String[] parts = value.toLowerCase().trim().split("\\+");
         String input = parts.length == 2 ? parts[1].trim() : null;
         if (!(parts.length == 2 && parts[0].trim().equals("ctrl")) || input.isEmpty() || input.length() > 2) {
             Logger.logError(LOG_TAG, "Keyboard shortcut '" + key + "' is not Ctrl+<something>");
             return null;
         }
-
         char c = input.charAt(0);
         int codePoint = c;
         if (Character.isLowSurrogate(c)) {
@@ -498,7 +445,6 @@ public abstract class TermuxSharedProperties {
                 codePoint = Character.toCodePoint(input.charAt(1), c);
             }
         }
-
         return codePoint;
     }
 
@@ -520,7 +466,8 @@ public abstract class TermuxSharedProperties {
      * @return Returns the internal value for value.
      */
     public static String getDefaultWorkingDirectoryInternalPropertyValueFromValue(String path) {
-        if (path == null || path.isEmpty()) return TermuxPropertyConstants.DEFAULT_IVALUE_DEFAULT_WORKING_DIRECTORY;
+        if (path == null || path.isEmpty())
+            return TermuxPropertyConstants.DEFAULT_IVALUE_DEFAULT_WORKING_DIRECTORY;
         File workDir = new File(path);
         if (!workDir.exists() || !workDir.isDirectory() || !workDir.canRead()) {
             // Fallback to default directory if user configured working directory does not exist,
@@ -559,9 +506,7 @@ public abstract class TermuxSharedProperties {
      * @return Returns the internal value for value.
      */
     public static String getNightModeInternalPropertyValueFromValue(String value) {
-        return (String) SharedProperties.getDefaultIfNotInMap(TermuxPropertyConstants.KEY_NIGHT_MODE,
-            TermuxPropertyConstants.MAP_NIGHT_MODE, SharedProperties.toLowerCase(value),
-            TermuxPropertyConstants.DEFAULT_IVALUE_NIGHT_MODE, true, LOG_TAG);
+        return (String) SharedProperties.getDefaultIfNotInMap(TermuxPropertyConstants.KEY_NIGHT_MODE, TermuxPropertyConstants.MAP_NIGHT_MODE, SharedProperties.toLowerCase(value), TermuxPropertyConstants.DEFAULT_IVALUE_NIGHT_MODE, true, LOG_TAG);
     }
 
     /**
@@ -583,10 +528,6 @@ public abstract class TermuxSharedProperties {
     public static String getVolumeKeysBehaviourInternalPropertyValueFromValue(String value) {
         return (String) SharedProperties.getDefaultIfNotInMap(TermuxPropertyConstants.KEY_VOLUME_KEYS_BEHAVIOUR, TermuxPropertyConstants.MAP_VOLUME_KEYS_BEHAVIOUR, SharedProperties.toLowerCase(value), TermuxPropertyConstants.DEFAULT_IVALUE_VOLUME_KEYS_BEHAVIOUR, true, LOG_TAG);
     }
-
-
-
-
 
     public boolean shouldAllowExternalApps() {
         return (boolean) getInternalPropertyValue(TermuxConstants.PROP_ALLOW_EXTERNAL_APPS, true);
@@ -616,10 +557,11 @@ public abstract class TermuxSharedProperties {
         return (boolean) getInternalPropertyValue(TermuxPropertyConstants.KEY_DRAW_BOLD_TEXT_WITH_BRIGHT_COLORS, true);
     }
 
-    /** Get the {@link TermuxPropertyConstants#KEY_DRAW_BOLD_TEXT_WITH_BRIGHT_COLORS} value from the properties file on disk. */
+    /**
+     * Get the {@link TermuxPropertyConstants#KEY_DRAW_BOLD_TEXT_WITH_BRIGHT_COLORS} value from the properties file on disk.
+     */
     public static boolean shouldDrawBoldTextWithBrightColors(Context context) {
-        return (Boolean) TermuxSharedProperties.getTermuxInternalPropertyValue(context,
-            TermuxPropertyConstants.KEY_DRAW_BOLD_TEXT_WITH_BRIGHT_COLORS);
+        return (Boolean) TermuxSharedProperties.getTermuxInternalPropertyValue(context, TermuxPropertyConstants.KEY_DRAW_BOLD_TEXT_WITH_BRIGHT_COLORS);
     }
 
     public boolean shouldExtraKeysTextBeAllCaps() {
@@ -702,10 +644,11 @@ public abstract class TermuxSharedProperties {
         return (String) getInternalPropertyValue(TermuxPropertyConstants.KEY_NIGHT_MODE, true);
     }
 
-    /** Get the {@link TermuxPropertyConstants#KEY_NIGHT_MODE} value from the properties file on disk. */
+    /**
+     * Get the {@link TermuxPropertyConstants#KEY_NIGHT_MODE} value from the properties file on disk.
+     */
     public static String getNightMode(Context context) {
-        return (String) TermuxSharedProperties.getTermuxInternalPropertyValue(context,
-            TermuxPropertyConstants.KEY_NIGHT_MODE);
+        return (String) TermuxSharedProperties.getTermuxInternalPropertyValue(context, TermuxPropertyConstants.KEY_NIGHT_MODE);
     }
 
     public boolean shouldEnableDisableSoftKeyboardOnToggle() {
@@ -716,14 +659,9 @@ public abstract class TermuxSharedProperties {
         return (boolean) TermuxPropertyConstants.IVALUE_VOLUME_KEY_BEHAVIOUR_VOLUME.equals(getInternalPropertyValue(TermuxPropertyConstants.KEY_VOLUME_KEYS_BEHAVIOUR, true));
     }
 
-
-
-
-
     public void dumpPropertiesToLog() {
         Properties properties = getProperties(true);
         StringBuilder propertiesDump = new StringBuilder();
-
         propertiesDump.append(mLabel).append(" Termux Properties:");
         if (properties != null) {
             for (String key : properties.stringPropertyNames()) {
@@ -732,22 +670,18 @@ public abstract class TermuxSharedProperties {
         } else {
             propertiesDump.append(" null");
         }
-
         Logger.logVerbose(LOG_TAG, propertiesDump.toString());
     }
 
     public void dumpInternalPropertiesToLog() {
         HashMap<String, Object> internalProperties = (HashMap<String, Object>) getInternalProperties();
         StringBuilder internalPropertiesDump = new StringBuilder();
-
         internalPropertiesDump.append(mLabel).append(" Internal Properties:");
         if (internalProperties != null) {
             for (String key : internalProperties.keySet()) {
                 internalPropertiesDump.append("\n").append(key).append(": `").append(internalProperties.get(key)).append("`");
             }
         }
-
         Logger.logVerbose(LOG_TAG, internalPropertiesDump.toString());
     }
-
 }

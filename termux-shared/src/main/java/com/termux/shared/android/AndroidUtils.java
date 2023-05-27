@@ -5,15 +5,12 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.os.Build;
-
 import androidx.annotation.NonNull;
-
 import com.google.common.base.Joiner;
 import com.termux.shared.R;
 import com.termux.shared.data.DataUtils;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.markdown.MarkdownUtils;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,27 +35,20 @@ public class AndroidUtils {
      */
     public static String getAppInfoMarkdownString(@NonNull final Context context) {
         StringBuilder markdownString = new StringBuilder();
-
         String appInfo = getAppInfoMarkdownString(context, context.getPackageName());
         if (appInfo == null)
             return markdownString.toString();
         else
             markdownString.append(appInfo);
-
         String filesDir = context.getFilesDir().getAbsolutePath();
-        if (!filesDir.equals("/data/user/0/" + context.getPackageName() + "/files") &&
-            !filesDir.equals("/data/data/" + context.getPackageName() + "/files"))
-            AndroidUtils.appendPropertyToMarkdown(markdownString,"FILES_DIR", filesDir);
-
-
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        if (!filesDir.equals("/data/user/0/" + context.getPackageName() + "/files") && !filesDir.equals("/data/data/" + context.getPackageName() + "/files"))
+            AndroidUtils.appendPropertyToMarkdown(markdownString, "FILES_DIR", filesDir);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             Long userId = PackageUtils.getUserIdForPackage(context);
             if (userId == null || userId != 0)
                 AndroidUtils.appendPropertyToMarkdown(markdownString, "USER_ID", userId);
         }
-
-        AndroidUtils.appendPropertyToMarkdownIfSet(markdownString,"PROFILE_OWNER", PackageUtils.getProfileOwnerPackageNameForUser(context));
-
+        AndroidUtils.appendPropertyToMarkdownIfSet(markdownString, "PROFILE_OWNER", PackageUtils.getProfileOwnerPackageNameForUser(context));
         return markdownString.toString();
     }
 
@@ -71,32 +61,27 @@ public class AndroidUtils {
      */
     public static String getAppInfoMarkdownString(@NonNull final Context context, @NonNull final String packageName) {
         PackageInfo packageInfo = PackageUtils.getPackageInfoForPackage(context, packageName);
-        if (packageInfo == null) return null;
+        if (packageInfo == null)
+            return null;
         ApplicationInfo applicationInfo = PackageUtils.getApplicationInfoForPackage(context, packageName);
-        if (applicationInfo == null) return null;
-
+        if (applicationInfo == null)
+            return null;
         StringBuilder markdownString = new StringBuilder();
-
-        AndroidUtils.appendPropertyToMarkdown(markdownString,"APP_NAME", PackageUtils.getAppNameForPackage(context, applicationInfo));
-        AndroidUtils.appendPropertyToMarkdown(markdownString,"PACKAGE_NAME", PackageUtils.getPackageNameForPackage(applicationInfo));
-        AndroidUtils.appendPropertyToMarkdown(markdownString,"VERSION_NAME", PackageUtils.getVersionNameForPackage(packageInfo));
-        AndroidUtils.appendPropertyToMarkdown(markdownString,"VERSION_CODE", PackageUtils.getVersionCodeForPackage(packageInfo));
-        AndroidUtils.appendPropertyToMarkdown(markdownString,"UID", PackageUtils.getUidForPackage(applicationInfo));
-        AndroidUtils.appendPropertyToMarkdown(markdownString,"TARGET_SDK", PackageUtils.getTargetSDKForPackage(applicationInfo));
-        AndroidUtils.appendPropertyToMarkdown(markdownString,"IS_DEBUGGABLE_BUILD", PackageUtils.isAppForPackageADebuggableBuild(applicationInfo));
-
+        AndroidUtils.appendPropertyToMarkdown(markdownString, "APP_NAME", PackageUtils.getAppNameForPackage(context, applicationInfo));
+        AndroidUtils.appendPropertyToMarkdown(markdownString, "PACKAGE_NAME", PackageUtils.getPackageNameForPackage(applicationInfo));
+        AndroidUtils.appendPropertyToMarkdown(markdownString, "VERSION_NAME", PackageUtils.getVersionNameForPackage(packageInfo));
+        AndroidUtils.appendPropertyToMarkdown(markdownString, "VERSION_CODE", PackageUtils.getVersionCodeForPackage(packageInfo));
+        AndroidUtils.appendPropertyToMarkdown(markdownString, "UID", PackageUtils.getUidForPackage(applicationInfo));
+        AndroidUtils.appendPropertyToMarkdown(markdownString, "TARGET_SDK", PackageUtils.getTargetSDKForPackage(applicationInfo));
+        AndroidUtils.appendPropertyToMarkdown(markdownString, "IS_DEBUGGABLE_BUILD", PackageUtils.isAppForPackageADebuggableBuild(applicationInfo));
         if (PackageUtils.isAppInstalledOnExternalStorage(applicationInfo)) {
-            AndroidUtils.appendPropertyToMarkdown(markdownString,"APK_PATH", PackageUtils.getBaseAPKPathForPackage(applicationInfo));
-            AndroidUtils.appendPropertyToMarkdown(markdownString,"IS_INSTALLED_ON_EXTERNAL_STORAGE", true);
+            AndroidUtils.appendPropertyToMarkdown(markdownString, "APK_PATH", PackageUtils.getBaseAPKPathForPackage(applicationInfo));
+            AndroidUtils.appendPropertyToMarkdown(markdownString, "IS_INSTALLED_ON_EXTERNAL_STORAGE", true);
         }
-
-        AndroidUtils.appendPropertyToMarkdown(markdownString,"SE_PROCESS_CONTEXT", SELinuxUtils.getContext());
-        AndroidUtils.appendPropertyToMarkdown(markdownString,"SE_FILE_CONTEXT", SELinuxUtils.getFileContext(context.getFilesDir().getAbsolutePath()));
-
+        AndroidUtils.appendPropertyToMarkdown(markdownString, "SE_PROCESS_CONTEXT", SELinuxUtils.getContext());
+        AndroidUtils.appendPropertyToMarkdown(markdownString, "SE_FILE_CONTEXT", SELinuxUtils.getFileContext(context.getFilesDir().getAbsolutePath()));
         String seInfoUser = PackageUtils.getApplicationInfoSeInfoUserForPackage(applicationInfo);
-        AndroidUtils.appendPropertyToMarkdown(markdownString,"SE_INFO", PackageUtils.getApplicationInfoSeInfoForPackage(applicationInfo) +
-            (DataUtils.isNullOrEmpty(seInfoUser) ? "" : seInfoUser));
-
+        AndroidUtils.appendPropertyToMarkdown(markdownString, "SE_INFO", PackageUtils.getApplicationInfoSeInfoForPackage(applicationInfo) + (DataUtils.isNullOrEmpty(seInfoUser) ? "" : seInfoUser));
         return markdownString.toString();
     }
 
@@ -115,13 +100,10 @@ public class AndroidUtils {
         // Some properties cannot be read with {@link System#getProperty(String)} but can be read
         // directly by running getprop command
         Properties systemProperties = getSystemProperties();
-
         StringBuilder markdownString = new StringBuilder();
-
         markdownString.append("## Device Info");
-
         markdownString.append("\n\n### Software\n");
-        appendPropertyToMarkdown(markdownString,"OS_VERSION", getSystemPropertyWithAndroidAPI("os.version"));
+        appendPropertyToMarkdown(markdownString, "OS_VERSION", getSystemPropertyWithAndroidAPI("os.version"));
         appendPropertyToMarkdown(markdownString, "SDK_INT", Build.VERSION.SDK_INT);
         // If its a release version
         if ("REL".equals(Build.VERSION.CODENAME))
@@ -137,7 +119,6 @@ public class AndroidUtils {
         appendPropertyToMarkdownIfSet(markdownString, "IS_TREBLE_ENABLED", systemProperties.getProperty("ro.treble.enabled"));
         appendPropertyToMarkdown(markdownString, "TYPE", Build.TYPE);
         appendPropertyToMarkdown(markdownString, "TAGS", Build.TAGS);
-
         // If on Android >= 12
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.R) {
             Integer maxPhantomProcesses = PhantomProcessUtils.getActivityManagerMaxPhantomProcesses(context);
@@ -145,11 +126,9 @@ public class AndroidUtils {
                 appendPropertyToMarkdown(markdownString, "MAX_PHANTOM_PROCESSES", maxPhantomProcesses);
             else
                 appendLiteralPropertyToMarkdown(markdownString, "MAX_PHANTOM_PROCESSES", "- (*" + context.getString(R.string.msg_requires_dump_and_package_usage_stats_permissions) + "*)");
-
             appendPropertyToMarkdown(markdownString, "MONITOR_PHANTOM_PROCS", PhantomProcessUtils.getFeatureFlagMonitorPhantomProcsValueString(context).getName());
             appendPropertyToMarkdown(markdownString, "DEVICE_CONFIG_SYNC_DISABLED", PhantomProcessUtils.getSettingsGlobalDeviceConfigSyncDisabled(context));
         }
-
         markdownString.append("\n\n### Hardware\n");
         appendPropertyToMarkdown(markdownString, "MANUFACTURER", Build.MANUFACTURER);
         appendPropertyToMarkdown(markdownString, "BRAND", Build.BRAND);
@@ -159,17 +138,12 @@ public class AndroidUtils {
         appendPropertyToMarkdown(markdownString, "HARDWARE", Build.HARDWARE);
         appendPropertyToMarkdown(markdownString, "DEVICE", Build.DEVICE);
         appendPropertyToMarkdown(markdownString, "SUPPORTED_ABIS", Joiner.on(", ").skipNulls().join(Build.SUPPORTED_ABIS));
-
         markdownString.append("\n##\n");
-
         return markdownString.toString();
     }
 
-
-
     public static Properties getSystemProperties() {
         Properties systemProperties = new Properties();
-
         // getprop commands returns values in the format `[key]: [value]`
         // Regex matches string starting with a literal `[`,
         // followed by one or more characters that do not match a closing square bracket as the key,
@@ -178,17 +152,11 @@ public class AndroidUtils {
         // followed by string ending with literal `]`
         // multiline values will be ignored
         Pattern propertiesPattern = Pattern.compile("^\\[([^]]+)]: \\[(.+)]$");
-
         try {
-            Process process = new ProcessBuilder()
-                .command("/system/bin/getprop")
-                .redirectErrorStream(true)
-                .start();
-
+            Process process = new ProcessBuilder().command("/system/bin/getprop").redirectErrorStream(true).start();
             InputStream inputStream = process.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
             String line, key, value;
-
             while ((line = bufferedReader.readLine()) != null) {
                 Matcher matcher = propertiesPattern.matcher(line);
                 if (matcher.matches()) {
@@ -198,18 +166,14 @@ public class AndroidUtils {
                         systemProperties.put(key, value);
                 }
             }
-
             bufferedReader.close();
             process.destroy();
-
         } catch (IOException e) {
             Logger.logStackTraceWithMessage("Failed to get run \"/system/bin/getprop\" to get system properties.", e);
         }
-
         //for (String key : systemProperties.stringPropertyNames()) {
         //    Logger.logVerbose(key + ": " +  systemProperties.get(key));
         //}
-
         return systemProperties;
     }
 
@@ -223,8 +187,10 @@ public class AndroidUtils {
     }
 
     public static void appendPropertyToMarkdownIfSet(StringBuilder markdownString, String label, Object value) {
-        if (value == null) return;
-        if (value instanceof String && (((String) value).isEmpty()) || "REL".equals(value)) return;
+        if (value == null)
+            return;
+        if (value instanceof String && (((String) value).isEmpty()) || "REL".equals(value))
+            return;
         markdownString.append("\n").append(getPropertyMarkdown(label, value));
     }
 
@@ -243,8 +209,6 @@ public class AndroidUtils {
     public static String getLiteralPropertyMarkdown(String label, Object value) {
         return MarkdownUtils.getLiteralSingleLineMarkdownStringEntry(label, value, "-");
     }
-
-
 
     public static String getCurrentTimeStamp() {
         @SuppressLint("SimpleDateFormat")
@@ -266,5 +230,4 @@ public class AndroidUtils {
         df.setTimeZone(TimeZone.getDefault());
         return df.format(new Date());
     }
-
 }

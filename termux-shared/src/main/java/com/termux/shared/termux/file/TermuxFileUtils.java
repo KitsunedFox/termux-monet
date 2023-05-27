@@ -1,12 +1,9 @@
 package com.termux.shared.termux.file;
 
 import static com.termux.shared.termux.TermuxConstants.TERMUX_PREFIX_DIR_PATH;
-
 import android.content.Context;
 import android.os.Environment;
-
 import androidx.annotation.NonNull;
-
 import com.termux.shared.file.FileUtils;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.markdown.MarkdownUtils;
@@ -18,7 +15,6 @@ import com.termux.shared.shell.command.runner.app.AppShell;
 import com.termux.shared.android.AndroidUtils;
 import com.termux.shared.termux.TermuxConstants;
 import com.termux.shared.termux.TermuxUtils;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,13 +31,12 @@ public class TermuxFileUtils {
      * @return Returns the {@code expand paths}.
      */
     public static List<String> getExpandedTermuxPaths(List<String> paths) {
-        if (paths == null) return null;
+        if (paths == null)
+            return null;
         List<String> expandedPaths = new ArrayList<>();
-
         for (int i = 0; i < paths.size(); i++) {
             expandedPaths.add(getExpandedTermuxPath(paths.get(i)));
         }
-
         return expandedPaths;
     }
 
@@ -58,7 +53,6 @@ public class TermuxFileUtils {
             path = path.replaceAll("^~/$", TermuxConstants.TERMUX_HOME_DIR_PATH);
             path = path.replaceAll("^~/", TermuxConstants.TERMUX_HOME_DIR_PATH + "/");
         }
-
         return path;
     }
 
@@ -69,13 +63,12 @@ public class TermuxFileUtils {
      * @return Returns the {@code unexpand paths}.
      */
     public static List<String> getUnExpandedTermuxPaths(List<String> paths) {
-        if (paths == null) return null;
+        if (paths == null)
+            return null;
         List<String> unExpandedPaths = new ArrayList<>();
-
         for (int i = 0; i < paths.size(); i++) {
             unExpandedPaths.add(getUnExpandedTermuxPath(paths.get(i)));
         }
-
         return unExpandedPaths;
     }
 
@@ -90,7 +83,6 @@ public class TermuxFileUtils {
             path = path.replaceAll("^" + Pattern.quote(TermuxConstants.TERMUX_PREFIX_DIR_PATH) + "/", "\\$PREFIX/");
             path = path.replaceAll("^" + Pattern.quote(TermuxConstants.TERMUX_HOME_DIR_PATH) + "/", "~/");
         }
-
         return path;
     }
 
@@ -105,15 +97,14 @@ public class TermuxFileUtils {
      * @param expandPath The {@code boolean} that decides if input path is first attempted to be expanded by calling
      *                   {@link TermuxFileUtils#getExpandedTermuxPath(String)} before its passed to
      *                   {@link FileUtils#getCanonicalPath(String, String)}.
-
+     *
      * @return Returns the {@code canonical path}.
      */
     public static String getCanonicalPath(String path, final String prefixForNonAbsolutePath, final boolean expandPath) {
-        if (path == null) path = "";
-
+        if (path == null)
+            path = "";
         if (expandPath)
             path = getExpandedTermuxPath(path);
-
         return FileUtils.getCanonicalPath(path, prefixForNonAbsolutePath);
     }
 
@@ -125,11 +116,12 @@ public class TermuxFileUtils {
      * @return Returns the allowed path if it {@code path} is under it, otherwise {@link TermuxConstants#TERMUX_FILES_DIR_PATH}.
      */
     public static String getMatchedAllowedTermuxWorkingDirectoryParentPathForPath(String path) {
-        if (path == null || path.isEmpty()) return TermuxConstants.TERMUX_FILES_DIR_PATH;
-
+        if (path == null || path.isEmpty())
+            return TermuxConstants.TERMUX_FILES_DIR_PATH;
         if (path.startsWith(TermuxConstants.TERMUX_STORAGE_HOME_DIR_PATH + "/")) {
             return TermuxConstants.TERMUX_STORAGE_HOME_DIR_PATH;
-        } if (path.startsWith(Environment.getExternalStorageDirectory().getAbsolutePath() + "/")) {
+        }
+        if (path.startsWith(Environment.getExternalStorageDirectory().getAbsolutePath() + "/")) {
             return Environment.getExternalStorageDirectory().getAbsolutePath();
         } else if (path.startsWith("/sdcard/")) {
             return "/sdcard";
@@ -164,13 +156,8 @@ public class TermuxFileUtils {
      * @return Returns the {@code error} if path is not a directory file, failed to create it,
      * or validating permissions failed, otherwise {@code null}.
      */
-    public static Error validateDirectoryFileExistenceAndPermissions(String label, final String filePath, final boolean createDirectoryIfMissing,
-                                                                     final boolean setPermissions, final boolean setMissingPermissionsOnly,
-                                                                     final boolean ignoreErrorsIfPathIsInParentDirPath, final boolean ignoreIfNotExecutable) {
-        return FileUtils.validateDirectoryFileExistenceAndPermissions(label, filePath,
-            TermuxFileUtils.getMatchedAllowedTermuxWorkingDirectoryParentPathForPath(filePath), createDirectoryIfMissing,
-            FileUtils.APP_WORKING_DIRECTORY_PERMISSIONS, setPermissions, setMissingPermissionsOnly,
-            ignoreErrorsIfPathIsInParentDirPath, ignoreIfNotExecutable);
+    public static Error validateDirectoryFileExistenceAndPermissions(String label, final String filePath, final boolean createDirectoryIfMissing, final boolean setPermissions, final boolean setMissingPermissionsOnly, final boolean ignoreErrorsIfPathIsInParentDirPath, final boolean ignoreIfNotExecutable) {
+        return FileUtils.validateDirectoryFileExistenceAndPermissions(label, filePath, TermuxFileUtils.getMatchedAllowedTermuxWorkingDirectoryParentPathForPath(filePath), createDirectoryIfMissing, FileUtils.APP_WORKING_DIRECTORY_PERMISSIONS, setPermissions, setMissingPermissionsOnly, ignoreErrorsIfPathIsInParentDirPath, ignoreIfNotExecutable);
     }
 
     /**
@@ -198,7 +185,6 @@ public class TermuxFileUtils {
      * and will not be automatically created, unless there is a bind mount from `/data/data` to
      * `/data/user/[id]`, ideally in the right namespace.
      * https://source.android.com/devices/tech/admin/multi-user
-     *
      *
      * On Android version `<=10`, the `/data/user/0` is a symlink to `/data/data` directory.
      * https://cs.android.com/android/platform/superproject/+/android-10.0.0_r47:system/core/rootdir/init.rc;l=589
@@ -237,7 +223,6 @@ public class TermuxFileUtils {
      * https://www.kernel.org/doc/Documentation/filesystems/sharedsubtree.txt
      * https://unix.stackexchange.com/a/571959
      *
-     *
      * Also note that running `/system/bin/ls -lhd /data/user/0/com.termux` as secondary user will result
      * in `ls: /data/user/0/com.termux: Permission denied` where `0` is primary user id but running
      * `/system/bin/ls -lhd /data/user/10/com.termux` will result in
@@ -257,16 +242,11 @@ public class TermuxFileUtils {
     public static Error isTermuxFilesDirectoryAccessible(@NonNull final Context context, boolean createDirectoryIfMissing, boolean setMissingPermissions) {
         if (createDirectoryIfMissing)
             context.getFilesDir();
-
         if (!FileUtils.directoryFileExists(TermuxConstants.TERMUX_FILES_DIR_PATH, true))
             return FileUtilsErrno.ERRNO_FILE_NOT_FOUND_AT_PATH.getError("termux files directory", TermuxConstants.TERMUX_FILES_DIR_PATH);
-
         if (setMissingPermissions)
-            FileUtils.setMissingFilePermissions("termux files directory", TermuxConstants.TERMUX_FILES_DIR_PATH,
-                FileUtils.APP_WORKING_DIRECTORY_PERMISSIONS);
-
-        return FileUtils.checkMissingFilePermissions("termux files directory", TermuxConstants.TERMUX_FILES_DIR_PATH,
-            FileUtils.APP_WORKING_DIRECTORY_PERMISSIONS, false);
+            FileUtils.setMissingFilePermissions("termux files directory", TermuxConstants.TERMUX_FILES_DIR_PATH, FileUtils.APP_WORKING_DIRECTORY_PERMISSIONS);
+        return FileUtils.checkMissingFilePermissions("termux files directory", TermuxConstants.TERMUX_FILES_DIR_PATH, FileUtils.APP_WORKING_DIRECTORY_PERMISSIONS, false);
     }
 
     /**
@@ -285,10 +265,7 @@ public class TermuxFileUtils {
      * or validating permissions failed, otherwise {@code null}.
      */
     public static Error isTermuxPrefixDirectoryAccessible(boolean createDirectoryIfMissing, boolean setMissingPermissions) {
-           return FileUtils.validateDirectoryFileExistenceAndPermissions("termux prefix directory", TermuxConstants.TERMUX_PREFIX_DIR_PATH,
-                null, createDirectoryIfMissing,
-                FileUtils.APP_WORKING_DIRECTORY_PERMISSIONS, setMissingPermissions, true,
-                false, false);
+        return FileUtils.validateDirectoryFileExistenceAndPermissions("termux prefix directory", TermuxConstants.TERMUX_PREFIX_DIR_PATH, null, createDirectoryIfMissing, FileUtils.APP_WORKING_DIRECTORY_PERMISSIONS, setMissingPermissions, true, false, false);
     }
 
     /**
@@ -303,10 +280,7 @@ public class TermuxFileUtils {
      * or validating permissions failed, otherwise {@code null}.
      */
     public static Error isTermuxPrefixStagingDirectoryAccessible(boolean createDirectoryIfMissing, boolean setMissingPermissions) {
-        return FileUtils.validateDirectoryFileExistenceAndPermissions("termux prefix staging directory", TermuxConstants.TERMUX_STAGING_PREFIX_DIR_PATH,
-            null, createDirectoryIfMissing,
-            FileUtils.APP_WORKING_DIRECTORY_PERMISSIONS, setMissingPermissions, true,
-            false, false);
+        return FileUtils.validateDirectoryFileExistenceAndPermissions("termux prefix staging directory", TermuxConstants.TERMUX_STAGING_PREFIX_DIR_PATH, null, createDirectoryIfMissing, FileUtils.APP_WORKING_DIRECTORY_PERMISSIONS, setMissingPermissions, true, false, false);
     }
 
     /**
@@ -321,10 +295,7 @@ public class TermuxFileUtils {
      * or validating permissions failed, otherwise {@code null}.
      */
     public static Error isAppsTermuxAppDirectoryAccessible(boolean createDirectoryIfMissing, boolean setMissingPermissions) {
-        return FileUtils.validateDirectoryFileExistenceAndPermissions("apps/termux-app directory", TermuxConstants.TERMUX_APP.APPS_DIR_PATH,
-            null, createDirectoryIfMissing,
-            FileUtils.APP_WORKING_DIRECTORY_PERMISSIONS, setMissingPermissions, true,
-            false, false);
+        return FileUtils.validateDirectoryFileExistenceAndPermissions("apps/termux-app directory", TermuxConstants.TERMUX_APP.APPS_DIR_PATH, null, createDirectoryIfMissing, FileUtils.APP_WORKING_DIRECTORY_PERMISSIONS, setMissingPermissions, true, false, false);
     }
 
     /**
@@ -332,11 +303,9 @@ public class TermuxFileUtils {
      * files in {@link TermuxConstants#TERMUX_PREFIX_DIR_IGNORED_SUB_FILES_PATHS_TO_CONSIDER_AS_EMPTY}.
      */
     public static boolean isTermuxPrefixDirectoryEmpty() {
-        Error error = FileUtils.validateDirectoryFileEmptyOrOnlyContainsSpecificFiles("termux prefix",
-            TERMUX_PREFIX_DIR_PATH, TermuxConstants.TERMUX_PREFIX_DIR_IGNORED_SUB_FILES_PATHS_TO_CONSIDER_AS_EMPTY, true);
+        Error error = FileUtils.validateDirectoryFileEmptyOrOnlyContainsSpecificFiles("termux prefix", TERMUX_PREFIX_DIR_PATH, TermuxConstants.TERMUX_PREFIX_DIR_IGNORED_SUB_FILES_PATHS_TO_CONSIDER_AS_EMPTY, true);
         if (error == null)
             return true;
-
         if (!FileUtilsErrno.ERRNO_NON_EMPTY_DIRECTORY_FILE.equalsErrorTypeAndCode(error))
             Logger.logErrorExtended(LOG_TAG, "Failed to check if termux prefix directory is empty:\n" + error.getErrorLogString());
         return false;
@@ -350,35 +319,15 @@ public class TermuxFileUtils {
      */
     public static String getTermuxFilesStatMarkdownString(@NonNull final Context context) {
         Context termuxPackageContext = TermuxUtils.getTermuxPackageContext(context);
-        if (termuxPackageContext == null) return null;
-
+        if (termuxPackageContext == null)
+            return null;
         // Also ensures that termux files directory is created if it does not already exist
         String filesDir = termuxPackageContext.getFilesDir().getAbsolutePath();
-
         // Build script
         StringBuilder statScript = new StringBuilder();
-        statScript
-            .append("echo 'ls info:'\n")
-            .append("/system/bin/ls -lhdZ")
-            .append(" '/data/data'")
-            .append(" '/data/user/0'")
-            .append(" '" + TermuxConstants.TERMUX_INTERNAL_PRIVATE_APP_DATA_DIR_PATH + "'")
-            .append(" '/data/user/0/" + TermuxConstants.TERMUX_PACKAGE_NAME + "'")
-            .append(" '" + TermuxConstants.TERMUX_FILES_DIR_PATH + "'")
-            .append(" '" + filesDir + "'")
-            .append(" '/data/user/0/" + TermuxConstants.TERMUX_PACKAGE_NAME + "/files'")
-            .append(" '/data/user/" + TermuxConstants.TERMUX_PACKAGE_NAME + "/files'")
-            .append(" '" + TermuxConstants.TERMUX_STAGING_PREFIX_DIR_PATH + "'")
-            .append(" '" + TermuxConstants.TERMUX_PREFIX_DIR_PATH + "'")
-            .append(" '" + TermuxConstants.TERMUX_HOME_DIR_PATH + "'")
-            .append(" '" + TermuxConstants.TERMUX_BIN_PREFIX_DIR_PATH + "/login'")
-            .append(" 2>&1")
-            .append("\necho; echo 'mount info:'\n")
-            .append("/system/bin/grep -E '( /data )|( /data/data )|( /data/user/[0-9]+ )' /proc/self/mountinfo 2>&1 | /system/bin/grep -v '/data_mirror' 2>&1");
-
+        statScript.append("echo 'ls info:'\n").append("/system/bin/ls -lhdZ").append(" '/data/data'").append(" '/data/user/0'").append(" '" + TermuxConstants.TERMUX_INTERNAL_PRIVATE_APP_DATA_DIR_PATH + "'").append(" '/data/user/0/" + TermuxConstants.TERMUX_PACKAGE_NAME + "'").append(" '" + TermuxConstants.TERMUX_FILES_DIR_PATH + "'").append(" '" + filesDir + "'").append(" '/data/user/0/" + TermuxConstants.TERMUX_PACKAGE_NAME + "/files'").append(" '/data/user/" + TermuxConstants.TERMUX_PACKAGE_NAME + "/files'").append(" '" + TermuxConstants.TERMUX_STAGING_PREFIX_DIR_PATH + "'").append(" '" + TermuxConstants.TERMUX_PREFIX_DIR_PATH + "'").append(" '" + TermuxConstants.TERMUX_HOME_DIR_PATH + "'").append(" '" + TermuxConstants.TERMUX_BIN_PREFIX_DIR_PATH + "/login'").append(" 2>&1").append("\necho; echo 'mount info:'\n").append("/system/bin/grep -E '( /data )|( /data/data )|( /data/user/[0-9]+ )' /proc/self/mountinfo 2>&1 | /system/bin/grep -v '/data_mirror' 2>&1");
         // Run script
-        ExecutionCommand executionCommand = new ExecutionCommand(-1, "/system/bin/sh", null,
-            statScript.toString() + "\n", "/", ExecutionCommand.Runner.APP_SHELL.getName(), true);
+        ExecutionCommand executionCommand = new ExecutionCommand(-1, "/system/bin/sh", null, statScript.toString() + "\n", "/", ExecutionCommand.Runner.APP_SHELL.getName(), true);
         executionCommand.commandLabel = TermuxConstants.TERMUX_APP_NAME + " Files Stat Command";
         executionCommand.backgroundCustomLogLevel = Logger.LOG_LEVEL_OFF;
         AppShell appShell = AppShell.execute(context, executionCommand, null, new TermuxShellEnvironment(), null, true);
@@ -386,12 +335,10 @@ public class TermuxFileUtils {
             Logger.logErrorExtended(LOG_TAG, executionCommand.toString());
             return null;
         }
-
         // Build script output
         StringBuilder statOutput = new StringBuilder();
         statOutput.append("$ ").append(statScript.toString());
         statOutput.append("\n\n").append(executionCommand.resultData.stdout.toString());
-
         boolean stderrSet = !executionCommand.resultData.stderr.toString().isEmpty();
         if (executionCommand.resultData.exitCode != 0 || stderrSet) {
             Logger.logErrorExtended(LOG_TAG, executionCommand.toString());
@@ -399,16 +346,13 @@ public class TermuxFileUtils {
                 statOutput.append("\n").append(executionCommand.resultData.stderr.toString());
             statOutput.append("\n").append("exit code: ").append(executionCommand.resultData.exitCode.toString());
         }
-
         // Build markdown output
         StringBuilder markdownString = new StringBuilder();
         markdownString.append("## ").append(TermuxConstants.TERMUX_APP_NAME).append(" Files Info\n\n");
-        AndroidUtils.appendPropertyToMarkdown(markdownString,"TERMUX_REQUIRED_FILES_DIR_PATH ($PREFIX)", TermuxConstants.TERMUX_FILES_DIR_PATH);
-        AndroidUtils.appendPropertyToMarkdown(markdownString,"ANDROID_ASSIGNED_FILES_DIR_PATH", filesDir);
+        AndroidUtils.appendPropertyToMarkdown(markdownString, "TERMUX_REQUIRED_FILES_DIR_PATH ($PREFIX)", TermuxConstants.TERMUX_FILES_DIR_PATH);
+        AndroidUtils.appendPropertyToMarkdown(markdownString, "ANDROID_ASSIGNED_FILES_DIR_PATH", filesDir);
         markdownString.append("\n\n").append(MarkdownUtils.getMarkdownCodeForString(statOutput.toString(), true));
         markdownString.append("\n##\n");
-
         return markdownString.toString();
     }
-
 }

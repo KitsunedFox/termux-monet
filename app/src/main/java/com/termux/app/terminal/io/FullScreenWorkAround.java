@@ -3,7 +3,6 @@ package com.termux.app.terminal.io;
 import android.graphics.Rect;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.termux.app.TermuxActivity;
 
 /**
@@ -15,12 +14,14 @@ import com.termux.app.TermuxActivity;
  * For more information, see https://issuetracker.google.com/issues/36911528
  */
 public class FullScreenWorkAround {
+
     private final View mChildOfContent;
+
     private int mUsableHeightPrevious;
+
     private final ViewGroup.LayoutParams mViewGroupLayoutParams;
 
     private final int mNavBarHeight;
-
 
     public static void apply(TermuxActivity activity) {
         new FullScreenWorkAround(activity);
@@ -41,7 +42,6 @@ public class FullScreenWorkAround {
             int heightDifference = usableHeightSansKeyboard - usableHeightNow;
             if (heightDifference > (usableHeightSansKeyboard / 4)) {
                 // keyboard probably just became visible
-
                 // ensures that usable layout space does not extend behind the
                 // soft keyboard, causing the extra keys to not be visible
                 mViewGroupLayoutParams.height = (usableHeightSansKeyboard - heightDifference) + getNavBarHeight();
@@ -63,6 +63,4 @@ public class FullScreenWorkAround {
         mChildOfContent.getWindowVisibleDisplayFrame(r);
         return (r.bottom - r.top);
     }
-
 }
-

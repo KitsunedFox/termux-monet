@@ -4,10 +4,8 @@ import android.content.Context;
 import android.system.ErrnoException;
 import android.system.Os;
 import android.system.OsConstants;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.google.common.base.Joiner;
 import com.termux.shared.R;
 import com.termux.shared.data.DataUtils;
@@ -20,7 +18,6 @@ import com.termux.shared.shell.command.ExecutionCommand.ExecutionState;
 import com.termux.shared.shell.command.environment.IShellEnvironment;
 import com.termux.shared.shell.ShellUtils;
 import com.termux.shared.shell.StreamGobbler;
-
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -37,13 +34,14 @@ import java.util.List;
 public final class AppShell {
 
     private final Process mProcess;
+
     private final ExecutionCommand mExecutionCommand;
+
     private final AppShellClient mAppShellClient;
 
     private static final String LOG_TAG = "AppShell";
 
-    private AppShell(@NonNull final Process process, @NonNull final ExecutionCommand executionCommand,
-                     final AppShellClient appShellClient) {
+    private AppShell(@NonNull final Process process, @NonNull final ExecutionCommand executionCommand, final AppShellClient appShellClient) {
         this.mProcess = process;
         this.mExecutionCommand = executionCommand;
         this.mAppShellClient = appShellClient;
@@ -75,56 +73,39 @@ public final class AppShell {
      *                      asynchronously in the background and control is returned to the caller thread.
      * @return Returns the {@link AppShell}. This will be {@code null} if failed to start the execution command.
      */
-    public static AppShell execute(@NonNull final Context currentPackageContext, @NonNull ExecutionCommand executionCommand,
-                                   final AppShellClient appShellClient,
-                                   @NonNull final IShellEnvironment shellEnvironmentClient,
-                                   @Nullable HashMap<String, String> additionalEnvironment,
-                                   final boolean isSynchronous) {
+    public static AppShell execute(@NonNull final Context currentPackageContext, @NonNull ExecutionCommand executionCommand, final AppShellClient appShellClient, @NonNull final IShellEnvironment shellEnvironmentClient, @Nullable HashMap<String, String> additionalEnvironment, final boolean isSynchronous) {
         if (executionCommand.executable == null || executionCommand.executable.isEmpty()) {
-            executionCommand.setStateFailed(Errno.ERRNO_FAILED.getCode(),
-                currentPackageContext.getString(R.string.error_executable_unset, executionCommand.getCommandIdAndLabelLogString()));
+            executionCommand.setStateFailed(Errno.ERRNO_FAILED.getCode(), currentPackageContext.getString(R.string.error_executable_unset, executionCommand.getCommandIdAndLabelLogString()));
             AppShell.processAppShellResult(null, executionCommand);
             return null;
         }
-
         if (executionCommand.workingDirectory == null || executionCommand.workingDirectory.isEmpty())
             executionCommand.workingDirectory = shellEnvironmentClient.getDefaultWorkingDirectoryPath();
         if (executionCommand.workingDirectory.isEmpty())
             executionCommand.workingDirectory = "/";
-
         // Transform executable path to shell/session name, e.g. "/bin/do-something.sh" => "do-something.sh".
         String executableBasename = ShellUtils.getExecutableBasename(executionCommand.executable);
-
         if (executionCommand.shellName == null)
             executionCommand.shellName = executableBasename;
-
         if (executionCommand.commandLabel == null)
             executionCommand.commandLabel = executableBasename;
-
         // Setup command args
         final String[] commandArray = shellEnvironmentClient.setupShellCommandArguments(executionCommand.executable, executionCommand.arguments);
-
         // Setup command environment
-        HashMap<String, String> environment = shellEnvironmentClient.setupShellCommandEnvironment(currentPackageContext,
-            executionCommand);
+        HashMap<String, String> environment = shellEnvironmentClient.setupShellCommandEnvironment(currentPackageContext, executionCommand);
         if (additionalEnvironment != null)
             environment.putAll(additionalEnvironment);
         List<String> environmentList = ShellEnvironmentUtils.convertEnvironmentToEnviron(environment);
         Collections.sort(environmentList);
         String[] environmentArray = environmentList.toArray(new String[0]);
-
         if (!executionCommand.setState(ExecutionState.EXECUTING)) {
             executionCommand.setStateFailed(Errno.ERRNO_FAILED.getCode(), currentPackageContext.getString(R.string.error_failed_to_execute_app_shell_command, executionCommand.getCommandIdAndLabelLogString()));
             AppShell.processAppShellResult(null, executionCommand);
             return null;
         }
-
         // No need to log stdin if logging is disabled, like for app internal scripts
-        Logger.logDebugExtended(LOG_TAG, ExecutionCommand.getExecutionInputLogString(executionCommand,
-            true, Logger.shouldEnableLoggingForCustomLogLevel(executionCommand.backgroundCustomLogLevel)));
-        Logger.logVerboseExtended(LOG_TAG, "\"" + executionCommand.getCommandIdAndLabelLogString() + "\" AppShell Environment:\n" +
-            Joiner.on("\n").join(environmentArray));
-
+        Logger.logDebugExtended(LOG_TAG, ExecutionCommand.getExecutionInputLogString(executionCommand, true, Logger.shouldEnableLoggingForCustomLogLevel(executionCommand.backgroundCustomLogLevel)));
+        Logger.logVerboseExtended(LOG_TAG, "\"" + executionCommand.getCommandIdAndLabelLogString() + "\" AppShell Environment:\n" + Joiner.on("\n").join(environmentArray));
         // Exec the process
         final Process process;
         try {
@@ -134,7 +115,6 @@ public final class AppShell {
             AppShell.processAppShellResult(null, executionCommand);
             return null;
         }
-
         final AppShell appShell = new AppShell(process, executionCommand, appShellClient);
         if (isSynchronous) {
             try {
@@ -144,6 +124,7 @@ public final class AppShell {
             }
         } else {
             new Thread() {
+
                 @Override
                 public void run() {
                     try {
@@ -154,7 +135,6 @@ public final class AppShell {
                 }
             }.start();
         }
-
         return appShell;
     }
 
@@ -169,20 +149,15 @@ public final class AppShell {
      */
     private void executeInner(@NonNull final Context context) throws IllegalThreadStateException, InterruptedException {
         mExecutionCommand.mPid = ShellUtils.getPid(mProcess);
-
         Logger.logDebug(LOG_TAG, "Running \"" + mExecutionCommand.getCommandIdAndLabelLogString() + "\" AppShell with pid " + mExecutionCommand.mPid);
-
         mExecutionCommand.resultData.exitCode = null;
-
         // setup stdin, and stdout and stderr gobblers
         DataOutputStream STDIN = new DataOutputStream(mProcess.getOutputStream());
         StreamGobbler STDOUT = new StreamGobbler(mExecutionCommand.mPid + "-stdout", mProcess.getInputStream(), mExecutionCommand.resultData.stdout, mExecutionCommand.backgroundCustomLogLevel);
         StreamGobbler STDERR = new StreamGobbler(mExecutionCommand.mPid + "-stderr", mProcess.getErrorStream(), mExecutionCommand.resultData.stderr, mExecutionCommand.backgroundCustomLogLevel);
-
         // start gobbling
         STDOUT.start();
         STDERR.start();
-
         if (!DataUtils.isNullOrEmpty(mExecutionCommand.stdin)) {
             try {
                 STDIN.write((mExecutionCommand.stdin + "\n").getBytes(StandardCharsets.UTF_8));
@@ -190,7 +165,7 @@ public final class AppShell {
                 STDIN.close();
                 //STDIN.write("exit\n".getBytes(StandardCharsets.UTF_8));
                 //STDIN.flush();
-            } catch(IOException e) {
+            } catch (IOException e) {
                 if (e.getMessage() != null && (e.getMessage().contains("EPIPE") || e.getMessage().contains("Stream closed"))) {
                     // Method most horrid to catch broken pipe, in which case we
                     // do nothing. The command is not a shell, the shell closed
@@ -207,10 +182,8 @@ public final class AppShell {
                 }
             }
         }
-
         // wait for our process to finish, while we gobble away in the background
         int exitCode = mProcess.waitFor();
-
         // make sure our threads are done gobbling
         // and the process is destroyed - while the latter shouldn't be
         // needed in theory, and may even produce warnings, in "normal" Java
@@ -224,24 +197,19 @@ public final class AppShell {
         STDOUT.join();
         STDERR.join();
         mProcess.destroy();
-
         // Process result
         if (exitCode == 0)
             Logger.logDebug(LOG_TAG, "The \"" + mExecutionCommand.getCommandIdAndLabelLogString() + "\" AppShell with pid " + mExecutionCommand.mPid + " exited normally");
         else
             Logger.logDebug(LOG_TAG, "The \"" + mExecutionCommand.getCommandIdAndLabelLogString() + "\" AppShell with pid " + mExecutionCommand.mPid + " exited with code: " + exitCode);
-
         // If the execution command has already failed, like SIGKILL was sent, then don't continue
         if (mExecutionCommand.isStateFailed()) {
             Logger.logDebug(LOG_TAG, "Ignoring setting \"" + mExecutionCommand.getCommandIdAndLabelLogString() + "\" AppShell state to ExecutionState.EXECUTED and processing results since it has already failed");
             return;
         }
-
         mExecutionCommand.resultData.exitCode = exitCode;
-
         if (!mExecutionCommand.setState(ExecutionState.EXECUTED))
             return;
-
         AppShell.processAppShellResult(this, null);
     }
 
@@ -259,16 +227,14 @@ public final class AppShell {
             Logger.logDebug(LOG_TAG, "Ignoring sending SIGKILL to \"" + mExecutionCommand.getCommandIdAndLabelLogString() + "\" AppShell since it has already finished executing");
             return;
         }
-
         Logger.logDebug(LOG_TAG, "Send SIGKILL to \"" + mExecutionCommand.getCommandIdAndLabelLogString() + "\" AppShell");
-
         if (mExecutionCommand.setStateFailed(Errno.ERRNO_FAILED.getCode(), context.getString(R.string.error_sending_sigkill_to_process))) {
             if (processResult) {
-                mExecutionCommand.resultData.exitCode = 137; // SIGKILL
+                // SIGKILL
+                mExecutionCommand.resultData.exitCode = 137;
                 AppShell.processAppShellResult(this, null);
             }
         }
-
         if (mExecutionCommand.isExecuting()) {
             kill();
         }
@@ -305,16 +271,13 @@ public final class AppShell {
     private static void processAppShellResult(final AppShell appShell, ExecutionCommand executionCommand) {
         if (appShell != null)
             executionCommand = appShell.mExecutionCommand;
-
-        if (executionCommand == null) return;
-
+        if (executionCommand == null)
+            return;
         if (executionCommand.shouldNotProcessResults()) {
             Logger.logDebug(LOG_TAG, "Ignoring duplicate call to process \"" + executionCommand.getCommandIdAndLabelLogString() + "\" AppShell result");
             return;
         }
-
         Logger.logDebug(LOG_TAG, "Processing \"" + executionCommand.getCommandIdAndLabelLogString() + "\" AppShell result");
-
         if (appShell != null && appShell.mAppShellClient != null) {
             appShell.mAppShellClient.onAppShellExited(appShell);
         } else {
@@ -333,8 +296,6 @@ public final class AppShell {
         return mExecutionCommand;
     }
 
-
-
     public interface AppShellClient {
 
         /**
@@ -343,7 +304,5 @@ public final class AppShell {
          * @param appShell The {@link AppShell} that exited.
          */
         void onAppShellExited(AppShell appShell);
-
     }
-
 }

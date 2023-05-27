@@ -1,19 +1,28 @@
 package com.termux.shared.termux.extrakeys;
 
 import com.google.android.material.button.MaterialButton;
-
 import java.util.ArrayList;
 import java.util.List;
 
-/** The {@link Class} that maintains a state of a {@link SpecialButton} */
+/**
+ * The {@link Class} that maintains a state of a {@link SpecialButton}
+ */
 public class SpecialButtonState {
 
-    /** If special button has been created for the {@link ExtraKeysView}. */
+    /**
+     * If special button has been created for the {@link ExtraKeysView}.
+     */
     boolean isCreated = false;
-    /** If special button is active. */
+
+    /**
+     * If special button is active.
+     */
     boolean isActive = false;
-    /** If special button is locked due to long hold on it and should not be deactivated if its
-     * state is read. */
+
+    /**
+     * If special button is locked due to long hold on it and should not be deactivated if its
+     * state is read.
+     */
     boolean isLocked = false;
 
     List<MaterialButton> buttons = new ArrayList<>();
@@ -30,12 +39,16 @@ public class SpecialButtonState {
         mExtraKeysView = extraKeysView;
     }
 
-    /** Set {@link #isCreated}. */
+    /**
+     * Set {@link #isCreated}.
+     */
     public void setIsCreated(boolean value) {
         isCreated = value;
     }
 
-    /** Set {@link #isActive}. */
+    /**
+     * Set {@link #isActive}.
+     */
     public void setIsActive(boolean value) {
         isActive = value;
         for (MaterialButton button : buttons) {
@@ -43,9 +56,10 @@ public class SpecialButtonState {
         }
     }
 
-    /** Set {@link #isLocked}. */
+    /**
+     * Set {@link #isLocked}.
+     */
     public void setIsLocked(boolean value) {
         isLocked = value;
     }
-
 }

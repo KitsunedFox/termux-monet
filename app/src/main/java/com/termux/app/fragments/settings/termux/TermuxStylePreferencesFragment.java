@@ -2,14 +2,12 @@ package com.termux.app.fragments.settings.termux;
 
 import android.content.Context;
 import android.os.Bundle;
-
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.preference.PreferenceDataStore;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.preference.SwitchPreferenceCompat;
-
 import com.termux.R;
 import com.termux.app.style.TermuxBackgroundManager;
 import com.termux.shared.termux.settings.preferences.TermuxAppSharedPreferences;
@@ -20,13 +18,11 @@ public class TermuxStylePreferencesFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         Context context = getContext();
-        if (context == null) return;
-
+        if (context == null)
+            return;
         PreferenceManager preferenceManager = getPreferenceManager();
         preferenceManager.setPreferenceDataStore(TermuxStylePreferencesDataStore.getInstance(context));
-
         setPreferencesFromResource(R.xml.termux_style_preferences, rootKey);
-
         configureBackgroundPreferences(context);
     }
 
@@ -37,12 +33,10 @@ public class TermuxStylePreferencesFragment extends PreferenceFragmentCompat {
      */
     private void configureBackgroundPreferences(@NonNull Context context) {
         SwitchPreferenceCompat backgroundImagePreference = findPreference("background_image_enabled");
-
         if (backgroundImagePreference != null) {
             TermuxAppSharedPreferences preferences = TermuxAppSharedPreferences.build(context, true);
-
-            if (preferences == null) return;
-
+            if (preferences == null)
+                return;
             // If background image preference is disabled and background images are
             // missing, then don't allow user to enable it from setting.
             if (!preferences.isBackgroundImageEnabled() && !TermuxBackgroundManager.isImageFilesExist(context, false)) {
@@ -50,7 +44,6 @@ public class TermuxStylePreferencesFragment extends PreferenceFragmentCompat {
             }
         }
     }
-
 }
 
 class TermuxStylePreferencesDataStore extends PreferenceDataStore {
@@ -70,18 +63,16 @@ class TermuxStylePreferencesDataStore extends PreferenceDataStore {
         if (mInstance == null) {
             mInstance = new TermuxStylePreferencesDataStore(context);
         }
-
         return mInstance;
     }
 
-
-
     @Override
     public void putBoolean(String key, boolean value) {
-        if (mPreferences == null) return;
-        if (key == null) return;
-
-        switch (key) {
+        if (mPreferences == null)
+            return;
+        if (key == null)
+            return;
+        switch(key) {
             case "background_image_enabled":
                 mPreferences.setBackgroundImageEnabled(value);
             default:
@@ -91,14 +82,13 @@ class TermuxStylePreferencesDataStore extends PreferenceDataStore {
 
     @Override
     public boolean getBoolean(String key, boolean defValue) {
-        if (mPreferences == null) return false;
-
-        switch (key) {
+        if (mPreferences == null)
+            return false;
+        switch(key) {
             case "background_image_enabled":
                 return mPreferences.isBackgroundImageEnabled();
             default:
                 return false;
         }
     }
-
 }

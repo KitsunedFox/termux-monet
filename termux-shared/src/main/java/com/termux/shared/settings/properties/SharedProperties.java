@@ -2,17 +2,14 @@ package com.termux.shared.settings.properties;
 
 import android.content.Context;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.primitives.Primitives;
 import com.termux.shared.file.FileUtils;
 import com.termux.shared.file.filesystem.FileType;
 import com.termux.shared.logger.Logger;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
@@ -61,25 +58,24 @@ public class SharedProperties {
     private Map<String, Object> mMap;
 
     private final Context mContext;
+
     private final File mPropertiesFile;
+
     private final Set<String> mPropertiesList;
+
     private final SharedPropertiesParser mSharedPropertiesParser;
 
     private final Object mLock = new Object();
 
-    /** Defines the bidirectional map for boolean values and their internal values  */
-    public static final ImmutableBiMap<String, Boolean> MAP_GENERIC_BOOLEAN =
-        new ImmutableBiMap.Builder<String, Boolean>()
-            .put("true", true)
-            .put("false", false)
-            .build();
+    /**
+     * Defines the bidirectional map for boolean values and their internal values
+     */
+    public static final ImmutableBiMap<String, Boolean> MAP_GENERIC_BOOLEAN = new ImmutableBiMap.Builder<String, Boolean>().put("true", true).put("false", false).build();
 
-    /** Defines the bidirectional map for inverted boolean values and their internal values  */
-    public static final ImmutableBiMap<String, Boolean> MAP_GENERIC_INVERTED_BOOLEAN =
-        new ImmutableBiMap.Builder<String, Boolean>()
-            .put("true", false)
-            .put("false", true)
-            .build();
+    /**
+     * Defines the bidirectional map for inverted boolean values and their internal values
+     */
+    public static final ImmutableBiMap<String, Boolean> MAP_GENERIC_INVERTED_BOOLEAN = new ImmutableBiMap.Builder<String, Boolean>().put("true", false).put("false", true).build();
 
     private static final String LOG_TAG = "SharedProperties";
 
@@ -98,7 +94,6 @@ public class SharedProperties {
         mPropertiesFile = propertiesFile;
         mPropertiesList = propertiesList;
         mSharedPropertiesParser = sharedPropertiesParser;
-
         mProperties = new Properties();
         mMap = new HashMap<>();
     }
@@ -113,36 +108,32 @@ public class SharedProperties {
         synchronized (mLock) {
             // Get properties from mPropertiesFile
             Properties properties = getProperties(false);
-
             // We still need to load default values into mMap, so we assume no properties defined if
             // reading from mPropertiesFile failed
             if (properties == null)
                 properties = new Properties();
-
             HashMap<String, Object> map = new HashMap<>();
             Properties newProperties = new Properties();
-
             Set<String> propertiesList = mPropertiesList;
             if (propertiesList == null)
                 propertiesList = properties.stringPropertyNames();
-
             String value;
             Object internalValue;
             for (String key : propertiesList) {
-                value = properties.getProperty(key); // value will be null if key does not exist in propertiesFile
+                // value will be null if key does not exist in propertiesFile
+                value = properties.getProperty(key);
                 // Logger.logVerbose(LOG_TAG, key + " : " + value);
-
                 // Call the {@link SharedPropertiesParser#getInternalPropertyValueFromValue(Context,String,String)}
                 // interface method to get the internal value to store in the {@link #mMap}.
                 internalValue = mSharedPropertiesParser.getInternalPropertyValueFromValue(mContext, key, value);
-
                 // If the internal value was successfully added to map, then also add value to newProperties
                 // We only store values in-memory defined by propertiesList
-                if (putToMap(map, key, internalValue)) { // null internalValue will be put into map
-                    putToProperties(newProperties, key, value); // null value will **not** be into properties
+                if (putToMap(map, key, internalValue)) {
+                    // null internalValue will be put into map
+                    // null value will **not** be into properties
+                    putToProperties(newProperties, key, value);
                 }
             }
-
             mMap = map;
             mProperties = newProperties;
         }
@@ -160,7 +151,8 @@ public class SharedProperties {
     public Properties getProperties(boolean cached) {
         synchronized (mLock) {
             if (cached) {
-                if (mProperties == null) mProperties = new Properties();
+                if (mProperties == null)
+                    mProperties = new Properties();
                 return getPropertiesCopy(mProperties);
             } else {
                 return getPropertiesFromFile(mContext, mPropertiesFile, mSharedPropertiesParser);
@@ -191,7 +183,8 @@ public class SharedProperties {
      */
     public Map<String, Object> getInternalProperties() {
         synchronized (mLock) {
-            if (mMap == null) mMap = new HashMap<>();
+            if (mMap == null)
+                mMap = new HashMap<>();
             return getMapCopy(mMap);
         }
     }
@@ -216,10 +209,6 @@ public class SharedProperties {
         }
     }
 
-
-
-
-
     /**
      * A static function to get the {@link Properties} object for the propertiesFile. A lock is not
      * taken when this function is called.
@@ -232,12 +221,10 @@ public class SharedProperties {
      */
     public static Properties getPropertiesFromFile(Context context, File propertiesFile, @Nullable SharedPropertiesParser sharedPropertiesParser) {
         Properties properties = new Properties();
-
         if (propertiesFile == null) {
             Logger.logWarn(LOG_TAG, "Not loading properties since file is null");
             return properties;
         }
-
         try {
             try (FileInputStream in = new FileInputStream(propertiesFile)) {
                 Logger.logVerbose(LOG_TAG, "Loading properties from \"" + propertiesFile.getAbsolutePath() + "\" file");
@@ -249,14 +236,14 @@ public class SharedProperties {
             Logger.logStackTraceWithMessage(LOG_TAG, "Error loading properties file \"" + propertiesFile.getAbsolutePath() + "\"", e);
             return null;
         }
-
         if (sharedPropertiesParser != null && context != null)
             return sharedPropertiesParser.preProcessPropertiesOnReadFromDisk(context, properties);
         else
             return properties;
     }
 
-    /** Returns the first {@link File} found in
+    /**
+     * Returns the first {@link File} found in
      * {@code propertiesFilePaths} from which app properties can be loaded. If the {@link File} found
      * is not a regular file or is not readable, then {@code null} is returned. Symlinks **will not**
      * be followed for potential security reasons.
@@ -268,10 +255,8 @@ public class SharedProperties {
     public static File getPropertiesFileFromList(List<String> propertiesFilePaths, @NonNull String logTag) {
         if (propertiesFilePaths == null || propertiesFilePaths.size() == 0)
             return null;
-
-        for(String propertiesFilePath : propertiesFilePaths) {
+        for (String propertiesFilePath : propertiesFilePaths) {
             File propertiesFile = new File(propertiesFilePath);
-
             // Symlinks **will not** be followed.
             FileType fileType = FileUtils.getFileType(propertiesFilePath, false);
             if (fileType == FileType.REGULAR) {
@@ -283,12 +268,9 @@ public class SharedProperties {
                 Logger.logWarn(logTag, "Ignoring properties file at \"" + propertiesFilePath + "\" of type: \"" + fileType.getName() + "\"");
             }
         }
-
         Logger.logDebug(logTag, "No readable properties file found at: " + propertiesFilePaths);
         return null;
     }
-
-
 
     public static String getProperty(Context context, File propertiesFile, String key, String def) {
         return getProperty(context, propertiesFile, key, def, null);
@@ -322,12 +304,10 @@ public class SharedProperties {
      */
     public static Object getInternalProperty(Context context, File propertiesFile, String key, @NonNull SharedPropertiesParser sharedPropertiesParser) {
         String value = (String) getDefaultIfNull(getPropertiesFromFile(context, propertiesFile, sharedPropertiesParser), new Properties()).get(key);
-
         // Call the {@link SharedPropertiesParser#getInternalPropertyValueFromValue(Context,String,String)}
         // interface method to get the internal value to return.
         return sharedPropertiesParser.getInternalPropertyValueFromValue(context, key, value);
     }
-
 
     public static boolean isPropertyValueTrue(Context context, File propertiesFile, String key, boolean logErrorOnInvalidValue) {
         return isPropertyValueTrue(context, propertiesFile, key, logErrorOnInvalidValue, null);
@@ -351,7 +331,6 @@ public class SharedProperties {
         return (boolean) getBooleanValueForStringValue(key, (String) getProperty(context, propertiesFile, key, null, sharedPropertiesParser), false, logErrorOnInvalidValue, LOG_TAG);
     }
 
-
     public static boolean isPropertyValueFalse(Context context, File propertiesFile, String key, boolean logErrorOnInvalidValue) {
         return isPropertyValueFalse(context, propertiesFile, key, logErrorOnInvalidValue, null);
     }
@@ -374,10 +353,6 @@ public class SharedProperties {
         return (boolean) getInvertedBooleanValueForStringValue(key, (String) getProperty(context, propertiesFile, key, null, sharedPropertiesParser), true, logErrorOnInvalidValue, LOG_TAG);
     }
 
-
-
-
-
     /**
      * Put a value in a {@link #mMap}.
      * The key cannot be {@code null}.
@@ -390,18 +365,15 @@ public class SharedProperties {
      * @return Returns {@code true} if value was successfully added, otherwise {@code false}.
      */
     public static boolean putToMap(HashMap<String, Object> map, String key, Object value) {
-
         if (map == null) {
             Logger.logError(LOG_TAG, "Map passed to SharedProperties.putToProperties() is null");
             return false;
         }
-
         // null keys are not allowed to be stored in mMap
         if (key == null) {
             Logger.logError(LOG_TAG, "Cannot put a null key into properties map");
             return false;
         }
-
         boolean put = false;
         if (value != null) {
             Class<?> clazz = value.getClass();
@@ -411,7 +383,6 @@ public class SharedProperties {
         } else {
             put = true;
         }
-
         if (put) {
             map.put(key, value);
             return true;
@@ -433,48 +404,39 @@ public class SharedProperties {
      * @return Returns {@code true} if value was successfully added, otherwise {@code false}.
      */
     public static boolean putToProperties(Properties properties, String key, String value) {
-
         if (properties == null) {
             Logger.logError(LOG_TAG, "Properties passed to SharedProperties.putToProperties() is null");
             return false;
         }
-
         // null keys are not allowed to be stored in mMap
         if (key == null) {
             Logger.logError(LOG_TAG, "Cannot put a null key into properties");
             return false;
         }
-
         if (value != null) {
             properties.put(key, value);
             return true;
         } else {
             properties.remove(key);
         }
-
         return true;
     }
 
     public static Properties getPropertiesCopy(Properties inputProperties) {
-        if (inputProperties == null) return null;
-
+        if (inputProperties == null)
+            return null;
         Properties outputProperties = new Properties();
         for (String key : inputProperties.stringPropertyNames()) {
             outputProperties.put(key, inputProperties.get(key));
         }
-
         return outputProperties;
     }
 
     public static Map<String, Object> getMapCopy(Map<String, Object> map) {
-        if (map == null) return null;
+        if (map == null)
+            return null;
         return new HashMap<>(map);
     }
-
-
-
-
-
 
     /**
      * Get the boolean value for the {@link String} value.
@@ -538,14 +500,12 @@ public class SharedProperties {
             Object defaultInputValue = map.inverse().get(defaultOutputValue);
             if (defaultInputValue == null)
                 Logger.logError(LOG_TAG, "The default output value \"" + defaultOutputValue + "\" for the key \"" + key + "\" does not exist as a value in the BiMap passed to getDefaultIfNotInMap(): " + map.values());
-
             if (logErrorOnInvalidValue && inputValue != null) {
                 if (key != null)
                     Logger.logError(logTag, "The value \"" + inputValue + "\" for the key \"" + key + "\" is invalid. Using default value \"" + defaultInputValue + "\" instead.");
                 else
                     Logger.logError(logTag, "The value \"" + inputValue + "\" is invalid. Using default value \"" + defaultInputValue + "\" instead.");
             }
-
             return defaultOutputValue;
         } else {
             return outputValue;
@@ -571,9 +531,9 @@ public class SharedProperties {
         if (value < min || value > max) {
             if (logErrorOnInvalidValue && (!ignoreErrorIfValueZero || value != 0)) {
                 if (key != null)
-                    Logger.logError(logTag, "The value \"" + value + "\" for the key \"" + key + "\" is not within the range " + min +  "-" + max +  " (inclusive). Using default value \"" + def + "\" instead.");
+                    Logger.logError(logTag, "The value \"" + value + "\" for the key \"" + key + "\" is not within the range " + min + "-" + max + " (inclusive). Using default value \"" + def + "\" instead.");
                 else
-                    Logger.logError(logTag, "The value \"" + value + "\" is not within the range " + min +  "-" + max +  " (inclusive). Using default value \"" + def + "\" instead.");
+                    Logger.logError(logTag, "The value \"" + value + "\" is not within the range " + min + "-" + max + " (inclusive). Using default value \"" + def + "\" instead.");
             }
             return def;
         } else {
@@ -600,9 +560,9 @@ public class SharedProperties {
         if (value < min || value > max) {
             if (logErrorOnInvalidValue && (!ignoreErrorIfValueZero || value != 0)) {
                 if (key != null)
-                    Logger.logError(logTag, "The value \"" + value + "\" for the key \"" + key + "\" is not within the range " + min +  "-" + max +  " (inclusive). Using default value \"" + def + "\" instead.");
+                    Logger.logError(logTag, "The value \"" + value + "\" for the key \"" + key + "\" is not within the range " + min + "-" + max + " (inclusive). Using default value \"" + def + "\" instead.");
                 else
-                    Logger.logError(logTag, "The value \"" + value + "\" is not within the range " + min +  "-" + max +  " (inclusive). Using default value \"" + def + "\" instead.");
+                    Logger.logError(logTag, "The value \"" + value + "\" is not within the range " + min + "-" + max + " (inclusive). Using default value \"" + def + "\" instead.");
             }
             return def;
         } else {
@@ -639,7 +599,9 @@ public class SharedProperties {
      * @return Returns the lowercased value.
      */
     public static String toLowerCase(String value) {
-        if (value == null) return null; else return value.toLowerCase();
+        if (value == null)
+            return null;
+        else
+            return value.toLowerCase();
     }
-
 }

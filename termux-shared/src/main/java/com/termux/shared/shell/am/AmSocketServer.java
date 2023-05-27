@@ -3,10 +3,8 @@ package com.termux.shared.shell.am;
 import android.Manifest;
 import android.app.Application;
 import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.termux.am.Am;
 import com.termux.shared.R;
 import com.termux.shared.android.PackageUtils;
@@ -21,7 +19,6 @@ import com.termux.shared.net.socket.local.LocalSocketManagerClientBase;
 import com.termux.shared.net.socket.local.LocalSocketRunConfig;
 import com.termux.shared.shell.ArgumentTokenizer;
 import com.termux.shared.shell.command.ExecutionCommand;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -67,22 +64,18 @@ public class AmSocketServer {
      * @param context The {@link Context} for {@link LocalSocketManager}.
      * @param localSocketRunConfig The {@link LocalSocketRunConfig} for {@link LocalSocketManager}.
      */
-    public static synchronized LocalSocketManager start(@NonNull Context context,
-                                                        @NonNull LocalSocketRunConfig localSocketRunConfig) {
+    public static synchronized LocalSocketManager start(@NonNull Context context, @NonNull LocalSocketRunConfig localSocketRunConfig) {
         LocalSocketManager localSocketManager = new LocalSocketManager(context, localSocketRunConfig);
         Error error = localSocketManager.start();
         if (error != null) {
             localSocketManager.onError(error);
             return null;
         }
-
         return localSocketManager;
     }
 
-    public static void processAmClient(@NonNull LocalSocketManager localSocketManager,
-                                       @NonNull LocalClientSocket clientSocket) {
+    public static void processAmClient(@NonNull LocalSocketManager localSocketManager, @NonNull LocalClientSocket clientSocket) {
         Error error;
-
         // Read amCommandString client sent and close input stream
         StringBuilder data = new StringBuilder();
         error = clientSocket.readDataOnInputStream(data, true);
@@ -90,12 +83,8 @@ public class AmSocketServer {
             sendResultToClient(localSocketManager, clientSocket, 1, null, error.toString());
             return;
         }
-
         String amCommandString = data.toString();
-
-        Logger.logVerbose(LOG_TAG, "am command received from peer " + clientSocket.getPeerCred().getMinimalString() +
-            "\nam command: `" + amCommandString + "`");
-
+        Logger.logVerbose(LOG_TAG, "am command received from peer " + clientSocket.getPeerCred().getMinimalString() + "\nam command: `" + amCommandString + "`");
         // Parse am command string and convert it to a list of arguments
         List<String> amCommandList = new ArrayList<>();
         error = parseAmCommand(amCommandString, amCommandList);
@@ -103,24 +92,16 @@ public class AmSocketServer {
             sendResultToClient(localSocketManager, clientSocket, 1, null, error.toString());
             return;
         }
-
         String[] amCommandArray = amCommandList.toArray(new String[0]);
-
-        Logger.logDebug(LOG_TAG, "am command received from peer " + clientSocket.getPeerCred().getMinimalString() +
-            "\n" + ExecutionCommand.getArgumentsLogString("am command", amCommandArray));
-
+        Logger.logDebug(LOG_TAG, "am command received from peer " + clientSocket.getPeerCred().getMinimalString() + "\n" + ExecutionCommand.getArgumentsLogString("am command", amCommandArray));
         AmSocketServerRunConfig amSocketServerRunConfig = (AmSocketServerRunConfig) localSocketManager.getLocalSocketRunConfig();
-
         // Run am command and send its result to the client
         StringBuilder stdout = new StringBuilder();
         StringBuilder stderr = new StringBuilder();
-        error = runAmCommand(localSocketManager.getContext(), amCommandArray, stdout, stderr,
-            amSocketServerRunConfig.shouldCheckDisplayOverAppsPermission());
+        error = runAmCommand(localSocketManager.getContext(), amCommandArray, stdout, stderr, amSocketServerRunConfig.shouldCheckDisplayOverAppsPermission());
         if (error != null) {
-            sendResultToClient(localSocketManager, clientSocket, 1, stdout.toString(),
-                !stderr.toString().isEmpty() ? stderr + "\n\n" + error : error.toString());
+            sendResultToClient(localSocketManager, clientSocket, 1, stdout.toString(), !stderr.toString().isEmpty() ? stderr + "\n\n" + error : error.toString());
         }
-
         sendResultToClient(localSocketManager, clientSocket, 0, stdout.toString(), stderr.toString());
     }
 
@@ -133,17 +114,13 @@ public class AmSocketServer {
      * @param stdout The stdout value to send.
      * @param stderr The stderr value to send.
      */
-    public static void sendResultToClient(@NonNull LocalSocketManager localSocketManager,
-                                          @NonNull LocalClientSocket clientSocket,
-                                          int exitCode,
-                                          @Nullable String stdout, @Nullable String stderr) {
+    public static void sendResultToClient(@NonNull LocalSocketManager localSocketManager, @NonNull LocalClientSocket clientSocket, int exitCode, @Nullable String stdout, @Nullable String stderr) {
         StringBuilder result = new StringBuilder();
         result.append(sanitizeExitCode(clientSocket, exitCode));
         result.append('\0');
         result.append(stdout != null ? stdout : "");
         result.append('\0');
         result.append(stderr != null ? stderr : "");
-
         // Send result to client and close output stream
         Error error = clientSocket.sendDataToOutputStream(result.toString(), true);
         if (error != null) {
@@ -161,13 +138,11 @@ public class AmSocketServer {
      */
     public static int sanitizeExitCode(@NonNull LocalClientSocket clientSocket, int exitCode) {
         if (exitCode < 0 || exitCode > 255) {
-            Logger.logWarn(LOG_TAG, "Ignoring invalid peer "  + clientSocket.getPeerCred().getMinimalString() + " result value \"" + exitCode + "\" and force setting it to \"" + 1 + "\"");
+            Logger.logWarn(LOG_TAG, "Ignoring invalid peer " + clientSocket.getPeerCred().getMinimalString() + " result value \"" + exitCode + "\" and force setting it to \"" + 1 + "\"");
             exitCode = 1;
         }
-
         return exitCode;
     }
-
 
     /**
      * Parse amCommandString into a list of arguments like normally done on shells like bourne shell.
@@ -181,17 +156,14 @@ public class AmSocketServer {
      * @return Returns the {@code error} if parsing am command failed, otherwise {@code null}.
      */
     public static Error parseAmCommand(String amCommandString, List<String> amCommandList) {
-
         if (amCommandString == null || amCommandString.isEmpty()) {
             return null;
         }
-
         try {
             amCommandList.addAll(ArgumentTokenizer.tokenize(amCommandString));
         } catch (Exception e) {
             return AmSocketServerErrno.ERRNO_PARSE_AM_COMMAND_FAILED_WITH_EXCEPTION.getError(e, amCommandString, e.getMessage());
         }
-
         return null;
     }
 
@@ -207,52 +179,36 @@ public class AmSocketServer {
      *                                       starting activity or service.
      * @return Returns the {@code error} if am command failed, otherwise {@code null}.
      */
-    public static Error runAmCommand(@NonNull Context context,
-                                     String[] amCommandArray,
-                                     @NonNull StringBuilder stdout, @NonNull StringBuilder stderr,
-                                     boolean checkDisplayOverAppsPermission) {
+    public static Error runAmCommand(@NonNull Context context, String[] amCommandArray, @NonNull StringBuilder stdout, @NonNull StringBuilder stderr, boolean checkDisplayOverAppsPermission) {
         try (ByteArrayOutputStream stdoutByteStream = new ByteArrayOutputStream();
-             PrintStream stdoutPrintStream = new PrintStream(stdoutByteStream);
-             ByteArrayOutputStream stderrByteStream = new ByteArrayOutputStream();
-             PrintStream stderrPrintStream = new PrintStream(stderrByteStream)) {
-
-            if (checkDisplayOverAppsPermission && amCommandArray.length >= 1 &&
-                (amCommandArray[0].equals("start") || amCommandArray[0].equals("startservice")) &&
-                !PermissionUtils.validateDisplayOverOtherAppsPermissionForPostAndroid10(context, true)) {
-                throw new IllegalStateException(context.getString(R.string.error_display_over_other_apps_permission_not_granted,
-                    PackageUtils.getAppNameForPackage(context)));
+            PrintStream stdoutPrintStream = new PrintStream(stdoutByteStream);
+            ByteArrayOutputStream stderrByteStream = new ByteArrayOutputStream();
+            PrintStream stderrPrintStream = new PrintStream(stderrByteStream)) {
+            if (checkDisplayOverAppsPermission && amCommandArray.length >= 1 && (amCommandArray[0].equals("start") || amCommandArray[0].equals("startservice")) && !PermissionUtils.validateDisplayOverOtherAppsPermissionForPostAndroid10(context, true)) {
+                throw new IllegalStateException(context.getString(R.string.error_display_over_other_apps_permission_not_granted, PackageUtils.getAppNameForPackage(context)));
             }
-
             new Am(stdoutPrintStream, stderrPrintStream, (Application) context.getApplicationContext()).run(amCommandArray);
-
             // Set stdout to value set by am command in stdoutPrintStream
             stdoutPrintStream.flush();
             stdout.append(stdoutByteStream.toString(StandardCharsets.UTF_8.name()));
-
             // Set stderr to value set by am command in stderrPrintStream
             stderrPrintStream.flush();
             stderr.append(stderrByteStream.toString(StandardCharsets.UTF_8.name()));
         } catch (Exception e) {
             return AmSocketServerErrno.ERRNO_RUN_AM_COMMAND_FAILED_WITH_EXCEPTION.getError(e, Arrays.toString(amCommandArray), e.getMessage());
         }
-
         return null;
     }
 
-
-
-
-
-    /** Implementation for {@link ILocalSocketManager} for {@link AmSocketServer}. */
+    /**
+     * Implementation for {@link ILocalSocketManager} for {@link AmSocketServer}.
+     */
     public abstract static class AmSocketServerClient extends LocalSocketManagerClientBase {
 
         @Override
-        public void onClientAccepted(@NonNull LocalSocketManager localSocketManager,
-                                     @NonNull LocalClientSocket clientSocket) {
+        public void onClientAccepted(@NonNull LocalSocketManager localSocketManager, @NonNull LocalClientSocket clientSocket) {
             AmSocketServer.processAmClient(localSocketManager, clientSocket);
             super.onClientAccepted(localSocketManager, clientSocket);
         }
-
     }
-
 }

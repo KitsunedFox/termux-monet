@@ -1,21 +1,20 @@
 package com.termux.shared.net.socket.local;
 
 import androidx.annotation.NonNull;
-
 import com.termux.shared.file.FileUtils;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.markdown.MarkdownUtils;
-
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-
 
 /**
  * Run config for {@link LocalSocketManager}.
  */
 public class LocalSocketRunConfig implements Serializable {
 
-    /** The {@link LocalSocketManager} title. */
+    /**
+     * The {@link LocalSocketManager} title.
+     */
     protected final String mTitle;
 
     /**
@@ -42,10 +41,14 @@ public class LocalSocketRunConfig implements Serializable {
      */
     protected final String mPath;
 
-    /** If abstract namespace {@link LocalServerSocket} instead of filesystem. */
+    /**
+     * If abstract namespace {@link LocalServerSocket} instead of filesystem.
+     */
     protected final boolean mAbstractNamespaceSocket;
 
-    /** The {@link ILocalSocketManager} client for the {@link LocalSocketManager}. */
+    /**
+     * The {@link ILocalSocketManager} client for the {@link LocalSocketManager}.
+     */
     protected final ILocalSocketManager mLocalSocketManagerClient;
 
     /**
@@ -62,6 +65,7 @@ public class LocalSocketRunConfig implements Serializable {
      * Defaults to {@link #DEFAULT_RECEIVE_TIMEOUT}.
      */
     protected Integer mReceiveTimeout;
+
     public static final int DEFAULT_RECEIVE_TIMEOUT = 10000;
 
     /**
@@ -72,6 +76,7 @@ public class LocalSocketRunConfig implements Serializable {
      * Defaults to {@link #DEFAULT_SEND_TIMEOUT}.
      */
     protected Integer mSendTimeout;
+
     public static final int DEFAULT_SEND_TIMEOUT = 10000;
 
     /**
@@ -81,6 +86,7 @@ public class LocalSocketRunConfig implements Serializable {
      * Defaults to {@link #DEFAULT_DEADLINE}.
      */
     protected Long mDeadline;
+
     public static final int DEFAULT_DEADLINE = 0;
 
     /**
@@ -92,8 +98,8 @@ public class LocalSocketRunConfig implements Serializable {
      * Defaults to {@link #DEFAULT_BACKLOG}.
      */
     protected Integer mBacklog;
-    public static final int DEFAULT_BACKLOG = 50;
 
+    public static final int DEFAULT_BACKLOG = 50;
 
     /**
      * Create an new instance of {@link LocalSocketRunConfig}.
@@ -106,46 +112,57 @@ public class LocalSocketRunConfig implements Serializable {
         mTitle = title;
         mLocalSocketManagerClient = localSocketManagerClient;
         mAbstractNamespaceSocket = path.getBytes(StandardCharsets.UTF_8)[0] == 0;
-
         if (mAbstractNamespaceSocket)
             mPath = path;
         else
             mPath = FileUtils.getCanonicalPath(path, null);
     }
 
-
-
-    /** Get {@link #mTitle}. */
+    /**
+     * Get {@link #mTitle}.
+     */
     public String getTitle() {
         return mTitle;
     }
 
-    /** Get log title that should be used for {@link LocalSocketManager}. */
+    /**
+     * Get log title that should be used for {@link LocalSocketManager}.
+     */
     public String getLogTitle() {
         return Logger.getDefaultLogTag() + "." + mTitle;
     }
 
-    /** Get {@link #mPath}. */
+    /**
+     * Get {@link #mPath}.
+     */
     public String getPath() {
         return mPath;
     }
 
-    /** Get {@link #mAbstractNamespaceSocket}. */
+    /**
+     * Get {@link #mAbstractNamespaceSocket}.
+     */
     public boolean isAbstractNamespaceSocket() {
         return mAbstractNamespaceSocket;
     }
 
-    /** Get {@link #mLocalSocketManagerClient}. */
+    /**
+     * Get {@link #mLocalSocketManagerClient}.
+     */
     public ILocalSocketManager getLocalSocketManagerClient() {
         return mLocalSocketManagerClient;
     }
 
-    /** Get {@link #mFD}. */
+    /**
+     * Get {@link #mFD}.
+     */
     public Integer getFD() {
         return mFD;
     }
 
-    /** Set {@link #mFD}. Value must be greater than 0 or -1. */
+    /**
+     * Set {@link #mFD}. Value must be greater than 0 or -1.
+     */
     public void setFD(int fd) {
         if (fd >= 0)
             mFD = fd;
@@ -153,47 +170,62 @@ public class LocalSocketRunConfig implements Serializable {
             mFD = -1;
     }
 
-    /** Get {@link #mReceiveTimeout} if set, otherwise {@link #DEFAULT_RECEIVE_TIMEOUT}. */
+    /**
+     * Get {@link #mReceiveTimeout} if set, otherwise {@link #DEFAULT_RECEIVE_TIMEOUT}.
+     */
     public Integer getReceiveTimeout() {
         return mReceiveTimeout != null ? mReceiveTimeout : DEFAULT_RECEIVE_TIMEOUT;
     }
 
-    /** Set {@link #mReceiveTimeout}. */
+    /**
+     * Set {@link #mReceiveTimeout}.
+     */
     public void setReceiveTimeout(Integer receiveTimeout) {
         mReceiveTimeout = receiveTimeout;
     }
 
-    /** Get {@link #mSendTimeout} if set, otherwise {@link #DEFAULT_SEND_TIMEOUT}. */
+    /**
+     * Get {@link #mSendTimeout} if set, otherwise {@link #DEFAULT_SEND_TIMEOUT}.
+     */
     public Integer getSendTimeout() {
         return mSendTimeout != null ? mSendTimeout : DEFAULT_SEND_TIMEOUT;
     }
 
-    /** Set {@link #mSendTimeout}. */
+    /**
+     * Set {@link #mSendTimeout}.
+     */
     public void setSendTimeout(Integer sendTimeout) {
         mSendTimeout = sendTimeout;
     }
 
-    /** Get {@link #mDeadline} if set, otherwise {@link #DEFAULT_DEADLINE}. */
+    /**
+     * Get {@link #mDeadline} if set, otherwise {@link #DEFAULT_DEADLINE}.
+     */
     public Long getDeadline() {
         return mDeadline != null ? mDeadline : DEFAULT_DEADLINE;
     }
 
-    /** Set {@link #mDeadline}. */
+    /**
+     * Set {@link #mDeadline}.
+     */
     public void setDeadline(Long deadline) {
         mDeadline = deadline;
     }
 
-    /** Get {@link #mBacklog} if set, otherwise {@link #DEFAULT_BACKLOG}. */
+    /**
+     * Get {@link #mBacklog} if set, otherwise {@link #DEFAULT_BACKLOG}.
+     */
     public Integer getBacklog() {
         return mBacklog != null ? mBacklog : DEFAULT_BACKLOG;
     }
 
-    /** Set {@link #mBacklog}. Value must be greater than 0. */
+    /**
+     * Set {@link #mBacklog}. Value must be greater than 0.
+     */
     public void setBacklog(Integer backlog) {
         if (backlog > 0)
             mBacklog = backlog;
     }
-
 
     /**
      * Get a log {@link String} for {@link LocalSocketRunConfig}.
@@ -203,15 +235,17 @@ public class LocalSocketRunConfig implements Serializable {
      */
     @NonNull
     public static String getRunConfigLogString(final LocalSocketRunConfig config) {
-        if (config == null) return "null";
+        if (config == null)
+            return "null";
         return config.getLogString();
     }
 
-    /** Get a log {@link String} for the {@link LocalSocketRunConfig}. */
+    /**
+     * Get a log {@link String} for the {@link LocalSocketRunConfig}.
+     */
     @NonNull
     public String getLogString() {
         StringBuilder logString = new StringBuilder();
-
         logString.append(mTitle).append(" Socket Server Run Config:");
         logString.append("\n").append(Logger.getSingleLineLogStringEntry("Path", mPath, "-"));
         logString.append("\n").append(Logger.getSingleLineLogStringEntry("AbstractNamespaceSocket", mAbstractNamespaceSocket, "-"));
@@ -221,7 +255,6 @@ public class LocalSocketRunConfig implements Serializable {
         logString.append("\n").append(Logger.getSingleLineLogStringEntry("SendTimeout", getSendTimeout(), "-"));
         logString.append("\n").append(Logger.getSingleLineLogStringEntry("Deadline", getDeadline(), "-"));
         logString.append("\n").append(Logger.getSingleLineLogStringEntry("Backlog", getBacklog(), "-"));
-
         return logString.toString();
     }
 
@@ -232,15 +265,17 @@ public class LocalSocketRunConfig implements Serializable {
      * @return Returns the markdown {@link String}.
      */
     public static String getRunConfigMarkdownString(final LocalSocketRunConfig config) {
-        if (config == null) return "null";
+        if (config == null)
+            return "null";
         return config.getMarkdownString();
     }
 
-    /** Get a markdown {@link String} for the {@link LocalSocketRunConfig}. */
+    /**
+     * Get a markdown {@link String} for the {@link LocalSocketRunConfig}.
+     */
     @NonNull
     public String getMarkdownString() {
         StringBuilder markdownString = new StringBuilder();
-
         markdownString.append("## ").append(mTitle).append(" Socket Server Run Config");
         markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("Path", mPath, "-"));
         markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("AbstractNamespaceSocket", mAbstractNamespaceSocket, "-"));
@@ -250,16 +285,12 @@ public class LocalSocketRunConfig implements Serializable {
         markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("SendTimeout", getSendTimeout(), "-"));
         markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("Deadline", getDeadline(), "-"));
         markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("Backlog", getBacklog(), "-"));
-
         return markdownString.toString();
     }
-
-
 
     @NonNull
     @Override
     public String toString() {
         return getLogString();
     }
-
 }

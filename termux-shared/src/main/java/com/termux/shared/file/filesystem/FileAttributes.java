@@ -22,14 +22,11 @@
  * or visit www.oracle.com if you need additional information or have any
  * questions.
  */
-
 package com.termux.shared.file.filesystem;
 
 import android.os.Build;
 import android.system.StructStat;
-
 import androidx.annotation.NonNull;
-
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.IOException;
@@ -41,31 +38,49 @@ import java.util.HashSet;
  * Unix implementation of PosixFileAttributes.
  * https://cs.android.com/android/platform/superproject/+/android-11.0.0_r3:libcore/ojluni/src/main/java/sun/nio/fs/UnixFileAttributes.java
  */
-
 public class FileAttributes {
+
     private String filePath;
+
     private FileDescriptor fileDescriptor;
 
     private int st_mode;
+
     private long st_ino;
+
     private long st_dev;
+
     private long st_rdev;
+
     private long st_nlink;
+
     private int st_uid;
+
     private int st_gid;
+
     private long st_size;
+
     private long st_blksize;
+
     private long st_blocks;
+
     private long st_atime_sec;
+
     private long st_atime_nsec;
+
     private long st_mtime_sec;
+
     private long st_mtime_nsec;
+
     private long st_ctime_sec;
+
     private long st_ctime_nsec;
 
     // created lazily
     private volatile String owner;
+
     private volatile String group;
+
     private volatile FileKey key;
 
     private FileAttributes(String filePath) {
@@ -79,20 +94,16 @@ public class FileAttributes {
     // get the FileAttributes for a given file
     public static FileAttributes get(String filePath, boolean followLinks) throws IOException {
         FileAttributes fileAttributes;
-
         if (filePath == null || filePath.isEmpty())
             fileAttributes = new FileAttributes((String) null);
         else
             fileAttributes = new FileAttributes(new File(filePath).getAbsolutePath());
-
         if (followLinks) {
             NativeDispatcher.stat(filePath, fileAttributes);
         } else {
             NativeDispatcher.lstat(filePath, fileAttributes);
         }
-
         // Logger.logDebug(fileAttributes.toString());
-
         return fileAttributes;
     }
 
@@ -212,16 +223,12 @@ public class FileAttributes {
 
     public boolean isOther() {
         int type = st_mode & UnixConstants.S_IFMT;
-        return (type != UnixConstants.S_IFREG &&
-            type != UnixConstants.S_IFDIR &&
-            type != UnixConstants.S_IFLNK);
+        return (type != UnixConstants.S_IFREG && type != UnixConstants.S_IFDIR && type != UnixConstants.S_IFLNK);
     }
 
     public boolean isDevice() {
         int type = st_mode & UnixConstants.S_IFMT;
-        return (type == UnixConstants.S_IFCHR ||
-            type == UnixConstants.S_IFBLK ||
-            type == UnixConstants.S_IFIFO);
+        return (type == UnixConstants.S_IFCHR || type == UnixConstants.S_IFBLK || type == UnixConstants.S_IFIFO);
     }
 
     public long size() {
@@ -264,28 +271,24 @@ public class FileAttributes {
     public Set<FilePermission> permissions() {
         int bits = (st_mode & UnixConstants.S_IAMB);
         HashSet<FilePermission> perms = new HashSet<>();
-
         if ((bits & UnixConstants.S_IRUSR) > 0)
             perms.add(FilePermission.OWNER_READ);
         if ((bits & UnixConstants.S_IWUSR) > 0)
             perms.add(FilePermission.OWNER_WRITE);
         if ((bits & UnixConstants.S_IXUSR) > 0)
             perms.add(FilePermission.OWNER_EXECUTE);
-
         if ((bits & UnixConstants.S_IRGRP) > 0)
             perms.add(FilePermission.GROUP_READ);
         if ((bits & UnixConstants.S_IWGRP) > 0)
             perms.add(FilePermission.GROUP_WRITE);
         if ((bits & UnixConstants.S_IXGRP) > 0)
             perms.add(FilePermission.GROUP_EXECUTE);
-
         if ((bits & UnixConstants.S_IROTH) > 0)
             perms.add(FilePermission.OTHERS_READ);
         if ((bits & UnixConstants.S_IWOTH) > 0)
             perms.add(FilePermission.OTHERS_WRITE);
         if ((bits & UnixConstants.S_IXOTH) > 0)
             perms.add(FilePermission.OTHERS_EXECUTE);
-
         return perms;
     }
 
@@ -300,7 +303,6 @@ public class FileAttributes {
         this.st_size = structStat.st_size;
         this.st_blksize = structStat.st_blksize;
         this.st_blocks = structStat.st_blocks;
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             this.st_atime_sec = structStat.st_atim.tv_sec;
             this.st_atime_nsec = structStat.st_atim.tv_nsec;
@@ -385,34 +387,25 @@ public class FileAttributes {
     }
 
     public static String getFileAttributesLogString(final FileAttributes fileAttributes) {
-        if (fileAttributes == null) return "null";
-
+        if (fileAttributes == null)
+            return "null";
         StringBuilder logString = new StringBuilder();
-
         logString.append(fileAttributes.getFileString());
-
         logString.append("\n").append(fileAttributes.getTypeString());
-
         logString.append("\n").append(fileAttributes.getSizeString());
         logString.append("\n").append(fileAttributes.getBlocksString());
         logString.append("\n").append(fileAttributes.getIOBlockString());
-
         logString.append("\n").append(fileAttributes.getDeviceString());
         logString.append("\n").append(fileAttributes.getInodeString());
         logString.append("\n").append(fileAttributes.getLinksString());
-
         if (fileAttributes.isBlock() || fileAttributes.isCharacter())
             logString.append("\n").append(fileAttributes.getDeviceTypeString());
-
         logString.append("\n").append(fileAttributes.getOwnerString());
         logString.append("\n").append(fileAttributes.getGroupString());
         logString.append("\n").append(fileAttributes.getPermissionString());
-
         logString.append("\n").append(fileAttributes.getAccessTimeString());
         logString.append("\n").append(fileAttributes.getModifiedTimeString());
         logString.append("\n").append(fileAttributes.getChangeTimeString());
-
         return logString.toString();
     }
-
 }

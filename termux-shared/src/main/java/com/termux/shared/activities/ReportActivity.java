@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -15,7 +14,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-
 import com.termux.shared.R;
 import com.termux.shared.activity.media.AppCompatActivityUtils;
 import com.termux.shared.data.DataUtils;
@@ -28,10 +26,8 @@ import com.termux.shared.markdown.MarkdownUtils;
 import com.termux.shared.interact.ShareUtils;
 import com.termux.shared.models.ReportInfo;
 import com.termux.shared.theme.NightMode;
-
 import org.commonmark.node.FencedCodeBlock;
 import org.jetbrains.annotations.NotNull;
-
 import io.noties.markwon.Markwon;
 import io.noties.markwon.recycler.MarkwonAdapter;
 import io.noties.markwon.recycler.SimpleEntry;
@@ -50,21 +46,28 @@ import io.noties.markwon.recycler.SimpleEntry;
 public class ReportActivity extends AppCompatActivity {
 
     private static final String CLASS_NAME = ReportActivity.class.getCanonicalName();
+
     private static final String ACTION_DELETE_REPORT_INFO_OBJECT_FILE = CLASS_NAME + ".ACTION_DELETE_REPORT_INFO_OBJECT_FILE";
 
     private static final String EXTRA_REPORT_INFO_OBJECT = CLASS_NAME + ".EXTRA_REPORT_INFO_OBJECT";
+
     private static final String EXTRA_REPORT_INFO_OBJECT_FILE_PATH = CLASS_NAME + ".EXTRA_REPORT_INFO_OBJECT_FILE_PATH";
 
     private static final String CACHE_DIR_BASENAME = "report_activity";
+
     private static final String CACHE_FILE_BASENAME_PREFIX = "report_info_";
 
     public static final int REQUEST_GRANT_STORAGE_PERMISSION_FOR_SAVE_FILE = 1000;
 
-    public static final int ACTIVITY_TEXT_SIZE_LIMIT_IN_BYTES = 1000 * 1024; // 1MB
+    // 1MB
+    public static final int ACTIVITY_TEXT_SIZE_LIMIT_IN_BYTES = 1000 * 1024;
 
     private ReportInfo mReportInfo;
+
     private String mReportInfoFilePath;
+
     private String mReportActivityMarkdownString;
+
     private Bundle mBundle;
 
     private static final String LOG_TAG = "ReportActivity";
@@ -73,34 +76,26 @@ public class ReportActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Logger.logVerbose(LOG_TAG, "onCreate");
-
         AppCompatActivityUtils.setNightMode(this, NightMode.getAppNightMode().getName(), true);
-
         setContentView(R.layout.activity_report);
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
         }
-
         mBundle = null;
         Intent intent = getIntent();
         if (intent != null)
             mBundle = intent.getExtras();
         else if (savedInstanceState != null)
             mBundle = savedInstanceState;
-
         updateUI();
-
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         Logger.logVerbose(LOG_TAG, "onNewIntent");
-
         setIntent(intent);
-
         if (intent != null) {
             deleteReportInfoFile(this, mReportInfoFilePath);
             mBundle = intent.getExtras();
@@ -109,14 +104,12 @@ public class ReportActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
-
         if (mBundle == null) {
-            finish(); return;
+            finish();
+            return;
         }
-
         mReportInfo = null;
         mReportInfoFilePath = null;
-
         if (mBundle.containsKey(EXTRA_REPORT_INFO_OBJECT_FILE_PATH)) {
             mReportInfoFilePath = mBundle.getString(EXTRA_REPORT_INFO_OBJECT_FILE_PATH);
             Logger.logVerbose(LOG_TAG, ReportInfo.class.getSimpleName() + " serialized object will be read from file at path \"" + mReportInfoFilePath + "\"");
@@ -126,7 +119,8 @@ public class ReportActivity extends AppCompatActivity {
                     if (result.error != null) {
                         Logger.logErrorExtended(LOG_TAG, result.error.toString());
                         Logger.showToast(this, Error.getMinimalErrorString(result.error), true);
-                        finish(); return;
+                        finish();
+                        return;
                     } else {
                         if (result.serializableObject != null)
                             mReportInfo = (ReportInfo) result.serializableObject;
@@ -139,12 +133,10 @@ public class ReportActivity extends AppCompatActivity {
         } else {
             mReportInfo = (ReportInfo) mBundle.getSerializable(EXTRA_REPORT_INFO_OBJECT);
         }
-
         if (mReportInfo == null) {
-            finish(); return;
+            finish();
+            return;
         }
-
-
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             if (mReportInfo.reportTitle != null)
@@ -152,24 +144,15 @@ public class ReportActivity extends AppCompatActivity {
             else
                 actionBar.setTitle(TermuxConstants.TERMUX_APP_NAME + " App Report");
         }
-
-
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
-
         final Markwon markwon = MarkdownUtils.getRecyclerMarkwonBuilder(this);
-
-        final MarkwonAdapter adapter = MarkwonAdapter.builderTextViewIsRoot(R.layout.markdown_adapter_node_default)
-            .include(FencedCodeBlock.class, SimpleEntry.create(R.layout.markdown_adapter_node_code_block, R.id.code_text_view))
-            .build();
-
+        final MarkwonAdapter adapter = MarkwonAdapter.builderTextViewIsRoot(R.layout.markdown_adapter_node_default).include(FencedCodeBlock.class, SimpleEntry.create(R.layout.markdown_adapter_node_code_block, R.id.code_text_view)).build();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
-
         generateReportActivityMarkdownString();
         adapter.setMarkdown(markwon, mReportActivityMarkdownString);
         adapter.notifyDataSetChanged();
     }
-
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -185,7 +168,6 @@ public class ReportActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Logger.logVerbose(LOG_TAG, "onDestroy");
-
         deleteReportInfoFile(this, mReportInfoFilePath);
     }
 
@@ -193,13 +175,11 @@ public class ReportActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(final Menu menu) {
         final MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_report, menu);
-
         if (mReportInfo.reportSaveFilePath == null) {
             MenuItem item = menu.findItem(R.id.menu_item_save_report_to_file);
             if (item != null)
                 item.setEnabled(false);
         }
-
         return true;
     }
 
@@ -217,11 +197,8 @@ public class ReportActivity extends AppCompatActivity {
         } else if (id == R.id.menu_item_copy_report) {
             ShareUtils.copyTextToClipboard(this, ReportInfo.getReportInfoMarkdownString(mReportInfo), null);
         } else if (id == R.id.menu_item_save_report_to_file) {
-            ShareUtils.saveTextToFile(this, mReportInfo.reportSaveFileLabel,
-                mReportInfo.reportSaveFilePath, ReportInfo.getReportInfoMarkdownString(mReportInfo),
-                true, REQUEST_GRANT_STORAGE_PERMISSION_FOR_SAVE_FILE);
+            ShareUtils.saveTextToFile(this, mReportInfo.reportSaveFileLabel, mReportInfo.reportSaveFilePath, ReportInfo.getReportInfoMarkdownString(mReportInfo), true, REQUEST_GRANT_STORAGE_PERMISSION_FOR_SAVE_FILE);
         }
-
         return false;
     }
 
@@ -231,9 +208,7 @@ public class ReportActivity extends AppCompatActivity {
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Logger.logInfo(LOG_TAG, "Storage permission granted by user on request.");
             if (requestCode == REQUEST_GRANT_STORAGE_PERMISSION_FOR_SAVE_FILE) {
-                ShareUtils.saveTextToFile(this, mReportInfo.reportSaveFileLabel,
-                    mReportInfo.reportSaveFilePath, ReportInfo.getReportInfoMarkdownString(mReportInfo),
-                    true, -1);
+                ShareUtils.saveTextToFile(this, mReportInfo.reportSaveFileLabel, mReportInfo.reportSaveFilePath, ReportInfo.getReportInfoMarkdownString(mReportInfo), true, -1);
             }
         } else {
             Logger.logInfo(LOG_TAG, "Storage permission denied by user on request.");
@@ -247,10 +222,8 @@ public class ReportActivity extends AppCompatActivity {
         // We need to reduce chances of OutOfMemoryError happening so reduce new allocations and
         // do not keep output of getReportInfoMarkdownString in memory
         StringBuilder reportString = new StringBuilder();
-
         if (mReportInfo.reportStringPrefix != null)
             reportString.append(mReportInfo.reportStringPrefix);
-
         String reportMarkdownString = ReportInfo.getReportInfoMarkdownString(mReportInfo);
         int reportMarkdownStringSize = reportMarkdownString.getBytes().length;
         boolean truncated = false;
@@ -261,37 +234,34 @@ public class ReportActivity extends AppCompatActivity {
         } else {
             reportString.append(reportMarkdownString);
         }
-
         // Free reference
         reportMarkdownString = null;
-
         if (mReportInfo.reportStringSuffix != null)
             reportString.append(mReportInfo.reportStringSuffix);
-
         int reportStringSize = reportString.length();
         if (reportStringSize > ACTIVITY_TEXT_SIZE_LIMIT_IN_BYTES) {
             // This may break markdown formatting
             Logger.logVerbose(LOG_TAG, mReportInfo.reportTitle + " report string total size " + reportStringSize + " is greater than " + ACTIVITY_TEXT_SIZE_LIMIT_IN_BYTES + " and will be truncated");
-            mReportActivityMarkdownString = this.getString(R.string.msg_report_truncated) +
-                DataUtils.getTruncatedCommandOutput(reportString.toString(), ACTIVITY_TEXT_SIZE_LIMIT_IN_BYTES, true, false, false);
+            mReportActivityMarkdownString = this.getString(R.string.msg_report_truncated) + DataUtils.getTruncatedCommandOutput(reportString.toString(), ACTIVITY_TEXT_SIZE_LIMIT_IN_BYTES, true, false, false);
         } else if (truncated) {
             mReportActivityMarkdownString = this.getString(R.string.msg_report_truncated) + reportString.toString();
         } else {
             mReportActivityMarkdownString = reportString.toString();
         }
-
     }
 
-
-
-
-
     public static class NewInstanceResult {
-        /** An intent that can be used to start the {@link ReportActivity}. */
+
+        /**
+         * An intent that can be used to start the {@link ReportActivity}.
+         */
         public Intent contentIntent;
-        /** An intent that can should be adding as the {@link android.app.Notification#deleteIntent}
+
+        /**
+         * An intent that can should be adding as the {@link android.app.Notification#deleteIntent}
          * by a call to {@link android.app.PendingIntent#getBroadcast(Context, int, Intent, int)}
-         * so that {@link ReportActivityBroadcastReceiver} can do cleanup of {@link #EXTRA_REPORT_INFO_OBJECT_FILE_PATH}. */
+         * so that {@link ReportActivityBroadcastReceiver} can do cleanup of {@link #EXTRA_REPORT_INFO_OBJECT_FILE_PATH}.
+         */
         public Intent deleteIntent;
 
         NewInstanceResult(Intent contentIntent, Intent deleteIntent) {
@@ -308,7 +278,8 @@ public class ReportActivity extends AppCompatActivity {
      */
     public static void startReportActivity(@NonNull final Context context, @NonNull ReportInfo reportInfo) {
         NewInstanceResult result = newInstance(context, reportInfo);
-        if (result.contentIntent == null) return;
+        if (result.contentIntent == null)
+            return;
         context.startActivity(result.contentIntent);
     }
 
@@ -330,7 +301,6 @@ public class ReportActivity extends AppCompatActivity {
      */
     @NonNull
     public static NewInstanceResult newInstance(@NonNull final Context context, @NonNull final ReportInfo reportInfo) {
-
         long size = DataUtils.getSerializedSize(reportInfo);
         if (size > DataUtils.TRANSACTION_SIZE_LIMIT_IN_BYTES) {
             String reportInfoDirectoryPath = getReportInfoDirectoryPath(context);
@@ -342,27 +312,21 @@ public class ReportActivity extends AppCompatActivity {
                 Logger.showToast(context, Error.getMinimalErrorString(error), true);
                 return new NewInstanceResult(null, null);
             }
-
-            return new NewInstanceResult(createContentIntent(context, null, reportInfoFilePath),
-                createDeleteIntent(context, reportInfoFilePath));
+            return new NewInstanceResult(createContentIntent(context, null, reportInfoFilePath), createDeleteIntent(context, reportInfoFilePath));
         } else {
-            return new NewInstanceResult(createContentIntent(context, reportInfo, null),
-                null);
+            return new NewInstanceResult(createContentIntent(context, reportInfo, null), null);
         }
     }
 
     private static Intent createContentIntent(@NonNull final Context context, final ReportInfo reportInfo, final String reportInfoFilePath) {
         Intent intent = new Intent(context, ReportActivity.class);
         Bundle bundle = new Bundle();
-
         if (reportInfoFilePath != null) {
             bundle.putString(EXTRA_REPORT_INFO_OBJECT_FILE_PATH, reportInfoFilePath);
         } else {
             bundle.putSerializable(EXTRA_REPORT_INFO_OBJECT, reportInfo);
         }
-
         intent.putExtras(bundle);
-
         // Note that ReportActivity should have `documentLaunchMode="intoExisting"` set in `AndroidManifest.xml`
         // which has equivalent behaviour to FLAG_ACTIVITY_NEW_DOCUMENT.
         // FLAG_ACTIVITY_SINGLE_TOP must also be passed for onNewIntent to be called.
@@ -370,23 +334,16 @@ public class ReportActivity extends AppCompatActivity {
         return intent;
     }
 
-
     private static Intent createDeleteIntent(@NonNull final Context context, final String reportInfoFilePath) {
-        if (reportInfoFilePath == null) return null;
-
+        if (reportInfoFilePath == null)
+            return null;
         Intent intent = new Intent(context, ReportActivityBroadcastReceiver.class);
         intent.setAction(ACTION_DELETE_REPORT_INFO_OBJECT_FILE);
-
         Bundle bundle = new Bundle();
         bundle.putString(EXTRA_REPORT_INFO_OBJECT_FILE_PATH, reportInfoFilePath);
         intent.putExtras(bundle);
-
         return intent;
     }
-
-
-
-
 
     @NotNull
     private static String getReportInfoDirectoryPath(Context context) {
@@ -395,12 +352,12 @@ public class ReportActivity extends AppCompatActivity {
     }
 
     private static void deleteReportInfoFile(Context context, String reportInfoFilePath) {
-        if (context == null || reportInfoFilePath == null) return;
-
+        if (context == null || reportInfoFilePath == null)
+            return;
         // Extra protection for mainly if someone set `exported="true"` for ReportActivityBroadcastReceiver
         String reportInfoDirectoryPath = getReportInfoDirectoryPath(context);
         reportInfoFilePath = FileUtils.getCanonicalPath(reportInfoFilePath, null);
-        if(!reportInfoFilePath.equals(reportInfoDirectoryPath) && reportInfoFilePath.startsWith(reportInfoDirectoryPath + "/")) {
+        if (!reportInfoFilePath.equals(reportInfoDirectoryPath) && reportInfoFilePath.startsWith(reportInfoDirectoryPath + "/")) {
             Logger.logVerbose(LOG_TAG, "Deleting " + ReportInfo.class.getSimpleName() + " serialized object file at path \"" + reportInfoFilePath + "\"");
             Error error = FileUtils.deleteRegularFile(ReportInfo.class.getSimpleName(), reportInfoFilePath, true);
             if (error != null) {
@@ -431,12 +388,15 @@ public class ReportActivity extends AppCompatActivity {
         if (isSynchronous) {
             return deleteReportInfoFilesOlderThanXDaysInner(context, days);
         } else {
-            new Thread() { public void run() {
-                Error error = deleteReportInfoFilesOlderThanXDaysInner(context, days);
-                if (error != null) {
-                    Logger.logErrorExtended(LOG_TAG, error.toString());
+            new Thread() {
+
+                public void run() {
+                    Error error = deleteReportInfoFilesOlderThanXDaysInner(context, days);
+                    if (error != null) {
+                        Logger.logErrorExtended(LOG_TAG, error.toString());
+                    }
                 }
-            }}.start();
+            }.start();
             return null;
         }
     }
@@ -448,29 +408,28 @@ public class ReportActivity extends AppCompatActivity {
         return FileUtils.deleteFilesOlderThanXDays(ReportInfo.class.getSimpleName(), reportInfoDirectoryPath, null, days, true, FileType.REGULAR.getValue());
     }
 
-
     /**
      * The {@link BroadcastReceiver} for {@link ReportActivity} that currently does cleanup when
      * {@link android.app.Notification#deleteIntent} is called. It must be registered in `AndroidManifest.xml`.
      */
     public static class ReportActivityBroadcastReceiver extends BroadcastReceiver {
+
         private static final String LOG_TAG = "ReportActivityBroadcastReceiver";
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent == null) return;
-
+            if (intent == null)
+                return;
             String action = intent.getAction();
             Logger.logVerbose(LOG_TAG, "onReceive: \"" + action + "\" action");
-
             if (ACTION_DELETE_REPORT_INFO_OBJECT_FILE.equals(action)) {
                 Bundle bundle = intent.getExtras();
-                if (bundle == null) return;
+                if (bundle == null)
+                    return;
                 if (bundle.containsKey(EXTRA_REPORT_INFO_OBJECT_FILE_PATH)) {
                     deleteReportInfoFile(context, bundle.getString(EXTRA_REPORT_INFO_OBJECT_FILE_PATH));
                 }
             }
         }
     }
-
 }

@@ -1,11 +1,9 @@
 package com.termux.shared.termux.shell.am;
 
 import android.content.Context;
-
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.termux.shared.errors.Error;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.net.socket.local.LocalClientSocket;
@@ -62,10 +60,14 @@ public class TermuxAmSocketServer {
 
     public static final String TITLE = "TermuxAm";
 
-    /** The static instance for the {@link TermuxAmSocketServer} {@link LocalSocketManager}. */
+    /**
+     * The static instance for the {@link TermuxAmSocketServer} {@link LocalSocketManager}.
+     */
     private static LocalSocketManager termuxAmSocketServer;
 
-    /** Whether {@link TermuxAmSocketServer} is enabled and running or not. */
+    /**
+     * Whether {@link TermuxAmSocketServer} is enabled and running or not.
+     */
     @Keep
     protected static Boolean TERMUX_APP_AM_SOCKET_SERVER_ENABLED;
 
@@ -88,7 +90,6 @@ public class TermuxAmSocketServer {
         } else {
             Logger.logDebug(LOG_TAG, "Not starting " + TITLE + " socket server since its not enabled");
         }
-
         // Once termux-app has started, the server state must not be changed since the variable is
         // exported in shell sessions and tasks and if state is changed, then env of older shells will
         // retain invalid value. User should force stop the app to update state after changing prop.
@@ -101,10 +102,7 @@ public class TermuxAmSocketServer {
      */
     public static synchronized void start(@NonNull Context context) {
         stop();
-
-        AmSocketServerRunConfig amSocketServerRunConfig = new AmSocketServerRunConfig(TITLE,
-            TermuxConstants.TERMUX_APP.TERMUX_AM_SOCKET_FILE_PATH, new TermuxAmSocketServerClient());
-
+        AmSocketServerRunConfig amSocketServerRunConfig = new AmSocketServerRunConfig(TITLE, TermuxConstants.TERMUX_APP.TERMUX_AM_SOCKET_FILE_PATH, new TermuxAmSocketServerClient());
         termuxAmSocketServer = AmSocketServer.start(context, amSocketServerRunConfig);
     }
 
@@ -120,7 +118,7 @@ public class TermuxAmSocketServer {
             termuxAmSocketServer = null;
         }
     }
-    
+
     /**
      * Update the state of the {@link AmSocketServer} {@link LocalServerSocket} depending on current
      * value of {@link TermuxPropertyConstants#KEY_RUN_TERMUX_AM_SOCKET_SERVER}.
@@ -139,7 +137,7 @@ public class TermuxAmSocketServer {
             }
         }
     }
-    
+
     /**
      * Get {@link #termuxAmSocketServer}.
      */
@@ -157,15 +155,9 @@ public class TermuxAmSocketServer {
      * @param localSocketRunConfig The {@link LocalSocketRunConfig} for {@link LocalSocketManager}.
      * @param clientSocket The optional {@link LocalClientSocket} for which the error was generated.
      */
-    public static synchronized void showErrorNotification(@NonNull Context context, @NonNull Error error,
-                                                          @NonNull LocalSocketRunConfig localSocketRunConfig,
-                                                          @Nullable LocalClientSocket clientSocket) {
-        TermuxPluginUtils.sendPluginCommandErrorNotification(context, LOG_TAG,
-            localSocketRunConfig.getTitle() + " Socket Server Error", error.getMinimalErrorString(),
-            LocalSocketManager.getErrorMarkdownString(error, localSocketRunConfig, clientSocket));
+    public static synchronized void showErrorNotification(@NonNull Context context, @NonNull Error error, @NonNull LocalSocketRunConfig localSocketRunConfig, @Nullable LocalClientSocket clientSocket) {
+        TermuxPluginUtils.sendPluginCommandErrorNotification(context, LOG_TAG, localSocketRunConfig.getTitle() + " Socket Server Error", error.getMinimalErrorString(), LocalSocketManager.getErrorMarkdownString(error, localSocketRunConfig, clientSocket));
     }
-
-
 
     public static Boolean getTermuxAppAMSocketServerEnabled(@NonNull Context currentPackageContext) {
         boolean isTermuxApp = TermuxConstants.TERMUX_PACKAGE_NAME.equals(currentPackageContext.getPackageName());
@@ -177,56 +169,43 @@ public class TermuxAmSocketServer {
             // running needs to be used. Long checks would also not be possible on main application thread
             return null;
         }
-
     }
 
-
-
-
-
-    /** Enhanced implementation for {@link AmSocketServer.AmSocketServerClient} for {@link TermuxAmSocketServer}. */
+    /**
+     * Enhanced implementation for {@link AmSocketServer.AmSocketServerClient} for {@link TermuxAmSocketServer}.
+     */
     public static class TermuxAmSocketServerClient extends AmSocketServer.AmSocketServerClient {
 
         public static final String LOG_TAG = "TermuxAmSocketServerClient";
 
         @Nullable
         @Override
-        public Thread.UncaughtExceptionHandler getLocalSocketManagerClientThreadUEH(
-            @NonNull LocalSocketManager localSocketManager) {
+        public Thread.UncaughtExceptionHandler getLocalSocketManagerClientThreadUEH(@NonNull LocalSocketManager localSocketManager) {
             // Use termux crash handler for socket listener thread just like used for main app process thread.
             return TermuxCrashUtils.getCrashHandler(localSocketManager.getContext());
         }
 
         @Override
-        public void onError(@NonNull LocalSocketManager localSocketManager,
-                            @Nullable LocalClientSocket clientSocket, @NonNull Error error) {
+        public void onError(@NonNull LocalSocketManager localSocketManager, @Nullable LocalClientSocket clientSocket, @NonNull Error error) {
             // Don't show notification if server is not running since errors may be triggered
             // when server is stopped and server and client sockets are closed.
             if (localSocketManager.isRunning()) {
-                TermuxAmSocketServer.showErrorNotification(localSocketManager.getContext(), error,
-                    localSocketManager.getLocalSocketRunConfig(), clientSocket);
+                TermuxAmSocketServer.showErrorNotification(localSocketManager.getContext(), error, localSocketManager.getLocalSocketRunConfig(), clientSocket);
             }
-
             // But log the exception
             super.onError(localSocketManager, clientSocket, error);
         }
 
         @Override
-        public void onDisallowedClientConnected(@NonNull LocalSocketManager localSocketManager,
-                                                @NonNull LocalClientSocket clientSocket, @NonNull Error error) {
+        public void onDisallowedClientConnected(@NonNull LocalSocketManager localSocketManager, @NonNull LocalClientSocket clientSocket, @NonNull Error error) {
             // Always show notification and log error regardless of if server is running or not
-            TermuxAmSocketServer.showErrorNotification(localSocketManager.getContext(), error,
-                localSocketManager.getLocalSocketRunConfig(), clientSocket);
+            TermuxAmSocketServer.showErrorNotification(localSocketManager.getContext(), error, localSocketManager.getLocalSocketRunConfig(), clientSocket);
             super.onDisallowedClientConnected(localSocketManager, clientSocket, error);
         }
-
-
 
         @Override
         protected String getLogTag() {
             return LOG_TAG;
         }
-
     }
-
 }

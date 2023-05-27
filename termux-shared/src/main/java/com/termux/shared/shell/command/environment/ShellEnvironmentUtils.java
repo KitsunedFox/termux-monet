@@ -1,14 +1,11 @@
 package com.termux.shared.shell.command.environment;
 
 import static com.termux.shared.shell.command.environment.UnixShellEnvironment.*;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.termux.shared.errors.Error;
 import com.termux.shared.file.FileUtils;
 import com.termux.shared.logger.Logger;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -44,7 +41,6 @@ public class ShellEnvironmentUtils {
 
     /**
      * Convert environment {@link HashMap} to {@link String} where each item equals "key=value".
-     *
      */
     @NonNull
     public static String convertEnvironmentToDotEnvFile(@NonNull HashMap<String, String> environmentMap) {
@@ -76,9 +72,7 @@ public class ShellEnvironmentUtils {
         Collections.sort(environmentList);
         for (ShellEnvironmentVariable variable : environmentList) {
             if (isValidEnvironmentVariableNameValuePair(variable.name, variable.value, true) && variable.value != null) {
-                environment.append("export ").append(variable.name).append("=\"")
-                    .append(variable.escaped ? variable.value : variable.value.replaceAll("([\"`\\\\$])", "\\\\$1"))
-                    .append("\"\n");
+                environment.append("export ").append(variable.name).append("=\"").append(variable.escaped ? variable.value : variable.value.replaceAll("([\"`\\\\$])", "\\\\$1")).append("\"\n");
             }
         }
         return environment.toString();
@@ -91,7 +85,7 @@ public class ShellEnvironmentUtils {
     @NonNull
     public static List<ShellEnvironmentVariable> convertEnvironmentMapToEnvironmentVariableList(@NonNull HashMap<String, String> environmentMap) {
         List<ShellEnvironmentVariable> environmentList = new ArrayList<>();
-        for (String name :environmentMap.keySet()) {
+        for (String name : environmentMap.keySet()) {
             environmentList.add(new ShellEnvironmentVariable(name, environmentMap.get(name), false));
         }
         return environmentList;
@@ -110,13 +104,11 @@ public class ShellEnvironmentUtils {
                 Logger.logErrorPrivate(LOG_TAG, "Invalid environment variable name. name=`" + name + "`, value=`" + value + "`");
             return false;
         }
-
         if (!isValidEnvironmentVariableValue(value)) {
             if (logErrors)
                 Logger.logErrorPrivate(LOG_TAG, "Invalid environment variable value. name=`" + name + "`, value=`" + value + "`");
             return false;
         }
-
         return true;
     }
 
@@ -137,36 +129,37 @@ public class ShellEnvironmentUtils {
         return value != null && !value.contains("\0");
     }
 
-
-
-    /** Put value in environment if variable exists in {@link System) environment. */
-    public static void putToEnvIfInSystemEnv(@NonNull HashMap<String, String> environment,
-                                             @NonNull String name) {
+    /**
+     * Put value in environment if variable exists in {@link System) environment.
+     */
+    public static void putToEnvIfInSystemEnv(@NonNull HashMap<String, String> environment, @NonNull String name) {
         String value = System.getenv(name);
         if (value != null) {
             environment.put(name, value);
         }
     }
 
-    /** Put {@link String} value in environment if value set. */
-    public static void putToEnvIfSet(@NonNull HashMap<String, String> environment, @NonNull String name,
-                                     @Nullable String value) {
+    /**
+     * Put {@link String} value in environment if value set.
+     */
+    public static void putToEnvIfSet(@NonNull HashMap<String, String> environment, @NonNull String name, @Nullable String value) {
         if (value != null) {
             environment.put(name, value);
         }
     }
 
-    /** Put {@link Boolean} value "true" or "false" in environment if value set. */
-    public static void putToEnvIfSet(@NonNull HashMap<String, String> environment, @NonNull String name,
-                                     @Nullable Boolean value) {
+    /**
+     * Put {@link Boolean} value "true" or "false" in environment if value set.
+     */
+    public static void putToEnvIfSet(@NonNull HashMap<String, String> environment, @NonNull String name, @Nullable Boolean value) {
         if (value != null) {
             environment.put(name, String.valueOf(value));
         }
     }
 
-
-
-    /** Create HOME directory in environment {@link Map} if set. */
+    /**
+     * Create HOME directory in environment {@link Map} if set.
+     */
     public static void createHomeDir(@NonNull HashMap<String, String> environment) {
         String homeDirectory = environment.get(ENV_HOME);
         if (homeDirectory != null && !homeDirectory.isEmpty()) {
@@ -176,5 +169,4 @@ public class ShellEnvironmentUtils {
             }
         }
     }
-
 }

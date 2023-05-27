@@ -2,13 +2,10 @@ package com.termux.shared.termux.extrakeys;
 
 import android.view.View;
 import android.widget.Button;
-
 import androidx.annotation.NonNull;
-
 import com.google.android.material.button.MaterialButton;
 import com.termux.shared.termux.extrakeys.ExtraKeysConstants.EXTRA_KEY_DISPLAY_MAPS;
 import com.termux.shared.termux.terminal.io.TerminalExtraKeys;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -106,8 +103,7 @@ public class ExtraKeysInfo {
      *                           aliases for the actual key names. You can create your own or
      *                           optionally pass {@link ExtraKeysConstants#CONTROL_CHARS_ALIASES}.
      */
-    public ExtraKeysInfo(@NonNull String propertiesInfo, String style,
-                         @NonNull ExtraKeysConstants.ExtraKeyDisplayMap extraKeyAliasMap) throws JSONException {
+    public ExtraKeysInfo(@NonNull String propertiesInfo, String style, @NonNull ExtraKeysConstants.ExtraKeyDisplayMap extraKeyAliasMap) throws JSONException {
         mButtons = initExtraKeysInfo(propertiesInfo, getCharDisplayMapForStyle(style), extraKeyAliasMap);
     }
 
@@ -125,15 +121,11 @@ public class ExtraKeysInfo {
      *                           aliases for the actual key names. You can create your own or
      *                           optionally pass {@link ExtraKeysConstants#CONTROL_CHARS_ALIASES}.
      */
-    public ExtraKeysInfo(@NonNull String propertiesInfo,
-                         @NonNull ExtraKeysConstants.ExtraKeyDisplayMap extraKeyDisplayMap,
-                         @NonNull ExtraKeysConstants.ExtraKeyDisplayMap extraKeyAliasMap) throws JSONException {
+    public ExtraKeysInfo(@NonNull String propertiesInfo, @NonNull ExtraKeysConstants.ExtraKeyDisplayMap extraKeyDisplayMap, @NonNull ExtraKeysConstants.ExtraKeyDisplayMap extraKeyAliasMap) throws JSONException {
         mButtons = initExtraKeysInfo(propertiesInfo, extraKeyDisplayMap, extraKeyAliasMap);
     }
 
-    private ExtraKeyButton[][] initExtraKeysInfo(@NonNull String propertiesInfo,
-                                                 @NonNull ExtraKeysConstants.ExtraKeyDisplayMap extraKeyDisplayMap,
-                                                 @NonNull ExtraKeysConstants.ExtraKeyDisplayMap extraKeyAliasMap) throws JSONException {
+    private ExtraKeyButton[][] initExtraKeysInfo(@NonNull String propertiesInfo, @NonNull ExtraKeysConstants.ExtraKeyDisplayMap extraKeyDisplayMap, @NonNull ExtraKeysConstants.ExtraKeyDisplayMap extraKeyAliasMap) throws JSONException {
         // Convert String propertiesInfo to Array of Arrays
         JSONArray arr = new JSONArray(propertiesInfo);
         Object[][] matrix = new Object[arr.length()][];
@@ -144,18 +136,14 @@ public class ExtraKeysInfo {
                 matrix[i][j] = line.get(j);
             }
         }
-
         // convert matrix to buttons
         ExtraKeyButton[][] buttons = new ExtraKeyButton[matrix.length][];
         for (int i = 0; i < matrix.length; i++) {
             buttons[i] = new ExtraKeyButton[matrix[i].length];
             for (int j = 0; j < matrix[i].length; j++) {
                 Object key = matrix[i][j];
-
                 JSONObject jobject = normalizeKeyConfig(key);
-
                 ExtraKeyButton button;
-
                 if (!jobject.has(ExtraKeyButton.KEY_POPUP)) {
                     // no popup
                     button = new ExtraKeyButton(jobject, extraKeyDisplayMap, extraKeyAliasMap);
@@ -165,11 +153,9 @@ public class ExtraKeysInfo {
                     ExtraKeyButton popup = new ExtraKeyButton(popupJobject, extraKeyDisplayMap, extraKeyAliasMap);
                     button = new ExtraKeyButton(jobject, popup, extraKeyDisplayMap, extraKeyAliasMap);
                 }
-
                 buttons[i][j] = button;
             }
         }
-
         return buttons;
     }
 
@@ -196,7 +182,7 @@ public class ExtraKeysInfo {
 
     @NonNull
     public static ExtraKeysConstants.ExtraKeyDisplayMap getCharDisplayMapForStyle(String style) {
-        switch (style) {
+        switch(style) {
             case "arrows-only":
                 return EXTRA_KEY_DISPLAY_MAPS.ARROWS_ONLY_CHAR_DISPLAY;
             case "arrows-all":
@@ -209,5 +195,4 @@ public class ExtraKeysInfo {
                 return EXTRA_KEY_DISPLAY_MAPS.DEFAULT_CHAR_DISPLAY;
         }
     }
-
 }

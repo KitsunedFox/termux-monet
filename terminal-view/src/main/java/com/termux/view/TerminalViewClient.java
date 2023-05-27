@@ -4,7 +4,6 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
-
 import com.termux.terminal.TerminalSession;
 
 /**
@@ -21,8 +20,6 @@ public interface TerminalViewClient {
      */
     float onScale(float scale);
 
-
-
     /**
      * On a single tap on the terminal if terminal mouse reporting not enabled.
      */
@@ -36,19 +33,13 @@ public interface TerminalViewClient {
 
     boolean isTerminalViewSelected();
 
-
-
     void copyModeChanged(boolean copyMode);
-
-
 
     boolean onKeyDown(int keyCode, KeyEvent e, TerminalSession session);
 
     boolean onKeyUp(int keyCode, KeyEvent e);
 
     boolean onLongPress(MotionEvent event);
-
-
 
     boolean readControlKey();
 
@@ -58,13 +49,9 @@ public interface TerminalViewClient {
 
     boolean readFnKey();
 
-
-
     boolean onCodePoint(int codePoint, boolean ctrlDown, TerminalSession session);
 
-
     void onEmulatorSet();
-
 
     void logError(String tag, String message);
 
@@ -79,5 +66,4 @@ public interface TerminalViewClient {
     void logStackTraceWithMessage(String tag, String message, Exception e);
 
     void logStackTrace(String tag, Exception e);
-
 }

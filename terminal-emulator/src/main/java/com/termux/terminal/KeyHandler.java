@@ -2,7 +2,6 @@ package com.termux.terminal;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import static android.view.KeyEvent.KEYCODE_BACK;
 import static android.view.KeyEvent.KEYCODE_BREAK;
 import static android.view.KeyEvent.KEYCODE_DEL;
@@ -57,8 +56,11 @@ import static android.view.KeyEvent.KEYCODE_TAB;
 public final class KeyHandler {
 
     public static final int KEYMOD_ALT = 0x80000000;
+
     public static final int KEYMOD_CTRL = 0x40000000;
+
     public static final int KEYMOD_SHIFT = 0x20000000;
+
     public static final int KEYMOD_NUM_LOCK = 0x10000000;
 
     private static final Map<String, Integer> TERMCAP_TO_KEYCODE = new HashMap<>();
@@ -67,10 +69,11 @@ public final class KeyHandler {
         // terminfo: http://pubs.opengroup.org/onlinepubs/7990989799/xcurses/terminfo.html
         // termcap: http://man7.org/linux/man-pages/man5/termcap.5.html
         TERMCAP_TO_KEYCODE.put("%i", KEYMOD_SHIFT | KEYCODE_DPAD_RIGHT);
-        TERMCAP_TO_KEYCODE.put("#2", KEYMOD_SHIFT | KEYCODE_MOVE_HOME); // Shifted home
+        // Shifted home
+        TERMCAP_TO_KEYCODE.put("#2", KEYMOD_SHIFT | KEYCODE_MOVE_HOME);
         TERMCAP_TO_KEYCODE.put("#4", KEYMOD_SHIFT | KEYCODE_DPAD_LEFT);
-        TERMCAP_TO_KEYCODE.put("*7", KEYMOD_SHIFT | KEYCODE_MOVE_END); // Shifted end key
-
+        // Shifted end key
+        TERMCAP_TO_KEYCODE.put("*7", KEYMOD_SHIFT | KEYCODE_MOVE_END);
         TERMCAP_TO_KEYCODE.put("k1", KEYCODE_F1);
         TERMCAP_TO_KEYCODE.put("k2", KEYCODE_F2);
         TERMCAP_TO_KEYCODE.put("k3", KEYCODE_F3);
@@ -95,14 +98,13 @@ public final class KeyHandler {
         TERMCAP_TO_KEYCODE.put("FC", KEYMOD_SHIFT | KEYCODE_F10);
         TERMCAP_TO_KEYCODE.put("FD", KEYMOD_SHIFT | KEYCODE_F11);
         TERMCAP_TO_KEYCODE.put("FE", KEYMOD_SHIFT | KEYCODE_F12);
-
-        TERMCAP_TO_KEYCODE.put("kb", KEYCODE_DEL); // backspace key
-
-        TERMCAP_TO_KEYCODE.put("kd", KEYCODE_DPAD_DOWN); // terminfo=kcud1, down-arrow key
+        // backspace key
+        TERMCAP_TO_KEYCODE.put("kb", KEYCODE_DEL);
+        // terminfo=kcud1, down-arrow key
+        TERMCAP_TO_KEYCODE.put("kd", KEYCODE_DPAD_DOWN);
         TERMCAP_TO_KEYCODE.put("kh", KEYCODE_MOVE_HOME);
         TERMCAP_TO_KEYCODE.put("kl", KEYCODE_DPAD_LEFT);
         TERMCAP_TO_KEYCODE.put("kr", KEYCODE_DPAD_RIGHT);
-
         // K1=Upper left of keypad:
         // t_K1 <kHome> keypad home key
         // t_K3 <kPageUp> keypad page-up key
@@ -112,26 +114,30 @@ public final class KeyHandler {
         TERMCAP_TO_KEYCODE.put("K3", KEYCODE_PAGE_UP);
         TERMCAP_TO_KEYCODE.put("K4", KEYCODE_MOVE_END);
         TERMCAP_TO_KEYCODE.put("K5", KEYCODE_PAGE_DOWN);
-
         TERMCAP_TO_KEYCODE.put("ku", KEYCODE_DPAD_UP);
-
-        TERMCAP_TO_KEYCODE.put("kB", KEYMOD_SHIFT | KEYCODE_TAB); // termcap=kB, terminfo=kcbt: Back-tab
-        TERMCAP_TO_KEYCODE.put("kD", KEYCODE_FORWARD_DEL); // terminfo=kdch1, delete-character key
-        TERMCAP_TO_KEYCODE.put("kDN", KEYMOD_SHIFT | KEYCODE_DPAD_DOWN); // non-standard shifted arrow down
-        TERMCAP_TO_KEYCODE.put("kF", KEYMOD_SHIFT | KEYCODE_DPAD_DOWN); // terminfo=kind, scroll-forward key
+        // termcap=kB, terminfo=kcbt: Back-tab
+        TERMCAP_TO_KEYCODE.put("kB", KEYMOD_SHIFT | KEYCODE_TAB);
+        // terminfo=kdch1, delete-character key
+        TERMCAP_TO_KEYCODE.put("kD", KEYCODE_FORWARD_DEL);
+        // non-standard shifted arrow down
+        TERMCAP_TO_KEYCODE.put("kDN", KEYMOD_SHIFT | KEYCODE_DPAD_DOWN);
+        // terminfo=kind, scroll-forward key
+        TERMCAP_TO_KEYCODE.put("kF", KEYMOD_SHIFT | KEYCODE_DPAD_DOWN);
         TERMCAP_TO_KEYCODE.put("kI", KEYCODE_INSERT);
         TERMCAP_TO_KEYCODE.put("kN", KEYCODE_PAGE_UP);
         TERMCAP_TO_KEYCODE.put("kP", KEYCODE_PAGE_DOWN);
-        TERMCAP_TO_KEYCODE.put("kR", KEYMOD_SHIFT | KEYCODE_DPAD_UP); // terminfo=kri, scroll-backward key
-        TERMCAP_TO_KEYCODE.put("kUP", KEYMOD_SHIFT | KEYCODE_DPAD_UP); // non-standard shifted up
-
+        // terminfo=kri, scroll-backward key
+        TERMCAP_TO_KEYCODE.put("kR", KEYMOD_SHIFT | KEYCODE_DPAD_UP);
+        // non-standard shifted up
+        TERMCAP_TO_KEYCODE.put("kUP", KEYMOD_SHIFT | KEYCODE_DPAD_UP);
         TERMCAP_TO_KEYCODE.put("@7", KEYCODE_MOVE_END);
         TERMCAP_TO_KEYCODE.put("@8", KEYCODE_NUMPAD_ENTER);
     }
 
     static String getCodeFromTermcap(String termcap, boolean cursorKeysApplication, boolean keypadApplication) {
         Integer keyCodeAndMod = TERMCAP_TO_KEYCODE.get(termcap);
-        if (keyCodeAndMod == null) return null;
+        if (keyCodeAndMod == null)
+            return null;
         int keyCode = keyCodeAndMod;
         int keyMod = 0;
         if ((keyCode & KEYMOD_SHIFT) != 0) {
@@ -156,10 +162,9 @@ public final class KeyHandler {
     public static String getCode(int keyCode, int keyMode, boolean cursorApp, boolean keypadApplication) {
         boolean numLockOn = (keyMode & KEYMOD_NUM_LOCK) != 0;
         keyMode &= ~KEYMOD_NUM_LOCK;
-        switch (keyCode) {
+        switch(keyCode) {
             case KEYCODE_DPAD_CENTER:
                 return "\015";
-
             case KEYCODE_DPAD_UP:
                 return (keyMode == 0) ? (cursorApp ? "\033OA" : "\033[A") : transformForModifiers("\033[1", keyMode, 'A');
             case KEYCODE_DPAD_DOWN:
@@ -168,14 +173,12 @@ public final class KeyHandler {
                 return (keyMode == 0) ? (cursorApp ? "\033OC" : "\033[C") : transformForModifiers("\033[1", keyMode, 'C');
             case KEYCODE_DPAD_LEFT:
                 return (keyMode == 0) ? (cursorApp ? "\033OD" : "\033[D") : transformForModifiers("\033[1", keyMode, 'D');
-
             case KEYCODE_MOVE_HOME:
                 // Note that KEYCODE_HOME is handled by the system and never delivered to applications.
                 // On a Logitech k810 keyboard KEYCODE_MOVE_HOME is sent by FN+LeftArrow.
                 return (keyMode == 0) ? (cursorApp ? "\033OH" : "\033[H") : transformForModifiers("\033[1", keyMode, 'H');
             case KEYCODE_MOVE_END:
                 return (keyMode == 0) ? (cursorApp ? "\033OF" : "\033[F") : transformForModifiers("\033[1", keyMode, 'F');
-
             // An xterm can send function keys F1 to F4 in two modes: vt100 compatible or
             // not. Because Vim may not know what the xterm is sending, both types of keys
             // are recognized. The same happens for the <Home> and <End> keys.
@@ -210,22 +213,20 @@ public final class KeyHandler {
                 return transformForModifiers("\033[23", keyMode, '~');
             case KEYCODE_F12:
                 return transformForModifiers("\033[24", keyMode, '~');
-
             case KEYCODE_SYSRQ:
-                return "\033[32~"; // Sys Request / Print
+                // Sys Request / Print
+                return "\033[32~";
             // Is this Scroll lock? case Cancel: return "\033[33~";
             case KEYCODE_BREAK:
-                return "\033[34~"; // Pause/Break
-
+                // Pause/Break
+                return "\033[34~";
             case KEYCODE_ESCAPE:
             case KEYCODE_BACK:
                 return "\033";
-
             case KEYCODE_INSERT:
                 return transformForModifiers("\033[2", keyMode, '~');
             case KEYCODE_FORWARD_DEL:
                 return transformForModifiers("\033[3", keyMode, '~');
-
             case KEYCODE_PAGE_UP:
                 return transformForModifiers("\033[5", keyMode, '~');
             case KEYCODE_PAGE_DOWN:
@@ -249,7 +250,6 @@ public final class KeyHandler {
                 return (keyMode & KEYMOD_SHIFT) == 0 ? "\011" : "\033[Z";
             case KEYCODE_ENTER:
                 return ((keyMode & KEYMOD_ALT) == 0) ? "\r" : "\033\r";
-
             case KEYCODE_NUMPAD_ENTER:
                 return keypadApplication ? transformForModifiers("\033O", keyMode, 'M') : "\n";
             case KEYCODE_NUMPAD_MULTIPLY:
@@ -337,13 +337,12 @@ public final class KeyHandler {
             case KEYCODE_NUMPAD_EQUALS:
                 return keypadApplication ? transformForModifiers("\033O", keyMode, 'X') : "=";
         }
-
         return null;
     }
 
     private static String transformForModifiers(String start, int keymod, char lastChar) {
         int modifier;
-        switch (keymod) {
+        switch(keymod) {
             case KEYMOD_SHIFT:
                 modifier = 2;
                 break;

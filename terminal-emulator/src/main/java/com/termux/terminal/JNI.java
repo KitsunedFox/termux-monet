@@ -25,7 +25,9 @@ final class JNI {
      */
     public static native int createSubprocess(String cmd, String cwd, String[] args, String[] envVars, int[] processId, int rows, int columns, int cellWidth, int cellHeight);
 
-    /** Set the window size for a given pty, which allows connected programs to learn how large their screen is. */
+    /**
+     * Set the window size for a given pty, which allows connected programs to learn how large their screen is.
+     */
     public static native void setPtyWindowSize(int fd, int rows, int cols, int cellWidth, int cellHeight);
 
     /**
@@ -35,7 +37,8 @@ final class JNI {
      */
     public static native int waitFor(int processId);
 
-    /** Close a file descriptor through the close(2) system call. */
+    /**
+     * Close a file descriptor through the close(2) system call.
+     */
     public static native void close(int fileDescriptor);
-
 }

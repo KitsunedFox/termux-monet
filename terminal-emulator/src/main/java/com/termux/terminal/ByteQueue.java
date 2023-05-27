@@ -1,11 +1,16 @@
 package com.termux.terminal;
 
-/** A circular byte buffer allowing one producer and one consumer thread. */
+/**
+ * A circular byte buffer allowing one producer and one consumer thread.
+ */
 final class ByteQueue {
 
     private final byte[] mBuffer;
+
     private int mHead;
+
     private int mStoredBytes;
+
     private boolean mOpen = true;
 
     public ByteQueue(int size) {
@@ -29,8 +34,8 @@ final class ByteQueue {
                 return 0;
             }
         }
-        if (!mOpen) return -1;
-
+        if (!mOpen)
+            return -1;
         int totalRead = 0;
         int bufferLength = mBuffer.length;
         boolean wasFull = bufferLength == mStoredBytes;
@@ -41,13 +46,15 @@ final class ByteQueue {
             int bytesToCopy = Math.min(length, oneRun);
             System.arraycopy(mBuffer, mHead, buffer, offset, bytesToCopy);
             mHead += bytesToCopy;
-            if (mHead >= bufferLength) mHead = 0;
+            if (mHead >= bufferLength)
+                mHead = 0;
             mStoredBytes -= bytesToCopy;
             length -= bytesToCopy;
             offset += bytesToCopy;
             totalRead += bytesToCopy;
         }
-        if (wasFull) notify();
+        if (wasFull)
+            notify();
         return totalRead;
     }
 
@@ -62,9 +69,7 @@ final class ByteQueue {
         } else if (lengthToWrite <= 0) {
             throw new IllegalArgumentException("length <= 0");
         }
-
         final int bufferLength = mBuffer.length;
-
         synchronized (this) {
             while (lengthToWrite > 0) {
                 while (bufferLength == mStoredBytes && mOpen) {
@@ -74,11 +79,11 @@ final class ByteQueue {
                         // Ignore.
                     }
                 }
-                if (!mOpen) return false;
+                if (!mOpen)
+                    return false;
                 final boolean wasEmpty = mStoredBytes == 0;
                 int bytesToWriteBeforeWaiting = Math.min(lengthToWrite, bufferLength - mStoredBytes);
                 lengthToWrite -= bytesToWriteBeforeWaiting;
-
                 while (bytesToWriteBeforeWaiting > 0) {
                     int tail = mHead + mStoredBytes;
                     int oneRun;
@@ -100,7 +105,8 @@ final class ByteQueue {
                     bytesToWriteBeforeWaiting -= bytesToCopy;
                     mStoredBytes += bytesToCopy;
                 }
-                if (wasEmpty) notify();
+                if (wasEmpty)
+                    notify();
             }
         }
         return true;

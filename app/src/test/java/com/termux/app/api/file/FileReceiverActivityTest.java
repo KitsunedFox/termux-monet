@@ -1,12 +1,10 @@
 package com.termux.app.api.file;
 
 import com.termux.app.api.file.FileReceiverActivity;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,12 +21,10 @@ public class FileReceiverActivityTest {
         for (String url : validUrls) {
             Assert.assertTrue(FileReceiverActivity.isSharedTextAnUrl(url));
         }
-
         List<String> invalidUrls = new ArrayList<>();
         invalidUrls.add("a test with example.com");
         for (String url : invalidUrls) {
             Assert.assertFalse(FileReceiverActivity.isSharedTextAnUrl(url));
         }
     }
-
 }

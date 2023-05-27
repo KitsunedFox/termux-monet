@@ -11,17 +11,14 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.UserHandle;
 import android.os.UserManager;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-
 import com.termux.shared.R;
 import com.termux.shared.data.DataUtils;
 import com.termux.shared.interact.MessageDialogUtils;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.reflection.ReflectionUtils;
-
 import java.lang.reflect.Field;
 import java.security.MessageDigest;
 import java.util.List;
@@ -39,7 +36,7 @@ public class PackageUtils {
      */
     @Nullable
     public static Context getContextForPackage(@NonNull final Context context, String packageName) {
-       return getContextForPackage(context, packageName, Context.CONTEXT_RESTRICTED);
+        return getContextForPackage(context, packageName, Context.CONTEXT_RESTRICTED);
     }
 
     /**
@@ -71,25 +68,17 @@ public class PackageUtils {
      * @return Returns the {@link Context}. This will {@code null} if an exception is raised.
      */
     @Nullable
-    public static Context getContextForPackageOrExitApp(@NonNull Context context, String packageName,
-                                                        final boolean exitAppOnError, @Nullable String helpUrl) {
+    public static Context getContextForPackageOrExitApp(@NonNull Context context, String packageName, final boolean exitAppOnError, @Nullable String helpUrl) {
         Context packageContext = getContextForPackage(context, packageName);
-
         if (packageContext == null && exitAppOnError) {
-            String errorMessage = context.getString(R.string.error_get_package_context_failed_message,
-                packageName);
+            String errorMessage = context.getString(R.string.error_get_package_context_failed_message, packageName);
             if (!DataUtils.isNullOrEmpty(helpUrl))
                 errorMessage += "\n" + context.getString(R.string.error_get_package_context_failed_help_url_message, helpUrl);
             Logger.logError(LOG_TAG, errorMessage);
-            MessageDialogUtils.exitAppWithErrorMessage(context,
-                context.getString(R.string.error_get_package_context_failed_title),
-                errorMessage);
+            MessageDialogUtils.exitAppWithErrorMessage(context, context.getString(R.string.error_get_package_context_failed_title), errorMessage);
         }
-
         return packageContext;
     }
-
-
 
     /**
      * Get the {@link PackageInfo} for the package associated with the {@code context}.
@@ -143,8 +132,6 @@ public class PackageUtils {
             return null;
         }
     }
-
-
 
     /**
      * Get the {@link ApplicationInfo} for the {@code packageName}.
@@ -234,7 +221,8 @@ public class PackageUtils {
      */
     @Nullable
     public static String getApplicationInfoSeInfoUserForPackage(@NonNull final ApplicationInfo applicationInfo) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return null;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+            return null;
         ReflectionUtils.bypassHiddenAPIReflectionRestrictions();
         try {
             return (String) ReflectionUtils.invokeField(ApplicationInfo.class, "seInfoUser", applicationInfo).value;
@@ -274,17 +262,13 @@ public class PackageUtils {
     @Nullable
     public static Boolean isApplicationInfoPrivateFlagSetForPackage(@NonNull String flagToCheckName, @NonNull final ApplicationInfo applicationInfo) {
         Integer privateFlags = getApplicationInfoPrivateFlagsForPackage(applicationInfo);
-        if (privateFlags == null) return null;
-
+        if (privateFlags == null)
+            return null;
         Integer flagToCheck = getApplicationInfoStaticIntFieldValue(flagToCheckName);
-        if (flagToCheck == null) return null;
-
-        return ( 0 != ( privateFlags & flagToCheck ) );
+        if (flagToCheck == null)
+            return null;
+        return (0 != (privateFlags & flagToCheck));
     }
-
-
-
-
 
     /**
      * Get the app name for the package associated with the {@code context}.
@@ -307,8 +291,6 @@ public class PackageUtils {
         return applicationInfo.loadLabel(context.getPackageManager()).toString();
     }
 
-
-
     /**
      * Get the package name for the package associated with the {@code context}.
      *
@@ -328,8 +310,6 @@ public class PackageUtils {
     public static String getPackageNameForPackage(@NonNull final ApplicationInfo applicationInfo) {
         return applicationInfo.packageName;
     }
-
-
 
     /**
      * Get the uid for the package associated with the {@code context}.
@@ -351,8 +331,6 @@ public class PackageUtils {
         return applicationInfo.uid;
     }
 
-
-
     /**
      * Get the {@code targetSdkVersion} for the package associated with the {@code context}.
      *
@@ -372,8 +350,6 @@ public class PackageUtils {
     public static int getTargetSDKForPackage(@NonNull final ApplicationInfo applicationInfo) {
         return applicationInfo.targetSdkVersion;
     }
-
-
 
     /**
      * Get the base apk path for the package associated with the {@code context}.
@@ -395,8 +371,6 @@ public class PackageUtils {
         return applicationInfo.publicSourceDir;
     }
 
-
-
     /**
      * Check if the app associated with the {@code context} has {@link ApplicationInfo#FLAG_DEBUGGABLE}
      * set.
@@ -416,10 +390,8 @@ public class PackageUtils {
      * @return Returns {@code true} if app is debuggable, otherwise {@code false}.
      */
     public static boolean isAppForPackageADebuggableBuild(@NonNull final ApplicationInfo applicationInfo) {
-        return ( 0 != ( applicationInfo.flags & ApplicationInfo.FLAG_DEBUGGABLE ) );
+        return (0 != (applicationInfo.flags & ApplicationInfo.FLAG_DEBUGGABLE));
     }
-
-
 
     /**
      * Check if the app associated with the {@code context} has {@link ApplicationInfo#FLAG_EXTERNAL_STORAGE}
@@ -440,10 +412,8 @@ public class PackageUtils {
      * @return Returns {@code true} if app is installed on external storage, otherwise {@code false}.
      */
     public static boolean isAppInstalledOnExternalStorage(@NonNull final ApplicationInfo applicationInfo) {
-        return ( 0 != ( applicationInfo.flags & ApplicationInfo.FLAG_EXTERNAL_STORAGE ) );
+        return (0 != (applicationInfo.flags & ApplicationInfo.FLAG_EXTERNAL_STORAGE));
     }
-
-
 
     /**
      * Check if the app associated with the {@code context} has
@@ -472,8 +442,6 @@ public class PackageUtils {
     public static Boolean hasRequestedLegacyExternalStorage(@NonNull final ApplicationInfo applicationInfo) {
         return isApplicationInfoPrivateFlagSetForPackage("PRIVATE_FLAG_REQUEST_LEGACY_EXTERNAL_STORAGE", applicationInfo);
     }
-
-
 
     /**
      * Get the {@code versionCode} for the package associated with the {@code context}.
@@ -508,8 +476,6 @@ public class PackageUtils {
     public static Integer getVersionCodeForPackage(@Nullable final PackageInfo packageInfo) {
         return packageInfo != null ? packageInfo.versionCode : null;
     }
-
-
 
     /**
      * Get the {@code versionName} for the package associated with the {@code context}.
@@ -546,8 +512,6 @@ public class PackageUtils {
         return packageInfo != null ? packageInfo.versionName : null;
     }
 
-
-
     /**
      * Get the {@code SHA-256 digest} of signing certificate for the package associated with the {@code context}.
      *
@@ -578,14 +542,13 @@ public class PackageUtils {
              * W/PackageManager: Failed to parse /path/to/com.termux.tasker.apk: Signature mismatch for shared user: SharedUserSetting{xxxxxxx com.termux/10xxx}
              */
             PackageInfo packageInfo = getPackageInfoForPackage(context, packageName, PackageManager.GET_SIGNATURES);
-            if (packageInfo == null) return null;
+            if (packageInfo == null)
+                return null;
             return DataUtils.bytesToHex(MessageDigest.getInstance("SHA-256").digest(packageInfo.signatures[0].toByteArray()));
         } catch (final Exception e) {
             return null;
         }
     }
-
-
 
     /**
      * Get the serial number for the user for the package associated with the {@code context}.
@@ -597,7 +560,8 @@ public class PackageUtils {
     @Nullable
     public static Long getUserIdForPackage(@NonNull Context context) {
         UserManager userManager = (UserManager) context.getSystemService(Context.USER_SERVICE);
-        if (userManager == null) return null;
+        if (userManager == null)
+            return null;
         return userManager.getSerialNumberForUser(UserHandle.getUserHandleForUid(getUidForPackage(context)));
     }
 
@@ -624,19 +588,18 @@ public class PackageUtils {
     @Nullable
     public static String getProfileOwnerPackageNameForUser(@NonNull Context context) {
         DevicePolicyManager devicePolicyManager = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
-        if (devicePolicyManager == null) return null;
+        if (devicePolicyManager == null)
+            return null;
         List<ComponentName> activeAdmins = devicePolicyManager.getActiveAdmins();
-        if (activeAdmins != null){
-            for (ComponentName admin:activeAdmins){
+        if (activeAdmins != null) {
+            for (ComponentName admin : activeAdmins) {
                 String packageName = admin.getPackageName();
-                if(devicePolicyManager.isProfileOwnerApp(packageName))
+                if (devicePolicyManager.isProfileOwnerApp(packageName))
                     return packageName;
             }
         }
         return null;
     }
-
-
 
     /**
      * Get the process id of the main app process of a package. This will work for sharedUserId. Note
@@ -663,8 +626,6 @@ public class PackageUtils {
         }
         return null;
     }
-
-
 
     /**
      * Check if app is installed and enabled. This can be used by external apps that don't
@@ -698,23 +659,19 @@ public class PackageUtils {
      */
     public static String isAppInstalled(@NonNull final Context context, String appName, String packageName) {
         String errmsg = null;
-
         ApplicationInfo applicationInfo = getApplicationInfoForPackage(context, packageName);
         boolean isAppEnabled = (applicationInfo != null && applicationInfo.enabled);
-
         // If app is not installed or is disabled
         if (!isAppEnabled)
             errmsg = context.getString(R.string.error_app_not_installed_or_disabled_warning, appName, packageName);
-
         return errmsg;
     }
 
-
-    /** Wrapper for {@link #setComponentState(Context, String, String, boolean, String, boolean, boolean)} with
-     * {@code alwaysShowToast} {@code true}. */
-    public static String setComponentState(@NonNull final Context context, @NonNull String packageName,
-                                           @NonNull String className, boolean newState, String toastString,
-                                           boolean showErrorMessage) {
+    /**
+     * Wrapper for {@link #setComponentState(Context, String, String, boolean, String, boolean, boolean)} with
+     * {@code alwaysShowToast} {@code true}.
+     */
+    public static String setComponentState(@NonNull final Context context, @NonNull String packageName, @NonNull String className, boolean newState, String toastString, boolean showErrorMessage) {
         return setComponentState(context, packageName, className, newState, toastString, showErrorMessage, true);
     }
 
@@ -732,9 +689,7 @@ public class PackageUtils {
      * @return Returns the errmsg if failed to set state, otherwise {@code null}.
      */
     @Nullable
-    public static String setComponentState(@NonNull final Context context, @NonNull String packageName,
-                                           @NonNull String className, boolean newState, String toastString,
-                                           boolean alwaysShowToast, boolean showErrorMessage) {
+    public static String setComponentState(@NonNull final Context context, @NonNull String packageName, @NonNull String className, boolean newState, String toastString, boolean alwaysShowToast, boolean showErrorMessage) {
         try {
             PackageManager packageManager = context.getPackageManager();
             if (packageManager != null) {
@@ -742,30 +697,24 @@ public class PackageUtils {
                     Logger.showToast(context, toastString, true);
                     toastString = null;
                 }
-
                 Boolean currentlyDisabled = PackageUtils.isComponentDisabled(context, packageName, className, false);
                 if (currentlyDisabled == null)
                     throw new UnsupportedOperationException("Failed to find if component currently disabled");
-
                 Boolean setState = null;
                 if (newState && currentlyDisabled)
                     setState = true;
                 else if (!newState && !currentlyDisabled)
                     setState = false;
-
-                if (setState == null) return null;
-
-                if (toastString != null) Logger.showToast(context, toastString, true);
+                if (setState == null)
+                    return null;
+                if (toastString != null)
+                    Logger.showToast(context, toastString, true);
                 ComponentName componentName = new ComponentName(packageName, className);
-                packageManager.setComponentEnabledSetting(componentName,
-                    setState ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED : PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                    PackageManager.DONT_KILL_APP);
+                packageManager.setComponentEnabledSetting(componentName, setState ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED : PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
             }
             return null;
         } catch (final Exception e) {
-            String errmsg = context.getString(
-                newState ? R.string.error_enable_component_failed : R.string.error_disable_component_failed,
-                packageName, className) + ": " + e.getMessage();
+            String errmsg = context.getString(newState ? R.string.error_enable_component_failed : R.string.error_disable_component_failed, packageName, className) + ": " + e.getMessage();
             if (showErrorMessage)
                 Logger.showToast(context, errmsg, true);
             return errmsg;
@@ -783,8 +732,7 @@ public class PackageUtils {
      * @return Returns {@code true} if disabled, {@code false} if not and {@code null} if failed to
      * get the state.
      */
-    public static Boolean isComponentDisabled(@NonNull final Context context, @NonNull String packageName,
-                                              @NonNull String className, boolean logErrorMessage) {
+    public static Boolean isComponentDisabled(@NonNull final Context context, @NonNull String packageName, @NonNull String className, boolean logErrorMessage) {
         try {
             PackageManager packageManager = context.getPackageManager();
             if (packageManager != null) {
@@ -797,7 +745,6 @@ public class PackageUtils {
             if (logErrorMessage)
                 Logger.logStackTraceWithMessage(LOG_TAG, context.getString(R.string.error_get_component_state_failed, packageName, className), e);
         }
-
         return null;
     }
 
@@ -811,8 +758,7 @@ public class PackageUtils {
      * @param flags The flags to filter results.
      * @return Returns {@code true} if it exists, otherwise {@code false}.
      */
-    public static boolean doesActivityComponentExist(@NonNull final Context context, @NonNull String packageName,
-                                                     @NonNull String className, int flags) {
+    public static boolean doesActivityComponentExist(@NonNull final Context context, @NonNull String packageName, @NonNull String className, int flags) {
         try {
             PackageManager packageManager = context.getPackageManager();
             if (packageManager != null) {
@@ -823,8 +769,6 @@ public class PackageUtils {
         } catch (final Exception e) {
             // ignore
         }
-
         return false;
     }
-
 }

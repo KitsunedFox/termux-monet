@@ -1,12 +1,9 @@
 package com.termux.shared.shell.command.environment;
 
 import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.termux.shared.shell.command.ExecutionCommand;
-
 import java.util.HashMap;
 
 public interface IShellEnvironment {
@@ -46,7 +43,5 @@ public interface IShellEnvironment {
      * @return Should return the shell environment.
      */
     @NonNull
-    HashMap<String, String> setupShellCommandEnvironment(@NonNull Context currentPackageContext,
-                                                         @NonNull ExecutionCommand executionCommand);
-
+    HashMap<String, String> setupShellCommandEnvironment(@NonNull Context currentPackageContext, @NonNull ExecutionCommand executionCommand);
 }

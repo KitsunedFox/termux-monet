@@ -10,9 +10,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.termux.shared.R;
 import com.termux.shared.data.DataUtils;
 import com.termux.shared.data.IntentUtils;
@@ -20,9 +18,7 @@ import com.termux.shared.file.FileUtils;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.errors.Error;
 import com.termux.shared.android.PermissionUtils;
-
 import java.nio.charset.Charset;
-
 import javax.annotation.Nullable;
 
 public class ShareUtils {
@@ -37,8 +33,8 @@ public class ShareUtils {
      * @param title The title for choose menu.
      */
     public static void openSystemAppChooser(final Context context, final Intent intent, final String title) {
-        if (context == null) return;
-
+        if (context == null)
+            return;
         final Intent chooserIntent = new Intent(Intent.ACTION_CHOOSER);
         chooserIntent.putExtra(Intent.EXTRA_INTENT, intent);
         chooserIntent.putExtra(Intent.EXTRA_TITLE, title);
@@ -70,24 +66,25 @@ public class ShareUtils {
      * @param title The title for share menu.
      */
     public static void shareText(final Context context, final String subject, final String text, @Nullable final String title) {
-        if (context == null || text == null) return;
-
+        if (context == null || text == null)
+            return;
         final Intent shareTextIntent = new Intent(Intent.ACTION_SEND);
         shareTextIntent.setType("text/plain");
         shareTextIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
         shareTextIntent.putExtra(Intent.EXTRA_TEXT, DataUtils.getTruncatedCommandOutput(text, DataUtils.TRANSACTION_SIZE_LIMIT_IN_BYTES, true, false, false));
-
         openSystemAppChooser(context, shareTextIntent, DataUtils.isNullOrEmpty(title) ? context.getString(R.string.title_share_with) : title);
     }
 
-
-
-    /** Wrapper for {@link #copyTextToClipboard(Context, String, String, String)} with `null` `clipDataLabel` and `toastString`. */
+    /**
+     * Wrapper for {@link #copyTextToClipboard(Context, String, String, String)} with `null` `clipDataLabel` and `toastString`.
+     */
     public static void copyTextToClipboard(Context context, final String text) {
         copyTextToClipboard(context, null, text, null);
     }
 
-    /** Wrapper for {@link #copyTextToClipboard(Context, String, String, String)} with `null` `clipDataLabel`. */
+    /**
+     * Wrapper for {@link #copyTextToClipboard(Context, String, String, String)} with `null` `clipDataLabel`.
+     */
     public static void copyTextToClipboard(Context context, final String text, final String toastString) {
         copyTextToClipboard(context, null, text, toastString);
     }
@@ -101,22 +98,16 @@ public class ShareUtils {
      * @param toastString If this is not {@code null} or empty, then a toast is shown if copying to
      *                    clipboard is successful.
      */
-    public static void copyTextToClipboard(Context context, @Nullable final String clipDataLabel,
-                                           final String text, final String toastString) {
-        if (context == null || text == null) return;
-
+    public static void copyTextToClipboard(Context context, @Nullable final String clipDataLabel, final String text, final String toastString) {
+        if (context == null || text == null)
+            return;
         ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-        if (clipboardManager == null) return;
-
-        clipboardManager.setPrimaryClip(ClipData.newPlainText(clipDataLabel,
-            DataUtils.getTruncatedCommandOutput(text, DataUtils.TRANSACTION_SIZE_LIMIT_IN_BYTES,
-                true, false, false)));
-
+        if (clipboardManager == null)
+            return;
+        clipboardManager.setPrimaryClip(ClipData.newPlainText(clipDataLabel, DataUtils.getTruncatedCommandOutput(text, DataUtils.TRANSACTION_SIZE_LIMIT_IN_BYTES, true, false, false)));
         if (toastString != null && !toastString.isEmpty())
             Logger.showToast(context, toastString, true);
     }
-
-
 
     /**
      * Wrapper for {@link #getTextFromClipboard(Context, boolean)} that returns primary text {@link String}
@@ -125,7 +116,8 @@ public class ShareUtils {
     @Nullable
     public static String getTextStringFromClipboardIfSet(Context context, boolean coerceToText) {
         CharSequence textCharSequence = getTextFromClipboard(context, coerceToText);
-        if (textCharSequence == null) return null;
+        if (textCharSequence == null)
+            return null;
         String textString = textCharSequence.toString();
         return !textString.isEmpty() ? textString : null;
     }
@@ -140,21 +132,19 @@ public class ShareUtils {
      */
     @Nullable
     public static CharSequence getTextFromClipboard(Context context, boolean coerceToText) {
-        if (context == null) return null;
-
+        if (context == null)
+            return null;
         ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-        if (clipboardManager == null) return null;
-
+        if (clipboardManager == null)
+            return null;
         ClipData clipData = clipboardManager.getPrimaryClip();
-        if (clipData == null) return null;
-
+        if (clipData == null)
+            return null;
         ClipData.Item clipItem = clipData.getItemAt(0);
-        if (clipItem == null) return null;
-
+        if (clipItem == null)
+            return null;
         return coerceToText ? clipItem.coerceToText(context) : clipItem.getText();
     }
-
-
 
     /**
      * Open a url.
@@ -163,7 +153,8 @@ public class ShareUtils {
      * @param url The url to open.
      */
     public static void openUrl(final Context context, final String url) {
-        if (context == null || url == null || url.isEmpty()) return;
+        if (context == null || url == null || url.isEmpty())
+            return;
         Uri uri = Uri.parse(url);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         try {
@@ -193,26 +184,20 @@ public class ShareUtils {
      * @param storagePermissionRequestCode The request code to use while asking for permission.
      */
     public static void saveTextToFile(final Context context, final String label, final String filePath, final String text, final boolean showToast, final int storagePermissionRequestCode) {
-        if (context == null || filePath == null || filePath.isEmpty() || text == null) return;
-
+        if (context == null || filePath == null || filePath.isEmpty() || text == null)
+            return;
         // If path is under primary external storage directory, then check for missing permissions.
-        if ((FileUtils.isPathInDirPath(filePath, Environment.getExternalStorageDirectory().getAbsolutePath(), true) ||
-            FileUtils.isPathInDirPath(filePath, "/sdcard", true)) &&
-            !PermissionUtils.checkPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+        if ((FileUtils.isPathInDirPath(filePath, Environment.getExternalStorageDirectory().getAbsolutePath(), true) || FileUtils.isPathInDirPath(filePath, "/sdcard", true)) && !PermissionUtils.checkPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             Logger.logErrorAndShowToast(context, LOG_TAG, context.getString(R.string.msg_storage_permission_not_granted));
-
             if (storagePermissionRequestCode >= 0 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (context instanceof AppCompatActivity)
                     PermissionUtils.requestPermission(((AppCompatActivity) context), Manifest.permission.WRITE_EXTERNAL_STORAGE, storagePermissionRequestCode);
                 else if (context instanceof Activity)
                     PermissionUtils.requestPermission(((Activity) context), Manifest.permission.WRITE_EXTERNAL_STORAGE, storagePermissionRequestCode);
             }
-
             return;
         }
-
-        Error error = FileUtils.writeTextToFile(label, filePath,
-            Charset.defaultCharset(), text, false);
+        Error error = FileUtils.writeTextToFile(label, filePath, Charset.defaultCharset(), text, false);
         if (error != null) {
             Logger.logErrorExtended(LOG_TAG, error.toString());
             Logger.showToast(context, Error.getMinimalErrorString(error), true);
@@ -221,5 +206,4 @@ public class ShareUtils {
                 Logger.showToast(context, context.getString(R.string.msg_file_saved_successfully, label, filePath), true);
         }
     }
-
 }

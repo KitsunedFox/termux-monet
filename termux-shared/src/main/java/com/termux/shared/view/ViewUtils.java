@@ -10,17 +10,17 @@ import android.os.Build;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.termux.shared.logger.Logger;
 
 public class ViewUtils {
 
-    /** Log root view events. */
+    /**
+     * Log root view events.
+     */
     public static boolean VIEW_UTILS_LOGGING_ENABLED = false;
 
     private static final String LOG_TAG = "ViewUtils";
@@ -66,34 +66,30 @@ public class ViewUtils {
     public static Rect[] getWindowAndViewRects(View view, int statusBarHeight) {
         if (view == null || !view.isShown())
             return null;
-
         boolean view_utils_logging_enabled = VIEW_UTILS_LOGGING_ENABLED;
-
         // windowRect - will hold available area where content remain visible to users
         // Takes into account screen decorations (e.g. statusbar)
         Rect windowRect = new Rect();
         view.getWindowVisibleDisplayFrame(windowRect);
-
         // If there is actionbar, get his height
         int actionBarHeight = 0;
         boolean isInMultiWindowMode = false;
         Context context = view.getContext();
         if (context instanceof AppCompatActivity) {
             ActionBar actionBar = ((AppCompatActivity) context).getSupportActionBar();
-            if (actionBar != null) actionBarHeight = actionBar.getHeight();
+            if (actionBar != null)
+                actionBarHeight = actionBar.getHeight();
             isInMultiWindowMode = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) && ((AppCompatActivity) context).isInMultiWindowMode();
         } else if (context instanceof Activity) {
             android.app.ActionBar actionBar = ((Activity) context).getActionBar();
-            if (actionBar != null) actionBarHeight = actionBar.getHeight();
+            if (actionBar != null)
+                actionBarHeight = actionBar.getHeight();
             isInMultiWindowMode = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) && ((Activity) context).isInMultiWindowMode();
         }
-
         int displayOrientation = getDisplayOrientation(context);
-
         // windowAvailableRect - takes into account actionbar and statusbar height
         Rect windowAvailableRect;
         windowAvailableRect = new Rect(windowRect.left, windowRect.top + actionBarHeight, windowRect.right, windowRect.bottom);
-
         // viewRect - holds position of the view in window
         // (methods as getGlobalVisibleRect, getHitRect, getDrawingRect can return different result,
         // when partialy visible)
@@ -102,16 +98,12 @@ public class ViewUtils {
         view.getLocationInWindow(viewsLocationInWindow);
         int viewLeft = viewsLocationInWindow[0];
         int viewTop = viewsLocationInWindow[1];
-
         if (view_utils_logging_enabled) {
             Logger.logVerbose(LOG_TAG, "getWindowAndViewRects:");
             Logger.logVerbose(LOG_TAG, "windowRect: " + toRectString(windowRect) + ", windowAvailableRect: " + toRectString(windowAvailableRect));
             Logger.logVerbose(LOG_TAG, "viewsLocationInWindow: " + toPointString(new Point(viewLeft, viewTop)));
-            Logger.logVerbose(LOG_TAG, "activitySize: " + toPointString(getDisplaySize(context, true)) +
-                ", displaySize: " + toPointString(getDisplaySize(context, false)) +
-                ", displayOrientation=" + displayOrientation);
+            Logger.logVerbose(LOG_TAG, "activitySize: " + toPointString(getDisplaySize(context, true)) + ", displaySize: " + toPointString(getDisplaySize(context, false)) + ", displayOrientation=" + displayOrientation);
         }
-
         if (isInMultiWindowMode) {
             if (displayOrientation == Configuration.ORIENTATION_PORTRAIT) {
                 // The windowRect.top of the window at the of split screen mode should start right
@@ -124,25 +116,21 @@ public class ViewUtils {
                     if (view_utils_logging_enabled)
                         Logger.logVerbose(LOG_TAG, "windowRect.top equals statusBarHeight " + statusBarHeight + " in multi-window portrait mode. Window is possibly top app in split screen mode.");
                 }
-
             } else if (displayOrientation == Configuration.ORIENTATION_LANDSCAPE) {
                 // If window is on the right in landscape mode of split screen, the viewLeft actually
                 // starts at windowRect.left instead of 0 returned by getLocationInWindow
                 viewLeft += windowRect.left;
             }
         }
-
         int viewRight = viewLeft + view.getWidth();
         int viewBottom = viewTop + view.getHeight();
         viewRect = new Rect(viewLeft, viewTop, viewRight, viewBottom);
-
         if (displayOrientation == Configuration.ORIENTATION_LANDSCAPE && viewRight > windowAvailableRect.right) {
             if (view_utils_logging_enabled)
                 Logger.logVerbose(LOG_TAG, "viewRight " + viewRight + " is greater than windowAvailableRect.right " + windowAvailableRect.right + " in landscape mode. Setting windowAvailableRect.right to viewRight since it may not include navbar height.");
             windowAvailableRect.right = viewRight;
         }
-
-        return new Rect[]{windowAvailableRect, viewRect};
+        return new Rect[] { windowAvailableRect, viewRect };
     }
 
     /**
@@ -154,9 +142,8 @@ public class ViewUtils {
      */
     public static boolean isRectAbove(@NonNull Rect r1, @NonNull Rect r2) {
         // check for empty first
-        return r1.left < r1.right && r1.top < r1.bottom
-            // now check if above
-            && r1.left <= r2.left && r1.bottom >= r2.bottom;
+        return r1.left < r1.right && r1.top < r1.bottom && // now check if above
+        r1.left <= r2.left && r1.bottom >= r2.bottom;
     }
 
     /**
@@ -182,7 +169,7 @@ public class ViewUtils {
      *                     and can be smaller than physical display size in multi-window mode.
      * @return Returns the display size as {@link Point}.
      */
-    public static Point getDisplaySize( @NonNull Context context, boolean activitySize) {
+    public static Point getDisplaySize(@NonNull Context context, boolean activitySize) {
         // android.view.WindowManager.getDefaultDisplay() and Display.getSize() are deprecated in
         // API 30 and give wrong values in API 30 for activitySize=false in multi-window
         androidx.window.WindowManager windowManager = new androidx.window.WindowManager(context);
@@ -194,46 +181,55 @@ public class ViewUtils {
         return new Point(windowMetrics.getBounds().width(), windowMetrics.getBounds().height());
     }
 
-    /** Convert {@link Rect} to {@link String}. */
+    /**
+     * Convert {@link Rect} to {@link String}.
+     */
     public static String toRectString(Rect rect) {
-        if (rect == null) return "null";
+        if (rect == null)
+            return "null";
         return "(" + rect.left + "," + rect.top + "), (" + rect.right + "," + rect.bottom + ")";
     }
 
-    /** Convert {@link Point} to {@link String}. */
+    /**
+     * Convert {@link Point} to {@link String}.
+     */
     public static String toPointString(Point point) {
-        if (point == null) return "null";
+        if (point == null)
+            return "null";
         return "(" + point.x + "," + point.y + ")";
     }
 
-    /** Get the {@link Activity} associated with the {@link Context} if available. */
+    /**
+     * Get the {@link Activity} associated with the {@link Context} if available.
+     */
     @Nullable
     public static Activity getActivity(Context context) {
         while (context instanceof ContextWrapper) {
             if (context instanceof Activity) {
-                return (Activity)context;
+                return (Activity) context;
             }
-            context = ((ContextWrapper)context).getBaseContext();
+            context = ((ContextWrapper) context).getBaseContext();
         }
         return null;
     }
 
-
-    /** Convert value in device independent pixels (dp) to pixels (px) units. */
+    /**
+     * Convert value in device independent pixels (dp) to pixels (px) units.
+     */
     public static float dpToPx(Context context, float dp) {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
     }
 
-    /** Convert value in pixels (px) to device independent pixels (dp) units. */
+    /**
+     * Convert value in pixels (px) to device independent pixels (dp) units.
+     */
     public static float pxToDp(Context context, float px) {
         return px / context.getResources().getDisplayMetrics().density;
     }
 
-
     public static void setLayoutMarginsInDp(@NonNull View view, int left, int top, int right, int bottom) {
         Context context = view.getContext();
-        setLayoutMarginsInPixels(view, (int) dpToPx(context, left), (int) dpToPx(context, top),
-            (int) dpToPx(context, right), (int) dpToPx(context, bottom));
+        setLayoutMarginsInPixels(view, (int) dpToPx(context, left), (int) dpToPx(context, top), (int) dpToPx(context, right), (int) dpToPx(context, bottom));
     }
 
     public static void setLayoutMarginsInPixels(@NonNull View view, int left, int top, int right, int bottom) {
@@ -243,5 +239,4 @@ public class ViewUtils {
             view.setLayoutParams(params);
         }
     }
-
 }
