@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.os.SystemClock;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.os.VibratorManager;
 import com.termux.shared.logger.Logger;
 
 public class BellHandler {
@@ -22,7 +23,7 @@ public class BellHandler {
             synchronized (lock) {
                 if (instance == null) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                        instance = new BellHandler((Vibrator) context.getApplicationContext().getSystemService(Context.VIBRATOR_MANAGER_SERVICE));
+                        instance = new BellHandler(((VibratorManager) context.getApplicationContext().getSystemService(Context.VIBRATOR_MANAGER_SERVICE)).getDefaultVibrator());
                     } else {
                         instance = new BellHandler((Vibrator) context.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE));
                     }
