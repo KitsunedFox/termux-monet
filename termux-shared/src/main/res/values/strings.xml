@@ -35,7 +35,7 @@
     <string name="error_failed_to_request_permissions">Failed to request permissions with request code %1$d: %2$s</string>
     <string name="error_attempted_to_check_for_permissions_not_requested">Attempted to check for permissions that have not been requested in app manifest: %1$s</string>
     <string name="error_attempted_to_ask_for_permissions_not_requested">Attempted to ask for permissions that have not been requested in app manifest: %1$s</string>
-    <string name="error_has_not_requested_legacy_external_storage">The \"%1$s\" package is targeting targetSdkVersion %2$d and is running on android sdk %3$d but has not set requestLegacyExternalStorage to true in app manifest</string>
+    <string name="error_has_not_requested_legacy_external_storage">The \"%1$s\" package is targeting targetSdkVersion %2$d and is running on android sdk %3$d but has not set `requestLegacyExternalStorage` to  `true` in app manifest</string>
     <string name="msg_requires_dump_and_package_usage_stats_permissions">Requires `DUMP` and `PACKAGE_USAGE_STATS` permission</string>
     <string name="error_display_over_other_apps_permission_not_granted">%1$s requires
         \"Display over other apps\" permission to start activities and services from background on Android >= 10.
@@ -79,8 +79,7 @@
 
 
     <!-- TermuxUtils -->
-    <string name="msg_report_issue">
-        If you want to report this issue, then copy its text from the options menu (3-dots on top right) and post
+    <string name="msg_report_issue">If you want to report this issue, then copy its text from the options menu (3-dots on top right) and post
         an issue on one of the following links.
         \n\nIf you are posting a &TERMUX_APP_NAME; app crash report, then please provide details on what you were doing that
         caused the crash and how to reproduce it, if possible.
