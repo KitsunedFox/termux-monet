@@ -9,12 +9,14 @@ buildscript {
 }
 
 allprojects {
-    repositories {
-        google()
-        mavenCentral()
-        maven { url "https://jitpack.io" }
-    }
-
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+    dependencies {
+	        implementation 'com.github.termux.termux-app:terminal-emulator:v0.118.0'
+	}
 tasks.withType(JavaCompile) {
         options.compilerArgs << "-Xlint:deprecation"
     }
