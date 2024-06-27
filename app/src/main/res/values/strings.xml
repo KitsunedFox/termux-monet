@@ -236,14 +236,23 @@
                     If you want to set a new background, set it from context menu by long click on Terminal. (Default)</string>
                 <string name="termux_background_image_enabled_on">Background image will be enabled.</string>
                 
-            <!-- ExtraKeys Category -->
+            <!-- Extra Keys Category -->
             <string name="termux_extrakeys_header">Extra Keys</string>
                 
-                <!-- ExtraKeys Blur -->
-                <string name="termux_extrakeys_blur_enabled_title">ExtraKeys Blurred Background</string>
-                <string name="termux_extrakeys_blur_enabled_off">ExtraKeys Blurred Background will be disabled.
-                    Adds a transparent and blurred Background to ExtraKeys. (May impact performance) (Default)</string>
+                <!-- Extra Keys Blur -->
+                <string name="termux_extrakeys_blur_enabled_title">Extra Keys Blurred Background</string>
+                <string name="termux_extrakeys_blur_enabled_off">Extra Keys Blurred Background will be disabled.
+                    Adds a transparent and blurred Background to Extra Keys. (May impact performance) (Default)</string>
                 <string name="termux_extrakeys_blur_enabled_on">ExtraKeys Blurred Background will be enabled.</string>
+                
+            <!-- Sessions Category -->
+            <string name="termux_sessions_header">Sessions Menu</string>
+            
+                <!-- Sessions Blur -->
+                <string name="termux_sessions_blur_enabled_title">Sessions Blurred Background</string>
+                <string name="termux_sessions_blur_enabled_off">Sessions Blurred Background will be disabled.
+                    Adds a transparent and blurred Background to Sessions Menu. (May impact performance) (Default)</string>
+                <string name="termux_sessions_blur_enabled_on">Sessions Blurred Background will be enabled.</string>
 
 
 

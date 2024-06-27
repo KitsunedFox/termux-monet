@@ -10,9 +10,6 @@
             app:summaryOff="@string/termux_background_image_enabled_off"
             app:summaryOn="@string/termux_background_image_enabled_on"
             app:title="@string/termux_background_image_enabled_title" />
-            
-        
-
     </PreferenceCategory>
     
     <PreferenceCategory
@@ -24,6 +21,17 @@
             app:summaryOff="@string/termux_extrakeys_blur_enabled_off"
             app:summaryOn="@string/termux_extrakeys_blur_enabled_on"
             app:title="@string/termux_extrakeys_blur_enabled_title" />
+    </PreferenceCategory>
+    
+    <PreferenceCategory
+        app:key="sessions"
+        app:title="@string/termux_sessions_header">
+        
+        <SwitchPreferenceCompat
+            app:key="sessions_blur_enabled"
+            app:summaryOff="@string/termux_sessions_blur_enabled_off"
+            app:summaryOn="@string/termux_sessions_blur_enabled_on"
+            app:title="@string/termux_sessions_blur_enabled_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>

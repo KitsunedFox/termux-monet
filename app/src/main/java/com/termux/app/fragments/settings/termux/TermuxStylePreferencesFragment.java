@@ -77,6 +77,8 @@ class TermuxStylePreferencesDataStore extends PreferenceDataStore {
                 mPreferences.setBackgroundImageEnabled(value);
             case "extrakeys_blur_enabled":
                 mPreferences.setExtraKeysBlurEnabled(value);
+            case "sessions_blur_enabled":
+                mPreferences.setSessionsBlurEnabled(value);
             default:
                 break;
         }
@@ -91,6 +93,8 @@ class TermuxStylePreferencesDataStore extends PreferenceDataStore {
                 return mPreferences.isBackgroundImageEnabled();
             case "extrakeys_blur_enabled":
                 return mPreferences.isExtraKeysBlurEnabled();
+            case "sessions_blur_enabled":
+                return mPreferences.isSessionsBlurEnabled();
             default:
                 return false;
         }

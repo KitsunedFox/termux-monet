@@ -209,6 +209,13 @@ public final class TermuxPreferenceConstants {
         public static final String KEY_EXTRAKEYS_BLUR_ENABLED = "extrakeys_blur_enabled";
 
         public static final boolean DEFAULT_VALUE_EXTRAKEYS_BLUR_ENABLED = false;
+        
+        /**
+         * Defines the key for whether sessions blur is enabled or not.
+         */
+        public static final String KEY_SESSIONS_BLUR_ENABLED = "sessions_blur_enabled";
+
+        public static final boolean DEFAULT_VALUE_SESSIONS_BLUR_ENABLED = false;
     }
 
     /**

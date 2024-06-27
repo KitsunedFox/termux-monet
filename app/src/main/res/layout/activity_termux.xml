@@ -49,16 +49,17 @@
                 android:orientation="vertical">
 
                 <com.github.mmin18.widget.RealtimeBlurView
+                    android:id="@+id/sessions_backgroundblur"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     app:realtimeBlurRadius="10dp"
                     app:realtimeOverlayColor="@android:color/transparent" />
 
                 <View
+                    android:id="@+id/sessions_background"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/background_accent"
-                    android:alpha="0.5"/>
+                    android:background="@color/background_accent"/>
 
                 <LinearLayout
                     android:id="@+id/left_drawer"
