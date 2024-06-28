@@ -25,6 +25,8 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 import android.view.WindowManager;
 import android.view.autofill.AutofillManager;
 import android.widget.EditText;
@@ -70,6 +72,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsCompat.Type;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager.widget.ViewPager;
 import java.util.Arrays;
@@ -254,11 +259,16 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         mTermuxActivityRootView.setOnApplyWindowInsetsListener(new TermuxActivityRootView.WindowInsetsListener());
         View content = findViewById(android.R.id.content);
         content.setOnApplyWindowInsetsListener((v, insets) -> {
-            mNavBarHeight = insets.getSystemWindowInsetBottom();
-            return insets;
+            WindowInsetsCompat insetsCompat = WindowInsetsCompat.toWindowInsetsCompat(insets, v);
+            mNavBarHeight = insetsCompat.getInsets(Type.systemBars()).bottom;
+            return insetsCompat.toWindowInsets();
         });
         if (mProperties.isUsingFullScreen()) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            WindowInsetsController insetsController = getWindow().getInsetsController();
+            if (insetsController != null) {
+                insetsController.hide(WindowInsets.Type.statusBars());
+                insetsController.hide(WindowInsets.Type.navigationBars());
+            }
         }
         // Must be done every time activity is created in order to registerForActivityResult,
         // Even if the logic of launching is based on user input.
@@ -319,26 +329,28 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             mTermuxTerminalViewClient.onStart();
         if (mPreferences.isTerminalMarginAdjustmentEnabled())
             addTermuxActivityRootViewGlobalLayoutListener();
+        View terminalMonetBackground = findViewById(R.id.terminal_monetbackground);
+        View sessionsBackgroundBlur = findViewById(R.id.sessions_backgroundblur);
+        View sessionsBackground = findViewById(R.id.sessions_background);
+        View extraKeysBackgroundBlur = findViewById(R.id.extrakeys_backgroundblur);
+        View extraKeysBackground = findViewById(R.id.extrakeys_background);
+        if (mPreferences.isMonetBackgroundEnabled()) {
+            terminalMonetBackground.setVisibility(View.VISIBLE);
+        } else {
+            terminalMonetBackground.setVisibility(View.GONE);
+        }
         if (mPreferences.isSessionsBlurEnabled()) {
-            View sessionsBackgroundBlur = findViewById(R.id.sessions_backgroundblur);
-            sessionsBackgroundBlur.setEnabled(true);
-            View sessionsBackground = findViewById(R.id.sessions_background);
+            sessionsBackgroundBlur.setVisibility(View.VISIBLE);
             sessionsBackground.setAlpha(0.5f);
         } else {
-            View sessionsBackgroundBlur = findViewById(R.id.sessions_backgroundblur);
-            sessionsBackgroundBlur.setEnabled(false);
-            View extraKeysBackground = findViewById(R.id.sessions_background);
-            extraKeysBackground.setAlpha(1.0f);
+            sessionsBackgroundBlur.setVisibility(View.GONE);
+            sessionsBackground.setAlpha(1.0f);
         }
         if ((mPreferences.isExtraKeysBlurEnabled()) && (isToolbarHidden == false)) {
-            View extraKeysBackgroundBlur = findViewById(R.id.extrakeys_backgroundblur);
             extraKeysBackgroundBlur.setVisibility(View.VISIBLE);
-            View extraKeysBackground = findViewById(R.id.extrakeys_background);
             extraKeysBackground.setAlpha(0.80f);
         } else {
-            View extraKeysBackgroundBlur = findViewById(R.id.extrakeys_backgroundblur);
             extraKeysBackgroundBlur.setVisibility(View.GONE);
-            View extraKeysBackground = findViewById(R.id.extrakeys_background);
             extraKeysBackground.setAlpha(1.0f);
         }
         registerTermuxActivityBroadcastReceiver();

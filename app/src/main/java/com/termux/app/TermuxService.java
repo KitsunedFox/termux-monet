@@ -13,9 +13,11 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.PowerManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 import com.termux.R;
 import com.termux.app.event.SystemEventReceiver;
 import com.termux.app.terminal.TermuxTerminalSessionActivityClient;
@@ -74,7 +76,7 @@ public final class TermuxService extends Service implements AppShell.AppShellCli
 
     private final IBinder mBinder = new LocalBinder();
 
-    private final Handler mHandler = new Handler();
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     /**
      * The full implementation of the {@link TerminalSessionClient} interface to be used by {@link TerminalSession}
@@ -753,19 +755,18 @@ public final class TermuxService extends Service implements AppShell.AppShellCli
         // Set notification priority
         // If holding a wake or wifi lock consider the notification of high priority since it's using power,
         // otherwise use a low priority
-        int priority = (wakeLockHeld) ? Notification.PRIORITY_HIGH : Notification.PRIORITY_LOW;
+        int priority = (wakeLockHeld) ? NotificationCompat.PRIORITY_HIGH : NotificationCompat.PRIORITY_LOW;
         // Build the notification
-        Notification.Builder builder = NotificationUtils.geNotificationBuilder(this, TermuxConstants.TERMUX_APP_NOTIFICATION_CHANNEL_ID, priority, TermuxConstants.TERMUX_APP_NAME, notificationText, null, contentIntent, null, NotificationUtils.NOTIFICATION_MODE_SILENT);
-        if (builder == null)
-            return null;
-        // No need to show a timestamp:
-        builder.setShowWhen(false);
-        // Set notification icon
-        builder.setSmallIcon(R.drawable.ic_service_notification);
-        // Set background color for small notification icon
-        builder.setColor(0xFF607D8B);
-        // TermuxSessions are always ongoing
-        builder.setOngoing(true);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, TermuxConstants.TERMUX_APP_NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_service_notification)
+                .setColor(0xFF607D8B)
+                .setContentTitle(TermuxConstants.TERMUX_APP_NAME)
+                .setContentText(notificationText)
+                .setContentIntent(contentIntent)
+                .setOngoing(true)
+                .setAutoCancel(false)
+                .setOnlyAlertOnce(true)
+                .setPriority(priority);
         // Set Exit button action
         Intent exitIntent = new Intent(this, TermuxService.class).setAction(TERMUX_SERVICE.ACTION_STOP_SERVICE);
         builder.addAction(android.R.drawable.ic_delete, res.getString(R.string.notification_action_exit), PendingIntent.getService(this, 0, exitIntent, 0));

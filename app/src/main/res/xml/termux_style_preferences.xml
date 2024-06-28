@@ -10,6 +10,12 @@
             app:summaryOff="@string/termux_background_image_enabled_off"
             app:summaryOn="@string/termux_background_image_enabled_on"
             app:title="@string/termux_background_image_enabled_title" />
+            
+        <SwitchPreferenceCompat
+            app:key="monet_background_enabled"
+            app:summaryOff="@string/termux_monet_background_enabled_off"
+            app:summaryOn="@string/termux_monet_background_enabled_on"
+            app:title="@string/termux_monet_background_enabled_title" />
     </PreferenceCategory>
     
     <PreferenceCategory

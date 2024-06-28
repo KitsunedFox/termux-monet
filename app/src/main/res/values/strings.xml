@@ -236,6 +236,12 @@
                     If you want to set a new background, set it from context menu by long click on Terminal. (Default)</string>
                 <string name="termux_background_image_enabled_on">Background image will be enabled.</string>
                 
+                <!-- Monet Background -->
+                <string name="termux_monet_background_enabled_title">Monet Background (Unstable)</string>
+                <string name="termux_monet_background_enabled_off">Terminal Monet Background will be disabled.
+                    Turns the terminal background into monet (Default)</string>
+                <string name="termux_monet_background_enabled_on">Monet Background will be enabled.</string>
+                
             <!-- Extra Keys Category -->
             <string name="termux_extrakeys_header">Extra Keys</string>
                 

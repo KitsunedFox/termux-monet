@@ -2,12 +2,16 @@ package com.termux.app;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
+import androidx.core.app.NotificationCompat;
 import com.termux.R;
 import com.termux.shared.data.DataUtils;
 import com.termux.shared.data.IntentUtils;
@@ -228,16 +232,23 @@ public class RunCommandService extends Service {
     }
 
     private Notification buildNotification() {
+        Resources res = getResources();
+        // Set pending intent to be launched when notification is clicked
+        Intent notificationIntent = TermuxActivity.newInstance(this);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
         // Build the notification
-        Notification.Builder builder = NotificationUtils.geNotificationBuilder(this, TermuxConstants.TERMUX_RUN_COMMAND_NOTIFICATION_CHANNEL_ID, Notification.PRIORITY_LOW, TermuxConstants.TERMUX_RUN_COMMAND_NOTIFICATION_CHANNEL_NAME, null, null, null, null, NotificationUtils.NOTIFICATION_MODE_SILENT);
-        if (builder == null)
-            return null;
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, TermuxConstants.TERMUX_RUN_COMMAND_NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_service_notification)
+                .setColor(0xFF607D8B)
+                .setContentTitle(TermuxConstants.TERMUX_RUN_COMMAND_NOTIFICATION_CHANNEL_NAME)
+                .setContentIntent(contentIntent)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setAutoCancel(false)
+                .setOnlyAlertOnce(true);
+
         // No need to show a timestamp:
         builder.setShowWhen(false);
-        // Set notification icon
-        builder.setSmallIcon(R.drawable.ic_service_notification);
-        // Set background color for small notification icon
-        builder.setColor(0xFF607D8B);
+
         return builder.build();
     }
 
