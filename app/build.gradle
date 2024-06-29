@@ -109,7 +109,7 @@ android {
 
 dependencies {
     implementation "androidx.annotation:annotation:1.8.0"
-    implementation "androidx.core:core:1.9.0"
+    implementation "androidx.core:core:1.13.1"
     implementation "androidx.drawerlayout:drawerlayout:1.2.0"
     implementation "androidx.preference:preference:1.1.1" // Do not increment version due to ViewUtils issue
     implementation "androidx.viewpager:viewpager:1.1.0-alpha01"
