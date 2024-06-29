@@ -16,10 +16,7 @@ updates:
     rebase-strategy: "disabled"
     ignore:
       - dependency-name: "androidx.preference:preference"
-      - dependency-name: "com.android.tools:desugar_jdk_libs"
       - dependency-name: "androidx.window:window"
-      - dependency-name: "androidx.core:core"
-      - dependency-name: "androidx.appcompat:appcompat"
 
   - package-ecosystem: "github-actions"
     directory: "/" # Location of package manifests

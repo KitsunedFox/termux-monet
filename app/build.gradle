@@ -108,13 +108,13 @@ android {
 }
 
 dependencies {
-    implementation "androidx.annotation:annotation:1.5.0"
-    implementation "androidx.core:core:1.8.0" // Do not bump to 1.9.0 due to build issues
-    implementation "androidx.drawerlayout:drawerlayout:1.1.1"
+    implementation "androidx.annotation:annotation:1.8.0"
+    implementation "androidx.core:core:1.9.0"
+    implementation "androidx.drawerlayout:drawerlayout:1.2.0"
     implementation "androidx.preference:preference:1.1.1" // Do not increment version due to ViewUtils issue
     implementation "androidx.viewpager:viewpager:1.1.0-alpha01"
-    implementation "com.google.android.material:material:1.8.0"
-    implementation "com.google.guava:guava:32.0.1-jre"
+    implementation "com.google.android.material:material:1.9.0"
+    implementation "com.google.guava:guava:32.0.1-android"
     implementation "io.noties.markwon:core:$markwonVersion"
     implementation "io.noties.markwon:ext-strikethrough:$markwonVersion"
     implementation "io.noties.markwon:linkify:$markwonVersion"
@@ -124,7 +124,7 @@ dependencies {
     implementation project(":termux-shared")
     testImplementation "junit:junit:4.13.2"
     testImplementation "org.robolectric:robolectric:4.12.2"
-    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:1.1.6" // Do not increment version due to build issues
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:2.0.4" // Do not increment version due to build issues
 }
 
 tasks.withType(JavaCompile) {
