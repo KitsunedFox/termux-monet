@@ -99,4 +99,5 @@
     <string name="log_level_verbose">Verboso</string>
     <string name="log_level_unknown">*Desconocido*</string>
     <string name="log_level_value">Nivel del registro logcat ajustado a \"%1$s\"</string>
+    <string name="msg_about_termux_monet">Estas utilizando una bifurcación no oficial, modificada de Termux, con implementaciones hechas por la comunidad y características descartadas/no planificadas. Ten en cuenta que esta aplicación es inestable y no está soportada por Termux.</string>
 </resources>
