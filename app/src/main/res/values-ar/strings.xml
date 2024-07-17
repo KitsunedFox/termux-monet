@@ -3,6 +3,7 @@
 <!ENTITY TERMUX_PACKAGE_NAME "com.termux">
 <!ENTITY TERMUX_APP_NAME "Termux:Monet">
 <!ENTITY TERMUX_API_APP_NAME "Termux:API">
+<!ENTITY TERMUX_GUI_APP_NAME "Termux:GUI">
 <!ENTITY TERMUX_BOOT_APP_NAME "Termux:Boot">
 <!ENTITY TERMUX_FLOAT_APP_NAME "Termux:Float">
 <!ENTITY TERMUX_STYLING_APP_NAME "Termux:Styling">
@@ -11,10 +12,10 @@
 ]>
 <resources>
     <string name="shared_user_label">مستخدم Termux</string>
-    <string name="permission_run_command_label">بيئة Termux</string>
+    <string name="permission_run_command_label">تشغيل الأوامر في &amp;TERMUX_APP_NAME؛ بيئة</string>
     <string name="bootstrap_error_abort">إلغاء</string>
     <string name="action_new_session">فصل جديد</string>
-    <string name="title_max_terminals_reached">تم الوصول للحد الأقصى من الطرفيات</string>
+    <string name="title_max_terminals_reached">تم الوصول للحد الأقصى من الترمنل</string>
     <string name="title_rename_session">حدد إسمًا للفصل</string>
     <string name="action_rename_session_confirm">حدد</string>
     <string name="action_create_named_session_confirm">إنشاء</string>
@@ -49,7 +50,7 @@
     <string name="donate_preference_title">تبرع</string>
     <string name="bootstrap_error_try_again">إعادة المحاولة</string>
     <string name="title_create_named_session">تم تسمية الفصل الجديد</string>
-    <string name="msg_max_terminals_reached">يجب إغلاق واحدة على الأقل من الطرفيات قبل فتح واحدة جديدة</string>
+    <string name="msg_max_terminals_reached">يجب إغلاق واحدة على الأقل من الترمنل قبل فتح واحدة جديدة</string>
     <string name="action_select_url">إختر عنوان URL</string>
     <string name="title_select_url_none_found">لم يتم إيجاد عنوان URL في الطرفية</string>
     <string name="title_share_selected_text_with">إرسال النص المحدد إلى:</string>
@@ -60,4 +61,81 @@
     <string name="notification_action_exit">خروج</string>
     <string name="error_display_over_other_apps_permission_not_granted_to_start_terminal">&TERMUX_APP_NAME; يتطلب أذونات ”العرض فوق التطبيقات” لبدأ الطرفية من الخلفية على إصدار Android &gt;=10. يمكن تفعيله من خلال الذهاب إلى -&gt; التطبيقات -&gt; &TERMUX_APP_NAME; -&gt; متقدم</string>
     <string name="termux_float_preferences_summary">التفضيلات لتطبيق &TERMUX_FLOAT_APP_NAME;</string>
+    <string name="permission_run_command_description">تنفيذ أوامر عشوائية داخل بيئة &TERMUX_APP_NAME; والوصول إلى الملفات</string>
+    <string name="bootstrap_error_body">&TERMUX_APP_NAME; غير قادر على تثبيت حزم التهيئة.</string>
+    <string name="bootstrap_installer_body">تثبيت حزم التهيئة…</string>
+    <string name="bootstrap_error_title">غير قادر على تثبيت حزم التهيئة</string>
+    <string name="bootstrap_error_not_primary_user_message">&TERMUX_APP_NAME; يمكن تشغيله فقط من قبل المستخدم الرئيسي. تم تجميع الملفات التنفيذية للتهيئة الخاصة بـ &TERMUX_APP_NAME; بمسار $PREFIX مدمج ولا يمكن تثبيتها تحت أي مسار آخر غير: %1$s.</string>
+    <string name="action_new_session_failsafe">وضع الأمان</string>
+    <string name="action_share_transcript">مشاركة النص المترجم</string>
+    <string name="title_share_transcript">سجل الطرفية</string>
+    <string name="notification_action_wake_lock">الحصول على قفل الاستيقاظ</string>
+    <string name="notification_action_wake_unlock">إطلاق قفل الاستيقاظ</string>
+    <string name="error_termux_service_invalid_execution_command_runner">أمر تنفيذ غير صالح إلى خدمة Termux: `%1$s`</string>
+    <string name="error_termux_service_unsupported_execution_command_runner">أمر تنفيذ غير مدعوم إلى خدمة Termux: `%1$s`</string>
+    <string name="error_termux_service_unsupported_execution_command_shell_create_mode">وضع إنشاء الطرفية غير مدعوم لخدمة Termux: `%1$s`</string>
+    <string name="error_run_command_service_invalid_execution_command_runner">أمر تنفيذ غير صالح إلى خدمة RunCommand: `%1$s`</string>
+    <string name="error_run_command_service_mandatory_extra_missing">ناقص إضافي إلزامي لخدمة RunCommand: \"%1$s\"</string>
+    <string name="error_run_command_service_api_help">زر %1$s للمزيد من المعلومات حول استخدام نواية RUN_COMMAND.</string>
+    <string name="title_restore_background_image">تم اكتشاف صورة خلفية. هل ترغب في استعادتها؟</string>
+    <string name="error_background_image_loading_failed">تعذر تحميل صورة الخلفية. تعيين لون الخلفية بدلاً من ذلك.</string>
+    <string name="error_background_image_loading_from_gallery_failed">فشل في تحميل الصورة. جرب صورة أخرى.</string>
+    <string name="error_termux_service_start_failed_general">فشل في بدء خدمة TermuxService. تحقق من logcat لرسالة الاستثناء.</string>
+    <string name="title_activity_termux_settings">إعدادات &TERMUX_APP_NAME;</string>
+    <string name="termux_preferences_summary">التفضيلات لتطبيق &TERMUX_APP_NAME;</string>
+    <string name="termux_debugging_preferences_title">تصحيح الأخطاء</string>
+    <string name="termux_logging_header">سجل التسجيل</string>
+    <string name="termux_terminal_view_key_logging_enabled_off">السجلات لن تحتوي على إدخالات لمفاتيح عرض الطرفية. (الافتراضي)</string>
+    <string name="termux_plugin_error_notifications_enabled_title">إشعارات خطأ الإضافة</string>
+    <string name="termux_crash_report_notifications_enabled_title">إشعارات تقارير الأعطال</string>
+    <string name="termux_crash_report_notifications_enabled_off">تعطيل الإشعارات لتقارير الأعطال.</string>
+    <string name="termux_terminal_io_preferences_summary">التفضيلات لإدخال وإخراج الترمنل</string>
+    <string name="termux_keyboard_header">لوحة المفاتيح</string>
+    <string name="termux_soft_keyboard_enabled_on">سيتم تمكين لوحة المفاتيح الناعمة. (الافتراضي)</string>
+    <string name="termux_terminal_view_preferences_title">تخطيط عرض الترمنل</string>
+    <string name="termux_terminal_view_preferences_summary">تخصيص تخطيط عرض الترمنل</string>
+    <string name="termux_terminal_view_terminal_margin_adjustment_off">سيتم تعطيل ضبط هوامش الترمنل.</string>
+    <string name="termux_terminal_view_activity_remove_title">إزالة المهمة لنشاط عرض الترمنل</string>
+    <string name="termux_terminal_view_activity_remove_off">بمجرد إغلاق جلسات الطرفية جميعها، سيتم إغلاق &TERMUX_APP_NAME; وسيظل مرئيًا في التطبيقات الأخيرة.</string>
+    <string name="termux_terminal_view_activity_remove_on">سيُغلق &TERMUX_APP_NAME; وسيُزال من التطبيقات الأخيرة إذا لم تكن هناك جلسات ترمنل نشطة. (الافتراضي)</string>
+    <string name="termux_style_preferences_title">مظهر &TERMUX_APP_NAME;</string>
+    <string name="termux_style_preferences_summary">التفضيلات لمظهر وتخصيص &TERMUX_APP_NAME;</string>
+    <string name="termux_background_header">خلفية</string>
+    <string name="termux_background_image_enabled_title">عرض صورة الخلفية</string>
+    <string name="termux_background_image_enabled_on">سيتم تمكين صورة الخلفية.</string>
+    <string name="termux_api_preferences_summary">تفضيلات &amp;TERMUX_API_APP_NAME؛ برنامج</string>
+    <string name="termux_monet_background_enabled_title">خلفية مونيه (غير مستقرة)</string>
+    <string name="termux_monet_background_enabled_on">سيتم تمكين خلفية مونيه.</string>
+    <string name="termux_extrakeys_blur_enabled_off">سيتم تعطيل الخلفية غير الواضحة للمفاتيح الإضافية. يضيف خلفية شفافة وغير واضحة إلى المفاتيح الإضافية. (قد يؤثر على الأداء) (افتراضي)</string>
+    <string name="termux_sessions_header">قائمة الجلسات</string>
+    <string name="termux_sessions_blur_enabled_title">جلسات خلفية غير واضحة</string>
+    <string name="termux_sessions_blur_enabled_off">سيتم تعطيل الخلفية غير الواضحة للجلسات. يضيف خلفية شفافة وغير واضحة إلى قائمة الجلسات. (قد يؤثر على الأداء) (افتراضي)</string>
+    <string name="termux_sessions_blur_enabled_on">سيتم تمكين الخلفية غير الواضحة للجلسات.</string>
+    <string name="termux_gui_preferences_summary">تفضيلات &amp;TERMUX_GUI_APP_NAME؛ برنامج</string>
+    <string name="bootstrap_error_installed_on_portable_sd">&TERMUX_APP_NAME; لا يمكن تثبيته على بطاقة SD المحمولة/الخارجية/القابلة للإزالة على جهازك. تم تجميع الملفات التنفيذية للتهيئة الخاصة بـ &TERMUX_APP_NAME; بمسار $PREFIX مدمج ولا يمكن تثبيتها تحت أي مسار آخر غير: %1$s.</string>
+    <string name="error_termux_service_execution_command_shell_name_unset">اسم الطرفية غير مضبوط ولكن وضع إنشاء الطرفية `%1$s` تم تمريره</string>
+    <string name="error_run_command_service_invalid_intent_action">إجراء النواية غير صالح لخدمة RunCommand: `%1$s`</string>
+    <string name="error_termux_service_start_failed_bg">فشل بدء خدمة TermuxService أثناء تشغيل التطبيق في الخلفية بسبب قيود الخلفية في Android.</string>
+    <string name="termux_debugging_preferences_summary">التفضيلات لتصحيح الأخطاء</string>
+    <string name="termux_log_level_title">مستوى التسجيل</string>
+    <string name="termux_terminal_view_key_logging_enabled_title">تسجيل مفاتيح عرض الطرفية</string>
+    <string name="termux_terminal_view_key_logging_enabled_on">سيحتوي سجل Logcat على إدخالات لمفاتيح عرض الطرفية. هذه تكون مفصلة للغاية ويجب تعطيلها في الظروف العادية، وإلا ستسبب مشاكل في الأداء.</string>
+    <string name="termux_plugin_error_notifications_enabled_off">تعطيل الوميض والإشعارات لأخطاء الإضافات.</string>
+    <string name="termux_crash_report_notifications_enabled_on">إظهار الإشعارات لتقارير الأعطال. (الافتراضي)</string>
+    <string name="termux_plugin_error_notifications_enabled_on">إظهار الوميض والإشعارات لأخطاء الإضافات. (الافتراضي)</string>
+    <string name="termux_terminal_io_preferences_title">إدخال وإخراج الطرفية</string>
+    <string name="termux_soft_keyboard_enabled_only_if_no_hardware_title">لوحة المفاتيح الناعمة فقط إذا لم يكن هناك أجهزة</string>
+    <string name="termux_soft_keyboard_enabled_title">تم تمكين لوحة المفاتيح الناعمة</string>
+    <string name="termux_soft_keyboard_enabled_off">سيتم تعطيل لوحة المفاتيح الناعمة.</string>
+    <string name="termux_soft_keyboard_enabled_only_if_no_hardware_off">سيتم تمكين لوحة المفاتيح الناعمة حتى إذا كانت لوحة المفاتيح الأجهزة متصلة. (الافتراضي)</string>
+    <string name="termux_soft_keyboard_enabled_only_if_no_hardware_on">سيتم تمكين لوحة المفاتيح الناعمة فقط إذا لم يكن هناك لوحة مفاتيح أجهزة متصلة.</string>
+    <string name="termux_terminal_view_view_header">عرض</string>
+    <string name="termux_terminal_view_terminal_margin_adjustment_title">ضبط هوامش الترمنل</string>
+    <string name="termux_terminal_view_terminal_margin_adjustment_on">‎سيتم تمكين ضبط هوامش الترمنل. يجب تمكينه لمحاولة إصلاح المشكلة التي تؤدي إلى تغطية لوحة المفاتيح الناعمة لجزء من المفاتيح الإضافية/عرض الترمنل. إذا تسبب في وميض الشاشة على أجهزتكم، فعليكم بتعطيله. (الافتراضي)</string>
+    <string name="termux_monet_background_enabled_off">سيتم تعطيل خلفية محطة Monet. تحويل الخلفية الطرفية إلى مونيه (افتراضي)</string>
+    <string name="termux_extrakeys_header">فئة المفاتيح الإضافية</string>
+    <string name="termux_extrakeys_blur_enabled_title">مفاتيح إضافية خلفية غير واضحة</string>
+    <string name="termux_background_image_enabled_off">سيتم تعطيل صورة الخلفية. لتمكينه، تأكد من وجود ملفات عمودية وأفقية مناسبة. إذا كنت تريد تعيين خلفية جديدة، فاضبطها من قائمة السياق بالنقر لفترة طويلة على الترمنل. (تقصير)</string>
+    <string name="termux_extrakeys_blur_enabled_on">سيتم تمكين الخلفية غير الواضحة لـ ExtraKeys.</string>
+    <string name="termux_gui_preferences_title">Termux: تفضيلات تطبيق واجهة المستخدم الرسومية</string>
 </resources>
