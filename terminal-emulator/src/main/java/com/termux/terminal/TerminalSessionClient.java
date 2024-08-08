@@ -30,6 +30,8 @@ public interface TerminalSessionClient {
 
     Integer getTerminalCursorStyle();
 
+    boolean shouldEnableDarkTheme();
+
     void logError(String tag, String message);
 
     void logWarn(String tag, String message);
