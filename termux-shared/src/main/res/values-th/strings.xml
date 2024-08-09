@@ -1,2 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="error_app_not_installed_or_disabled_warning">%1$s (%2$s) แอพลิเคชันไม่ติดตั้งหรือปิดการใช้งาน</string>
+    <string name="error_get_package_context_failed_help_url_message">เช็ค%1$sสำหรับรายละเอียดเพิ่มเติม</string>
+</resources>
