@@ -1,2 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="paste_text">วาง</string>
+    <string name="copy_text">คัดลอก</string>
+    <string name="text_selection_more">เพิ่มเติม…</string>
+</resources>
