@@ -3,6 +3,7 @@
 <!ENTITY TERMUX_PACKAGE_NAME "com.termux">
 <!ENTITY TERMUX_APP_NAME "Termux:Monet">
 <!ENTITY TERMUX_API_APP_NAME "Termux:API">
+<!ENTITY TERMUX_GUI_APP_NAME "Termux:GUI">
 <!ENTITY TERMUX_BOOT_APP_NAME "Termux:Boot">
 <!ENTITY TERMUX_FLOAT_APP_NAME "Termux:Float">
 <!ENTITY TERMUX_STYLING_APP_NAME "Termux:Styling">
@@ -14,4 +15,64 @@
     <string name="bootstrap_error_title">ไม่สามารถติดตั้งบูตสแตรปได้</string>
     <string name="shared_user_label">ผู้ใช้งาน &TERMUX_APP_NAME;</string>
     <string name="permission_run_command_label">รันคำสั่งในสภาพแวดล้อมของ &TERMUX_APP_NAME;</string>
+    <string name="termux_widget_preferences_summary">ค่ากำหนดสำหรับ
+\n&TERMUX_WIDGET_APP_NAME;</string>
+    <string name="about_preference_title">เกี่ยวกับ</string>
+    <string name="donate_preference_title">บริจาค</string>
+    <string name="bootstrap_error_try_again">ลองอีกครั้ง</string>
+    <string name="action_create_named_session_confirm">สร้าง</string>
+    <string name="action_toggle_soft_keyboard">คีย์บอร์ด</string>
+    <string name="title_create_named_session">รายการใหม่</string>
+    <string name="action_rename_session_confirm">ตั้ง</string>
+    <string name="title_rename_session">ตั้งชื่อซีซั่น</string>
+    <string name="extra_keys_command_hint">ใส่คำสั่ง</string>
+    <string name="action_share_selected_text">แชร์ข้อความที่เลือก</string>
+    <string name="action_autofill_password">ป้อนรหัสผ่านอัตโนมัติ</string>
+    <string name="action_reset_terminal">รีเซ็ต</string>
+    <string name="action_set_background_image">ตั้งภาพพื้นหลัง</string>
+    <string name="action_remove_background_image">ลบภาพพื้นหลัง</string>
+    <string name="action_open_settings">ตั้งค่า</string>
+    <string name="action_report_issue">รายงานปัญหา</string>
+    <string name="action_font_and_color">ฟอนต์และสี</string>
+    <string name="action_style_terminal">สไตล์</string>
+    <string name="action_kill_process">หยุดกระบวนการ%d</string>
+    <string name="title_confirm_kill_process">คุณแน่ใจว่าต้องการหยุดกระบวนการนี้?</string>
+    <string name="action_open_help">ช่วยเหลือ</string>
+    <string name="title_share_selected_text">ข้อความเทอร์มินอล</string>
+    <string name="action_styling_install">ติดตั้ง</string>
+    <string name="notification_action_exit">ออกจากแอพ</string>
+    <string name="termux_debugging_preferences_summary">การตั้งค่าสำหรับการดีบัก</string>
+    <string name="termux_debugging_preferences_title">ดีบัค</string>
+    <string name="action_file_received_open_directory">เปิดไดเรกทอรี</string>
+    <string name="action_file_received_edit">แก้ไข</string>
+    <string name="msg_select_url_copied_to_clipboard">URL คัดลอกไปยังคลิปบอร์ด</string>
+    <string name="msg_terminal_reset">รีเซ็ตเทอร์มินัล</string>
+    <string name="msg_enabling_terminal_toolbar">การเปิดใช้งานแถบเครื่องมือเทอร์มินัล</string>
+    <string name="msg_disabling_terminal_toolbar">ปิดการใช้งานแถบเครื่องมือเทอร์มินัล</string>
+    <string name="action_select_url">เลือก URL</string>
+    <string name="title_select_url_dialog">คลิกเพื่อคัดลอกURLหรือแตะค้างเพื่อเปิด</string>
+    <string name="action_toggle_keep_screen_on">ให้หน้าจอเปิดตลอดเวลา</string>
+    <string name="msg_generating_report">กำลังสร้างรายงาน</string>
+    <string name="title_share_selected_text_with">ลงข้อความที่เลือกไปยัง:</string>
+    <string name="title_select_url_none_found">ไม่พบ URL ในเทอร์มินอล</string>
+    <string name="error_styling_not_installed">&amp;TERMUX_STYLING_APPME; ปลั๊กอินไม่ติดตั้ง</string>
+    <string name="termux_plugin_error_notifications_enabled_on">แสดงแฟลชและการแจ้งเตือนข้อผิดพลาดของปลั๊กอิน (ค่าเริ่มต้น)</string>
+    <string name="termux_terminal_io_preferences_summary">การตั้งค่าสําหรับเทอร์มินัล I / O</string>
+    <string name="termux_terminal_io_preferences_title">เทอมินอล I/O</string>
+    <string name="termux_style_preferences_title">ลักษณะ &TERMUX_APP_NAME;</string>
+    <string name="termux_background_header">ภาพพื้นหลัง</string>
+    <string name="msg_max_terminals_reached">ปิดรายการที่มีอยู่ก่อนสร้างใหม่</string>
+    <string name="action_new_session">ซีซั่นใหม่</string>
+    <string name="action_share_transcript">แชร์สคริป</string>
+    <string name="title_file_received">บันทึกไฟล์ใน ~/ดาวน์โหลด/</string>
+    <string name="title_activity_termux_settings">&TERMUX_APP_NAME; ตั้งค่า</string>
+    <string name="termux_preferences_summary">ตัวเลือกสำหรับแอพ &TERMUX_APP_NAME;</string>
+    <string name="termux_logging_header">Logging</string>
+    <string name="termux_log_level_title">ระดับ log</string>
+    <string name="termux_plugin_error_notifications_enabled_title">การแจ้งเตือนปลั๊กอินเกิดข้อผิดพลาด</string>
+    <string name="termux_plugin_error_notifications_enabled_off">ปิดแฟลชและการแจ้งเตือนสำหรับข้อผิดพลาดของปลั๊กอิน</string>
+    <string name="termux_keyboard_header">คีย์บอร์ด</string>
+    <string name="termux_terminal_view_view_header">ดู</string>
+    <string name="termux_style_preferences_summary">การตั้งค่าสําหรับ &amp; MUX_APPME_ME; รูปลักษณ์และการปรับแต่ง</string>
+    <string name="termux_background_image_enabled_title">แสดงภาพพื้นหลัง</string>
 </resources>

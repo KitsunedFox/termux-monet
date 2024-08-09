@@ -49,7 +49,7 @@
     <string name="log_level_unknown">*Ismeretlen*</string>
     <string name="error_display_over_other_apps_permission_not_granted">%1$s igényli a „Megjelenítés más alkalmazások felett” engedélyt a tevékenységek és szolgáltatások háttérből történő indításához Android 10-től. Megadhatja az Android Beállítások -&gt; Alkalmazások -&gt; %1$s -&gt; Megjelenés legfelül. Az engedély neve eltérhet a különböző eszközökön, például a Xiaomi esetében, amelynek neve „Előugró ablakok megjelenítése a háttérben futás közben”, ellenőrizze a https://dontkillmyapp.com webhelyet az eszközspecifikus problémákért.</string>
     <string name="action_save_to_file">Mentés fájlba</string>
-    <string name="error_termux_prefix_dir_path_not_accessible">&TERMUX_APP_NAME; alkalmazás $PREFIX könyvtára nem érhető el a következő alkalmazás számára: %1$s. Ennek az lehet az oka, hogy, vagy nem telepítette és állította be a &TERMUX_APP_NAME; alkalmazást, vagy a &TERMUX_APP_NAME; alkalmazás és az %1$s alkalmazást eltérő APK-aláírásokkal rendelkezik, mivel mindkét alkalmazást különböző forrásból telepítette. Az is lehet, hogy a &TERMUX_APP_NAME; $PREFIX könyvtár „&TERMUX_PREFIX_DIR_PATH;” nem létezik, vagy nincsen olvasási, írási és végrehajtási jogosultságai.</string>
+    <string name="error_termux_prefix_dir_path_not_accessible">&TERMUX_APP_NAME; alkalmazás $PREFIX könyvtára nem érhető el a következő alkalmazás számára: %1$s. Ennek az lehet az oka, hogy, nem telepítette és állította be a &TERMUX_APP_NAME; alkalmazást, vagy a &TERMUX_APP_NAME; és az %1$s alkalmazások eltérő APK-aláírásokkal rendelkeznek, mivel a két alkalmazást különböző forrásból telepítette. Az is lehet, hogy a &TERMUX_APP_NAME; $PREFIX könyvtár „&TERMUX_PREFIX_DIR_PATH;” nem létezik, vagy nincsen olvasási, írási és végrehajtási jogosultságai.</string>
     <string name="action_cancel">Mégsem</string>
     <string name="msg_report_issue">Ha be szeretné jelenteni ezt a problémát, akkor másolja ki a szövegét a beállítások menüből (3 pont a jobb felső sarokban), és jelentse be a problémát a következő hivatkozások egyikén.
 \n
@@ -80,4 +80,5 @@
 \n##
 \n
 \n</string>
+    <string name="msg_about_termux_monet">Termux nem hivatalos, módosított változatát használod, amely közösség által készített implementációkat és elvetett/nem tervezett funkciókat tartalmaz. Légy tudatában annak, hogy ez az alkalmazás instabil és nem támogatott a Termux által</string>
 </resources>

@@ -128,4 +128,5 @@
     <string name="bootstrap_error_installed_on_portable_sd">&TERMUX_APP_NAME; нельзя установить на переносную/внешнюю/съемную SD-карту на вашем устройстве.
 \nДвоичные файлы Bootstrap, скомпилированные для &TERMUX_APP_NAME; имеют жестко заданный путь $PREFIX и не могут быть установлены ни по какому другому пути, кроме:
 \n%1$s.</string>
+    <string name="termux_extrakeys_header">Дополнительные клавиши</string>
 </resources>

@@ -3,6 +3,7 @@
 <!ENTITY TERMUX_PACKAGE_NAME "com.termux">
 <!ENTITY TERMUX_APP_NAME "Termux:Monet">
 <!ENTITY TERMUX_API_APP_NAME "Termux:API">
+<!ENTITY TERMUX_GUI_APP_NAME "Termux:GUI">
 <!ENTITY TERMUX_BOOT_APP_NAME "Termux:Boot">
 <!ENTITY TERMUX_FLOAT_APP_NAME "Termux:Float">
 <!ENTITY TERMUX_STYLING_APP_NAME "Termux:Styling">
@@ -22,9 +23,9 @@
     <string name="bootstrap_error_body">&TERMUX_APP_NAME; no fue posible instalar los paquetes de bootstrap.</string>
     <string name="bootstrap_error_abort">Abortar</string>
     <string name="bootstrap_error_try_again">Intentar de nuevo</string>
-    <string name="bootstrap_error_not_primary_user_message">&TERMUX_APP_NAME; solo se puede ejecutar como usuario principal.
-        \nBootstrap binarios compilados para &TERMUX_APP_NAME; tienen una ruta $PREFIX codificada que no se puede instalar
-        en cualquier ruta que no sea:\n%1$s.</string>
+    <string name="bootstrap_error_not_primary_user_message">&TERMUX_APP_NAME; solo se puede ejecutar como usuario principal. 
+\nLos binarios bootstrap compilados para &TERMUX_APP_NAME; tienen una ruta $PREFIX codificada que no se puede instalar \u0020en cualquier ruta que no sea:
+\n%1$s.</string>
     <string name="bootstrap_error_installed_on_portable_sd">&TERMUX_APP_NAME; no se puede instalar en
         tarjeta SD portátil/externa/extraíble en su dispositivo.
         \nBootstrap binarios compilados para &TERMUX_APP_NAME; tienen una ruta $PREFIX codificada que no se puede instalar
@@ -45,7 +46,7 @@
     <string name="extra_keys_command_hint">Insertar comando...</string>
     <!-- Terminal Popup -->
     <string name="action_select_url">Seleccionar URL</string>
-    <string name="title_select_url_dialog">Hacer clic en URL para copiar o presionar prolongadamente para abrir</string>
+    <string name="title_select_url_dialog">Hacer clic en la URL para copiar o presionar prolongadamente para abrir</string>
     <string name="title_select_url_none_found">No hay URL en la terminal.</string>
     <string name="msg_select_url_copied_to_clipboard">URL copiada al portapapeles</string>
     <string name="action_share_transcript">Compartir transcripción</string>
@@ -76,9 +77,7 @@
     <string name="notification_action_wake_lock">Adquirir wakelock</string>
     <string name="notification_action_wake_unlock">Liberar wakelock</string>
     <!-- TermuxService -->
-    <string name="error_display_over_other_apps_permission_not_granted_to_start_terminal">&TERMUX_APP_NAME; requiere
-        el permiso \"Mostrar sobre otras apps\" para iniciar sesiones de terminal desde el fondo en Android &gt;= 10.
-        Otorgar desde Ajustes -&gt; Apps -&gt; &TERMUX_APP_NAME; -&gt; Avanzado</string>
+    <string name="error_display_over_other_apps_permission_not_granted_to_start_terminal">&TERMUX_APP_NAME; requiere \u0020el permiso \"Mostrar sobre otras apps\" para iniciar sesiones de terminal en segundo plano en Android &gt;= 10. \u0020Otorgar desde Ajustes -&gt; Apps -&gt; &TERMUX_APP_NAME; -&gt; Avanzado</string>
     <string name="error_termux_service_invalid_execution_command_runner">Ejecutor de comando de ejecución no válido para TermuxService: `%1$s`</string>
     <string name="error_termux_service_unsupported_execution_command_runner">Ejecutor de comando de ejecución no admitido para TermuxService: `%1$s`</string>
     <string name="error_termux_service_unsupported_execution_command_shell_create_mode">Modo de creación de shell de comando de ejecución no compatible para TermuxService: `%1$s`</string>
@@ -157,9 +156,7 @@
     <string name="termux_background_header">Fondo de pantalla</string>
     <!-- Background Image -->
     <string name="termux_background_image_enabled_title">Mostrar imagen de fondo de pantalla</string>
-    <string name="termux_background_image_enabled_off">El fondo de pantalla estará deshabilitado.
-                    Para habilitarlo, asegúrese de que los archivos retrato y paisaje estén presentes.
-                    Si desea configurar un nuevo fondo de pantalla, configúrelo a través del menú contextual presionando prolongadamente en la Terminal. (Defecto)</string>
+    <string name="termux_background_image_enabled_off">El fondo de pantalla estará deshabilitado. Para habilitarlo, asegúrese de que los archivos verticales y horizontales estén presentes. Si desea configurar un nuevo fondo de pantalla, configúrelo a través del menú contextual presionando prolongadamente en la Terminal. (Defecto)</string>
     <string name="termux_background_image_enabled_on">El fondo de pantalla estará habilitado.</string>
     <!-- Termux:API App Preferences -->
     <string name="termux_api_preferences_title">&TERMUX_API_APP_NAME;</string>
@@ -180,4 +177,17 @@
     <string name="error_background_image_loading_failed">No se puede cargar la imagen de fondo. Configuración del color de fondo.</string>
     <string name="title_restore_background_image">Imagen de fondo detectada. ¿Quieres restaurarla\?</string>
     <string name="error_background_image_loading_from_gallery_failed">No se ha podido cargar la imagen. Prueba con otra imagen.</string>
+    <string name="termux_gui_preferences_summary">Preferencias para &TERMUX_GUI_APP_NAME; aplicación</string>
+    <string name="termux_gui_preferences_title">&TERMUX_GUI_APP_NAME;</string>
+    <string name="termux_sessions_blur_enabled_off">El fondo desenfocado del menú de ventanas está deshabilitado. Añade un fondo transparente y desenfocado al Menú de sesiones. (Puede afectar el rendimiento) (Defecto)</string>
+    <string name="termux_monet_background_enabled_title">Fondo estilo Monet (no estable)</string>
+    <string name="termux_monet_background_enabled_on">El fondo estilo Monet será habilitado.</string>
+    <string name="termux_monet_background_enabled_off">El fondo de la terminal estilo Monet está deshabilitado. Convierte el estilo del fondo de la terminal en Monet. (Defecto)</string>
+    <string name="termux_extrakeys_header">Teclas adicionales</string>
+    <string name="termux_extrakeys_blur_enabled_title">Fondo desenfocado de las teclas adicionales</string>
+    <string name="termux_extrakeys_blur_enabled_off">El fondo desenfocado de las teclas adicionales está deshabilitado. Añade un fondo transparente y desenfocado a las teclas extra. (Puede afectar el rendimiento) (Defecto)</string>
+    <string name="termux_extrakeys_blur_enabled_on">El fondo desenfocado de las teclas adicionales será habilitado.</string>
+    <string name="termux_sessions_header">Menú de Sesiones</string>
+    <string name="termux_sessions_blur_enabled_title">Fondo desenfocado del Menú de sesiones</string>
+    <string name="termux_sessions_blur_enabled_on">El fondo desenfocado del menú de sesiones será habilitado.</string>
 </resources>

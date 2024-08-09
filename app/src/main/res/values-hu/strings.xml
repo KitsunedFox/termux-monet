@@ -70,7 +70,7 @@
     <string name="notification_action_wake_lock">Wakelock megszerzése</string>
     <string name="notification_action_wake_unlock">Wakelock feloldása</string>
     <!-- TermuxService -->
-    <string name="error_display_over_other_apps_permission_not_granted_to_start_terminal">&TERMUX_APP_NAME;-nak szükséges a \"Megjelenítés más alkalmazások felett\" engedély a terminálmunkamenetek háttérben történő indításához Android &gt;= 10 rendszeren. Ezt meg lehet adni a Beállítások -&gt; alkalmazások -&gt; &TERMUX_APP_NAME; -&gt; Haladó</string>
+    <string name="error_display_over_other_apps_permission_not_granted_to_start_terminal">&TERMUX_APP_NAME;-nak szüksége van \"Megjelenítés más alkalmazások felett\" engedélyre a terminál munkamenetek háttérben történő futtatásához Android &gt;= 10 rendszereken. Ezt meg lehet adni a Beállítások -&gt; alkalmazások -&gt; &TERMUX_APP_NAME; -&gt; Haladó</string>
     <string name="error_termux_service_invalid_execution_command_runner">Érvénytelen végrehajtási parancsfuttató a TermuxService-hez: `%1$s`</string>
     <string name="error_termux_service_unsupported_execution_command_runner">Nem támogatott végrehajtási parancsfuttató a TermuxService-hez: `%1$s`</string>
     <string name="error_termux_service_unsupported_execution_command_shell_create_mode">Nem támogatott végrehajtási parancshéj létrehozási módja TermuxService: `%1$s`</string>
@@ -169,4 +169,7 @@
     <string name="termux_terminal_view_activity_remove_on">Amint az összes terminál munkamenetet bezárta, &TERMUX_APP_NAME; bezáródik, és nem marad látható a legutóbbi alkalmazásoknál. (Default)</string>
     <string name="termux_background_image_enabled_title">Háttérkép megjelenítése</string>
     <string name="termux_background_image_enabled_off">A háttérkép le van tiltva. Az engedélyezéshez győződjön meg arról, hogy léteznek megfelelő álló és fekvő képek. Új hátteret a kontextusmenüből tud beállítani, amit a Terminálon való hosszú érintéssel tud előhozni. (Alapértelmezett)</string>
+    <string name="termux_monet_background_enabled_title">Monet Háttérkép (Instabil)</string>
+    <string name="termux_monet_background_enabled_off">A Terminal Monet Háttérkép funkció letiltja a terminál háttérképet, és monet stílusúvá teszi (alapértelmett).</string>
+    <string name="termux_monet_background_enabled_on">A Monet Háttérkép engedélyezve lesz</string>
 </resources>
